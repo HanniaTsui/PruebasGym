@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JYearChooser;
 
 public class v3 extends JFrame {
 
@@ -78,6 +79,10 @@ public class v3 extends JFrame {
 		// Ubicar y agregar al panel
 		dateChooser.setBounds(162,126,400,50);
 		contentPane.add(dateChooser);
+		
+		JYearChooser yearChooser = new JYearChooser();
+		yearChooser.setBounds(131, 363, 46, 19);
+		contentPane.add(yearChooser);
 		
 		dateChooser.getJCalendar();
 	}
