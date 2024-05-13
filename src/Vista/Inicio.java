@@ -53,6 +53,8 @@ public class Inicio extends JFrame {
 		contentPane.setLayout(null);
 		setResizable(false);
 		iniciar();
+	//	registro();
+
 	}
 	
 	
@@ -62,23 +64,21 @@ public class Inicio extends JFrame {
 		panel.setBackground(Color.black);
 		contentPane.add(panel);
 		panel.setLayout(null);
-		
+		JLabel lblLogo = new JLabel();
+		lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblLogo.setIcon(new ImageIcon(Inicio.class.getResource("/img/logoInicio.png")));
+		lblLogo.setBounds(73, 143, 285, 285);
+		panel.add(lblLogo);
 		JLabel lblFoto = new JLabel();
 		lblFoto.setIcon(new ImageIcon(Inicio.class.getResource("/img/inicioF.png")));
 		lblFoto.setBounds(0, 0, 441, 700);
 		lblFoto.setOpaque(true);
 		panel.add(lblFoto);
 		
-		JLabel lblLogo = new JLabel();
-		lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblLogo.setIcon(new ImageIcon(Inicio.class.getResource("/img/logoLarrys.png")));
-		lblLogo.setBounds(460, 62, 207, 214);
-		panel.add(lblLogo);
-		
 		JLabel lblInicio = new JLabel();
 		lblInicio.setHorizontalAlignment(SwingConstants.CENTER);
 		lblInicio.setIcon(new ImageIcon(Inicio.class.getResource("/img/letrasInicio.png")));
-		lblInicio.setBounds(650, 74, 525, 202);
+		lblInicio.setBounds(440, 82, 750, 202);
 		panel.add(lblInicio);
 		
 		JButton btnIniciar = new JButton("Iniciar");
@@ -90,7 +90,7 @@ public class Inicio extends JFrame {
 		});
 		btnIniciar.setForeground(new Color(255, 255, 255));
 		btnIniciar.setBackground(new Color(128, 0, 0));
-		btnIniciar.setFont(new Font("Tahoma", Font.BOLD, 32));
+		btnIniciar.setFont(new Font("Arial Black", Font.BOLD, 32));
 		btnIniciar.setBounds(638, 556, 355, 50);
 		btnIniciar.setFocusable(false);
 		panel.add(btnIniciar);
@@ -98,18 +98,18 @@ public class Inicio extends JFrame {
 	
 	public void login() {
 		elementos();
-		JLabel lblUsuario = new JLabel("Usuario");
+		JLabel lblUsuario = new JLabel("Usuario:");
 		lblUsuario.setForeground(new Color(0, 0, 0));
-		lblUsuario.setHorizontalAlignment(SwingConstants.CENTER);
-		lblUsuario.setFont(new Font("Tahoma", Font.BOLD, 24));
-		lblUsuario.setBounds(87, 246, 100, 25);
+		lblUsuario.setHorizontalAlignment(SwingConstants.LEFT);
+		lblUsuario.setFont(new Font("Arial Black", Font.BOLD, 20));
+		lblUsuario.setBounds(87, 261, 146, 25);
 		panel.add(lblUsuario);
 		
-		JLabel lblContrasea = new JLabel("Contraseña");
+		JLabel lblContrasea = new JLabel("Contraseña:");
 		lblContrasea.setForeground(new Color(0, 0, 0));
 		lblContrasea.setHorizontalAlignment(SwingConstants.LEFT);
-		lblContrasea.setFont(new Font("Tahoma", Font.BOLD, 24));
-		lblContrasea.setBounds(87, 386, 206, 25);
+		lblContrasea.setFont(new Font("Arial Black", Font.BOLD, 20));
+		lblContrasea.setBounds(87, 401, 206, 25);
 		panel.add(lblContrasea);
 		
 		JButton btnAcceder = new JButton("Acceder");
@@ -122,7 +122,7 @@ public class Inicio extends JFrame {
 		        c1.setVisible(true);
 			}
 		});
-		btnAcceder.setFont(new Font("Tahoma", Font.BOLD, 32));
+		btnAcceder.setFont(new Font("Arial Black", Font.BOLD, 24));
 		btnAcceder.setBounds(87, 556, 355, 45);
 		btnAcceder.setFocusable(false);
 		panel.add(btnAcceder);
@@ -139,11 +139,11 @@ public class Inicio extends JFrame {
 		textPass.setBounds(87, 436, 355, 45);
 		panel.add(textPass);
 		
-		JLabel lblRegis = new JLabel("_____");
+		JLabel lblRegis = new JLabel("______");
 		lblRegis.setForeground(new Color(0, 0, 0));
 		lblRegis.setVerticalAlignment(SwingConstants.TOP);
 		lblRegis.setFont(new Font("Tahoma", Font.BOLD, 50));
-		lblRegis.setBounds(87, 133, 180, 98);
+		lblRegis.setBounds(87, 133, 224, 98);
 		panel.add(lblRegis);
 	}
 	
@@ -151,14 +151,14 @@ public class Inicio extends JFrame {
 		elementos();
 		JLabel lblNombre = new JLabel("Nombre:");
 		lblNombre.setForeground(new Color(0, 0, 0));
-		lblNombre.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblNombre.setFont(new Font("Arial Black", Font.BOLD, 20));
 		lblNombre.setBounds(87, 205, 100, 25);
 		panel.add(lblNombre);
 		
 		JLabel lblEmail = new JLabel("Correo electrónico:");
 		lblEmail.setForeground(new Color(0, 0, 0));
 		lblEmail.setHorizontalAlignment(SwingConstants.LEFT);
-		lblEmail.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblEmail.setFont(new Font("Arial Black", Font.BOLD, 20));
 		lblEmail.setBounds(87, 300, 258, 25);
 		panel.add(lblEmail);
 		
@@ -166,7 +166,7 @@ public class Inicio extends JFrame {
 		btnAceptar.setForeground(new Color(255, 255, 255));
 		btnAceptar.setBackground(new Color(1, 28, 45));
 		btnAceptar.setFocusable(false);
-		btnAceptar.setFont(new Font("Tahoma", Font.BOLD, 32));
+		btnAceptar.setFont(new Font("Arial Black", Font.BOLD, 24));
 		btnAceptar.setBounds(87, 600, 355, 45);
 		panel.add(btnAceptar);
 		
@@ -191,14 +191,14 @@ public class Inicio extends JFrame {
 		JLabel lblPass = new JLabel("Contraseña:");
 		lblPass.setHorizontalAlignment(SwingConstants.LEFT);
 		lblPass.setForeground(Color.BLACK);
-		lblPass.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblPass.setFont(new Font("Arial Black", Font.BOLD, 20));
 		lblPass.setBounds(87, 400, 258, 25);
 		panel.add(lblPass);
 		
 		JLabel lblPass2 = new JLabel("Confirmar contraseña:");
 		lblPass2.setHorizontalAlignment(SwingConstants.LEFT);
 		lblPass2.setForeground(Color.BLACK);
-		lblPass2.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblPass2.setFont(new Font("Arial Black", Font.BOLD, 20));
 		lblPass2.setBounds(87, 500, 258, 25);
 		panel.add(lblPass2);
 		
@@ -212,7 +212,7 @@ public class Inicio extends JFrame {
 		lblRegis.setForeground(new Color(0, 0, 0));
 		lblRegis.setVerticalAlignment(SwingConstants.TOP);
 		lblRegis.setFont(new Font("Tahoma", Font.BOLD, 50));
-		lblRegis.setBounds(288, 133, 180, 98);
+		lblRegis.setBounds(285, 133, 180, 98);
 		panel.add(lblRegis);
 	}
 	
@@ -225,7 +225,7 @@ public class Inicio extends JFrame {
 	public void elementos() {
 		panel = new JPanel();
 		panel.setBounds(0, 0, 1200, 720);
-		panel.setBackground(new Color(128, 128, 128));
+		panel.setBackground(new Color(152,166,178));
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
@@ -238,7 +238,7 @@ public class Inicio extends JFrame {
 		JButton botonRegistro = new JButton("Registro");
 		botonRegistro.setBorder(null);
 		botonRegistro.setForeground(new Color(0, 0, 0));
-		botonRegistro.setFont(new Font("Tahoma", Font.BOLD, 24));
+		botonRegistro.setFont(new Font("Arial Black", Font.BOLD, 24));
 		botonRegistro.setFocusPainted(false);
 		botonRegistro.setFocusable(false);
 		botonRegistro.setContentAreaFilled(false);
@@ -253,9 +253,10 @@ public class Inicio extends JFrame {
 		panel.add(botonRegistro);
 		
 		JButton btnInicio = new JButton("Iniciar sesión");
+		btnInicio.setHorizontalAlignment(SwingConstants.LEFT);
 		btnInicio.setBorder(null);
 		btnInicio.setForeground(new Color(0, 0, 0));
-		btnInicio.setFont(new Font("Tahoma", Font.BOLD, 24));
+		btnInicio.setFont(new Font("Arial Black", Font.BOLD, 24));
 		btnInicio.setFocusPainted(false);
 		btnInicio.setFocusable(false);
 		btnInicio.setContentAreaFilled(false);
@@ -265,7 +266,7 @@ public class Inicio extends JFrame {
 				login();
 			}
 		});
-		btnInicio.setBounds(87, 143, 170, 35);
+		btnInicio.setBounds(87, 143, 206, 35);
 		panel.add(btnInicio);
 			
 		JLabel lblFoto = new JLabel();

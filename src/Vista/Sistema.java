@@ -8,6 +8,9 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
@@ -22,19 +25,22 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
 public class Sistema extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane, panel, panelSup, panelTarifas, panelMenuVertical;
-
+	private JPanel contentPane, panel, panelSup, panelTarifas, panelMenuVertical, panelAsistencias, panelHistorialPagos, panelCredencial;
 	private final JPanel panelNegro = new JPanel();
 	JMenuBar menuBar;
 	JLabel lblTitulo, lblGym;
 	private JButton btnDetalles, btnCrear;
+	private JTextField textField;
+	 private JComboBox<String> monthComboBox;
 
 	/**
 	 * Launch the application.
@@ -66,8 +72,9 @@ public class Sistema extends JFrame {
 		contentPane.setLayout(null);
 		setResizable(false);
 		
-	//   	menuPrincipal();
-		clientes();
+	 //  	menuPrincipal();
+	//	clientes();
+		detallesClientes();
 		//menuVerticalClientes();
 	}
 	
@@ -84,7 +91,7 @@ public class Sistema extends JFrame {
 		menuB();
 		JButton btnClases = new JButton("Clases");
 		btnClases.setForeground(Color.WHITE);
-		btnClases.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 20));
+		btnClases.setFont(new Font("Arial Black", Font.BOLD, 20));
 		btnClases.setFocusable(false);
 		btnClases.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -98,7 +105,7 @@ public class Sistema extends JFrame {
 		
 		JButton btnChecador = new JButton("Checador");
 		btnChecador.setForeground(Color.WHITE);
-		btnChecador.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 20));
+		btnChecador.setFont(new Font("Arial Black", Font.BOLD, 20));
 		btnChecador.setFocusable(false);
 		btnChecador.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -112,7 +119,7 @@ public class Sistema extends JFrame {
 		
 		JButton btnInstructores = new JButton("Instructores");
 		btnInstructores.setForeground(Color.WHITE);
-		btnInstructores.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 20));
+		btnInstructores.setFont(new Font("Arial Black", Font.BOLD, 20));
 		btnInstructores.setFocusable(false);
 		btnInstructores.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -126,12 +133,11 @@ public class Sistema extends JFrame {
 		
 		JButton btnTarifas = new JButton("Tarifas");
 		btnTarifas.setForeground(Color.WHITE);
-		btnTarifas.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 20));
+		btnTarifas.setFont(new Font("Arial Black", Font.BOLD, 20));
 		btnTarifas.setFocusable(false);
 		btnTarifas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				quitarComponentes();
-				tarifas();
 			}
 		});
 		btnTarifas.setBackground(Color.BLACK);
@@ -147,7 +153,7 @@ public class Sistema extends JFrame {
 		});
 		btn.setFocusable(false);
 		btn.setForeground(new Color(255, 255, 255));
-		btn.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 20));
+		btn.setFont(new Font("Arial Black", Font.BOLD, 20));
 		btn.setBackground(new Color(0, 0, 0));
 		btn.setBounds(466, 302, 266, 40);
 		panel.add(btn);
@@ -269,7 +275,6 @@ public class Sistema extends JFrame {
 		menuTarifas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				quitarComponentes();
-				tarifas();
 				
 			}
 		});
@@ -325,7 +330,6 @@ public class Sistema extends JFrame {
 	}
 	
 	public void clientes() {
-
 		menuVerticalClientes();
 		panel();
 		menuB();
@@ -347,6 +351,7 @@ public class Sistema extends JFrame {
 		JScrollPane tablaScroll = new JScrollPane(datosTabla);
 		tablaScroll.setBounds(230,220,900,350);
 		panel.add(tablaScroll);
+		
 		JComboBox btnFiltro = new JComboBox();
 		btnFiltro.setModel(new DefaultComboBoxModel(new String[] {"Filtrar", "Todos","Activos", "No activos"}));
 		btnFiltro.setForeground(new Color(0, 0, 0));
@@ -354,162 +359,269 @@ public class Sistema extends JFrame {
 		btnFiltro.setBounds(943, 120, 155, 30);
 		panel.add(btnFiltro);
 	}
-	
-	public void tarifas() {
+
+	public void botonesDetallesClientes(JButton btn) {
+		btn.setFocusable(false);
+	    btn.setForeground(new Color(255, 255, 255));
+	    btn.setBackground(new Color(116, 116, 116));
+	    btn.setFont(new Font("Arial Black", Font.PLAIN, 13));
+	}
+	public void detallesClientes() {
+		menuVerticalClientes();
 		panel();
 		menuB();
-		JButton btnChecador = new JButton("Nueva membresía");
-		btnChecador.setForeground(Color.WHITE);
-		btnChecador.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 20));
-		btnChecador.setFocusable(false);
-		btnChecador.setBackground(Color.BLACK);
-		btnChecador.setBounds(832, 112, 266, 40);
-		panel.add(btnChecador);
+		JLabel lblTitutlo = new JLabel("Detalles del cliente");
+		lblTitutlo.setForeground(new Color(0, 0, 0));
+		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
+		lblTitutlo.setBounds(542, 114, 276, 33);
+		panel.add(lblTitutlo);
 		
-		panelTarifas = new JPanel();
-		panelTarifas.setBackground(new Color(255, 255, 255));
-		panelTarifas.setBounds(86, 210, 1000, 400);
-		panel.add(panelTarifas);
-		panelTarifas.setLayout(new GridLayout(0,3, 15, 15));
-		
-		 String[] tiposDePlan = {"Plan general", "Plan familiar", "Plan estudiante", "Plan dúo", "Plan visitante"};
-		 String[] detallesDePlan = {
-				 "<br>Plan Estándar - $399/mes<br>$1,077/3Meses<br>$2,394/6Meses<br>$4788/1Año",
-		            "<br>Plan Estándar - $799/mes<br>$2,097/3Meses<br>$4,194/6Meses<br>$8,388/1Año",
-		            "<br>Plan Estándar - $599/mes<br>$1,797/3Meses<br>$3,594/6Meses<br>$7,188/1Año",
-		            "<br>Plan Estándar - $299/mes<br>$897/3Meses<br>$1,794/6Meses<br>$3,588/1Año",
-		            "<br>Plan Visitante - $50/Día"
-		        };
-		 for (int i = 0; i < tiposDePlan.length; i++) {
-	            String tipoPlan = tiposDePlan[i];
-	            String detallePlan = detallesDePlan[i];
-
-	            // Crear un panel para contener el texto y los botones
-	            JPanel panelPlan = new JPanel(new BorderLayout());
-	            panelPlan.setBorder(BorderFactory.createLineBorder(Color.BLACK)); // Borde para mejorar la apariencia
-
-	            // Crear el label con el texto del plan
-	            JLabel lblPlan = new JLabel("<html><div style='text-align: center;'>" + tipoPlan + "<br>" + detallePlan + "</div></html>");
-	            lblPlan.setFont(new Font("Tahoma", Font.PLAIN, 18));
-	            lblPlan.setBorder(BorderFactory.createLineBorder(Color.black, 3));
-	            lblPlan.setHorizontalAlignment(SwingConstants.CENTER);
-	            lblPlan.setVerticalAlignment(SwingConstants.CENTER);
-	            lblPlan.setOpaque(true);
-	            lblPlan.setForeground(Color.white);
-	            lblPlan.setBackground(new Color(119, 182, 255));
-	            panelPlan.add(lblPlan, BorderLayout.CENTER);
-
-	            JButton btnDetalles = new JButton("Detalles");
-	            btnDetalles.addActionListener(new ActionListener() {
-	                public void actionPerformed(ActionEvent e) {
-	                    // Mostrar los detalles ampliados en un cuadro de diálogo
-	                    JOptionPane.showMessageDialog(null, getDetallesAmpliados(tipoPlan));
-	                }
-	            });
-	            btnDetalles.setBackground(Color.black); btnDetalles.setForeground(Color.white); btnDetalles.setFocusable(false); btnDetalles.setBorder(null);
-	            JButton btnEditar = new JButton("Editar"); btnEditar.setForeground(Color.white); btnEditar.setFocusable(false);  btnEditar.setBorder(null);
-	            btnEditar.setBackground(new Color(0,33,83));
-	            btnEditar.addActionListener(new ActionListener() {
-	                public void actionPerformed(ActionEvent e) {
-	                   panel.revalidate();
-	                   panel.repaint();
-	                }
-	            });
-
-	            JPanel panelBotones = new JPanel(new GridLayout(1, 2, 5, 5)); 
-	            panelBotones.add(btnDetalles);
-	            panelBotones.add(btnEditar);
-	            panelBotones.setBackground(new Color(119, 182, 255));
-	            panelPlan.add(panelBotones, BorderLayout.SOUTH);
-
-	            panelTarifas.add(panelPlan);
+		JTextField textID = new JTextField("Ingrese ID");
+		textID.setBackground(new Color(217, 217, 217));
+		textID.setFont(new Font("Arial Black", Font.PLAIN, 20));
+	    textID.setColumns(10);
+	    textID.setForeground(Color.GRAY);
+	    textID.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	    textID.setBounds(533, 172, 251, 50);
+	    textID.addFocusListener(new FocusListener() {
+	        @Override
+	        public void focusGained(FocusEvent e) {
+	            if (textID.getText().equals("Ingrese ID")) { 
+	                textID.setText(""); 
+	                textID.setForeground(Color.BLACK); 
+	            }
 	        }
+	        @Override
+	        public void focusLost(FocusEvent e) {
+	            if (textID.getText().isEmpty()) { 
+	                textID.setText("Ingrese ID"); 
+	                textID.setForeground(Color.GRAY);
+	            }
+	        }
+	    });
+	    panel.add(textID);
+	    
+	    textField = new JTextField();
+	    textField.setBounds(170, 80, 0, 0);
+	    panel.add(textField);
+	    
+	    panelCredencial = new JPanel();
+	    panelCredencial.setBackground(new Color(217, 217, 217));
+	    panelCredencial.setBounds(222, 306, 915, 310);
+	    panel.add(panelCredencial);
+	    panelCredencial.setVisible(false);
+	    panelCredencial.setLayout(null);
+	    
+	    panelHistorialPagos = new JPanel();
+	    panelHistorialPagos.setBackground(new Color(217, 217, 217));
+	    panelHistorialPagos.setBounds(222, 250, 915, 400);
+	    panel.add(panelHistorialPagos);
+	    panelHistorialPagos.setVisible(false);
+	    panelHistorialPagos.setLayout(null);
+	    
+	    JButton btnBuscar = new JButton("");
+	    btnBuscar.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		panelCredencial.setVisible(true);
+	    	}
+	    });
+	    btnBuscar.setFocusable(false);
+	    btnBuscar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	    btnBuscar.setIcon(new ImageIcon(Sistema.class.getResource("/img/buscar.png")));
+	    btnBuscar.setBackground(new Color(217, 217, 217)); 
+	    btnBuscar.setBounds(783, 172, 50, 50);
+	    panel.add(btnBuscar);
+	    
+	    
+	    JButton btnHistorial = new JButton("Historial de pagos");
+	    btnHistorial.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		panelCredencial.setVisible(false);
+	    		panelHistorialPagos.setVisible(true);
+	    	}
+	    	
+	    });
+	    botonesDetallesClientes(btnHistorial);
+	    btnHistorial.setBounds(690, 22, 215, 50);
+	    panelCredencial.add(btnHistorial);
+	    
+	    JButton btnHistorialDeAsistencias = new JButton("Historial de asistencias");
+	    btnHistorialDeAsistencias.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		panelCredencial.setVisible(false);
+	    		panelAsistencias.setVisible(true);
+	    	}
+	    });
+	    botonesDetallesClientes(btnHistorialDeAsistencias);
+	    btnHistorialDeAsistencias.setBounds(690, 94, 215, 50);
+	    panelCredencial.add(btnHistorialDeAsistencias);
+	    
+	    JButton btnDescargarCredencial = new JButton("Descargar credencial");
+	    btnDescargarCredencial.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		 JOptionPane.showMessageDialog(null, "Credencial descargada correctamente", "Descarga exitosa", JOptionPane.INFORMATION_MESSAGE);
+	    	}
+	    });
+	    botonesDetallesClientes(btnDescargarCredencial);
+	    btnDescargarCredencial.setBounds(690, 166, 215, 50);
+	    panelCredencial.add(btnDescargarCredencial);
+	    
+	    JButton btnDescargarReporte = new JButton("Descargar reporte");
+	    btnDescargarReporte.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		 JOptionPane.showMessageDialog(null, "Reporte descargado correctamente", "Descarga exitosa", JOptionPane.INFORMATION_MESSAGE);
+	 	    	
+	    	}
+	    });
+	    botonesDetallesClientes(btnDescargarReporte);
+	    btnDescargarReporte.setBounds(690, 238, 215, 50);
+	    panelCredencial.add(btnDescargarReporte);
+	    
+	    JLabel lblPersona = new JLabel();
+	    lblPersona.setIcon(new ImageIcon(Sistema.class.getResource("/img/usuarioGym 1.png")));
+	    lblPersona.setBounds(36, 23, 217, 218);
+	    panelCredencial.add(lblPersona);
+	    
+	    JLabel lblCodigo = new JLabel();
+	    lblCodigo.setIcon(new ImageIcon(Sistema.class.getResource("/img/codigoDeBarras.png")));
+	    lblCodigo.setBounds(299, 229, 327, 59);
+	    panelCredencial.add(lblCodigo);
+	    
+	    JLabel lblFecha = new JLabel("Fecha de nacimiento: " + "12/09/2004");
+	    lblFecha.setHorizontalAlignment(SwingConstants.CENTER);    lblFecha.setForeground(new Color(0, 0, 0));	    lblFecha.setFont(new Font("Arial Black", Font.PLAIN, 14));
+	    lblFecha.setBounds(299, 33, 327, 20);
+	    panelCredencial.add(lblFecha);
+	    
+	    JLabel lblTlefono = new JLabel("Teléfono: "+"2346546734");
+	    lblTlefono.setHorizontalAlignment(SwingConstants.CENTER);    lblTlefono.setForeground(Color.BLACK);  lblTlefono.setFont(new Font("Arial Black", Font.PLAIN, 14));
+	    lblTlefono.setBounds(299, 73, 327, 20);
+	    panelCredencial.add(lblTlefono);
+	    
+	    JLabel lblCorreoElectrnico = new JLabel("Correo electrónico: "+"peterBp1@gmail.com");
+	    lblCorreoElectrnico.setHorizontalAlignment(SwingConstants.CENTER);    lblCorreoElectrnico.setForeground(Color.BLACK);    lblCorreoElectrnico.setFont(new Font("Arial Black", Font.PLAIN, 14));
+	    lblCorreoElectrnico.setBounds(299, 113, 327, 20);
+	    panelCredencial.add(lblCorreoElectrnico);
+	    
+	    JLabel lblFechaDeRegistro = new JLabel("Fecha de registro: "+"21/07/2023");
+	    lblFechaDeRegistro.setHorizontalAlignment(SwingConstants.CENTER);  lblFechaDeRegistro.setForeground(Color.BLACK);  lblFechaDeRegistro.setFont(new Font("Arial Black", Font.PLAIN, 14));  lblFechaDeRegistro.setBounds(299, 153, 327, 20);
+	    panelCredencial.add(lblFechaDeRegistro);
+	    
+	    JLabel lblMembresa = new JLabel("Membresía: " + "Individual");
+	    lblMembresa.setHorizontalAlignment(SwingConstants.CENTER);	    lblMembresa.setForeground(Color.BLACK);	    lblMembresa.setFont(new Font("Arial Black", Font.PLAIN, 14));
+	    lblMembresa.setBounds(299, 193, 327, 20);
+	    panelCredencial.add(lblMembresa);
+	    
+	    JLabel lblPeterParker = new JLabel("Peter Parker");
+	    lblPeterParker.setHorizontalAlignment(SwingConstants.CENTER);	    lblPeterParker.setForeground(Color.BLACK);	    lblPeterParker.setFont(new Font("Arial Black", Font.PLAIN, 18));
+	    lblPeterParker.setBounds(36, 260, 217, 20);
+	    panelCredencial.add(lblPeterParker);
+	    
+	    //PANEL HISTORIAL PAGOS
+	    JLabel lblTitulo = new JLabel("Historial de pagos");
+		lblTitulo.setForeground(new Color(0, 0, 0));
+		lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTitulo.setFont(new Font("Arial Black", Font.PLAIN, 25));
+		lblTitulo.setBounds(320, 27, 276, 33);
+		panelHistorialPagos.add(lblTitulo);
+		
+		JButton btnVolver = new JButton("Volver");
+	    btnVolver.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		panelHistorialPagos.setVisible(false);
+	    		panelCredencial.setVisible(true);
+	    	}
+	    });
+	    botonesDetallesClientes(btnVolver);
+	    btnVolver.setBounds(676, 27, 151, 40);
+	    panelHistorialPagos.add(btnVolver);
+	    
+	    
+	    String titles[]= {"Membresía", "Fecha inicial", "Vencimiento", "Total"};
+		DefaultTableModel modelo = new DefaultTableModel(null, titles) {
+            @Override
+            public boolean isCellEditable(int row, int column) {	              
+                return false; //La tabla no se edita
+            }
+	     };
+		JTable datosTabla = new JTable(modelo);
+		JScrollPane tablaScroll = new JScrollPane(datosTabla);
+		tablaScroll.setBounds(87, 160, 740, 210);
+		panelHistorialPagos.add(tablaScroll);
+		
+		JLabel lblNewLabel = new JLabel();
+		lblNewLabel.setIcon(new ImageIcon(Sistema.class.getResource("/img/usuarioGym 2.png")));
+		lblNewLabel.setBounds(109, 27, 83, 81);
+		panelHistorialPagos.add(lblNewLabel);
+		
+	    JLabel lblPeterParke = new JLabel("Peter Parker");
+	    lblPeterParke.setHorizontalAlignment(SwingConstants.CENTER);	    lblPeterParke.setForeground(Color.BLACK);	    lblPeterParke.setFont(new Font("Arial Black", Font.PLAIN, 12));
+	    panelHistorialPagos.add(lblPeterParke);
+	    lblPeterParke.setBounds(87, 117, 122, 20);
 
-	}
+	    
+	    //PANEL ASISTENCIAS
+	    panelAsistencias = new JPanel();
+	    panelAsistencias.setBackground(new Color(217, 217, 217));
+	    panelAsistencias.setBounds(222, 250, 915, 400);
+	    panel.add(panelAsistencias);
+	    panelAsistencias.setVisible(false);
+	    panelAsistencias.setLayout(null);
+	    JLabel titulo2 = new JLabel("Historial de asistencia");
+	    titulo2.setForeground(new Color(0, 0, 0));
+	    titulo2.setHorizontalAlignment(SwingConstants.CENTER);
+	    titulo2.setFont(new Font("Arial Black", Font.PLAIN, 20));
+	    titulo2.setBounds(0, 27, 915, 33);
+		panelAsistencias.add(titulo2);
+		
+		JButton btnVolver2 = new JButton("Volver");
+		 btnVolver2.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    		panelAsistencias.setVisible(false);
+		    		panelCredencial.setVisible(true);
+		    	}
+		    	
+		    });
+		  botonesDetallesClientes(btnVolver2);
+		  btnVolver2.setBounds(676, 27, 151, 40);
+		  panelAsistencias.add(btnVolver2);
+		    
+		  String titulo[]= {"Fecha", "Hora de entrada", "Hora de salida"};
+		  DefaultTableModel modelo2 = new DefaultTableModel(null, titulo) {
+		      @Override
+		      public boolean isCellEditable(int row, int column) {	              
+		          return false; //La tabla no se edita
+		    }
+		 }; 
+		JTable datosTabla2 = new JTable(modelo2);
+		JScrollPane tablaScroll2 = new JScrollPane(datosTabla2);
+		tablaScroll2.setBounds(87, 160, 740, 210);
+        panelAsistencias.add(tablaScroll2);
 	
-	private String getDetallesAmpliados(String tipoPlan) {
-        // Aquí puedes colocar la lógica para obtener los detalles ampliados del plan según el tipo
-        // Por ahora, devolvemos un texto de ejemplo
-        if (tipoPlan.equals("Plan estudiante")) {
-            return "Plan Estudiante\n" +
-                    "Plan Estudiante - $299/mes:\n" +
-                    "- Acceso ilimitado a todas las instalaciones del gimnasio.\n" +
-                    "- Horario flexible: acceso al gimnasio 24/7.\n" +
-                    "- Soporte continuo y atención al cliente.\n\n" +
-                    "Plan Estudiante - Trimestral ($897):\n" +
-                    "- Disfruta de 3 meses de acceso ilimitado.\n" +
-                    "- Ahorro frente al plan mensual individual.\n" +
-                    "- ¡Ideal para estudiantes comprometidos con sus objetivos de fitness!\n\n" +
-                    "Plan Estudiante - 6 Meses ($1,794):\n" +
-                    "- Disfruta de 6 meses de acceso ilimitado.\n" +
-                    "- Mayor ahorro al elegir un plan de medio año.\n" +
-                    "- ¡Mantente en forma durante medio año mientras estudias!\n\n" +
-                    "Plan Estudiante - Anual ($3,588):\n" +
-                    "- Disfruta de un año completo de acceso ilimitado.\n" +
-                    "- Elige el plan más largo para la experiencia completa.\n" +
-                    "- ¡Aprovecha el mayor ahorro y mantente en forma durante todo el año académico!";
-        } else  if (tipoPlan.equals("Plan general")) {
-        	return "Plan general\n" +
-                    "Plan Estándar - $399/mes:\n"
-                    + "- Acceso ilimitado a todas las instalaciones del gimnasio.\n"
-                    + "- Horario flexible: acceso al gimnasio 24/7.\n"
-                    + "- Soporte continuo y atención al cliente.\n\n"
-                    + "Plan Estándar - Trimestral ($1,077):\n"
-                    + "- Disfruta de 3 meses de acceso ilimitado.\n"
-                    + "- Ahorro frente al plan mensual individual.\n"
-                    + "- ¡Perfecto para comprometerse por un periodo corto!\n\n"
-                    + "Plan Estándar - 6 Meses ($2,394):\n"
-                    + "- Disfruta de 6 meses de acceso ilimitado.\n"
-                    + "- Mayor ahorro al elegir un plan de medio año.\n"
-                    + "- ¡Mantente en forma durante medio año!\n\n"
-                    + "Plan Estándar - Anual ($4,788):\n"
-                    + "- Disfruta de un año completo de acceso ilimitado.\n"
-                    + "- Elige el plan más largo para la experiencia completa.\n"
-                    + "- ¡Aprovecha el mayor ahorro y logra tus objetivos de fitness a largo plazo!";
-        } else  if (tipoPlan.equals("Plan familiar")) {
-        	return "Plan Familiar\n"
-        			+ "Plan Familiar - $699/mes:\n"
-        			+ "- Acceso ilimitado a todas las instalaciones del gimnasio para 3 personas.\n"
-        			+ "- Horario flexible: acceso al gimnasio 24/7.\n"
-        			+ "- Soporte continuo y atención al cliente.\n\n"
-        			+ "Plan Familiar - Trimestral ($2,097):\n"
-        			+ "- Disfruta de 3 meses de acceso ilimitado para 3 personas.\n"
-        			+ "- Ahorro frente al plan mensual individual.\n"
-        			+ "- ¡Perfecto para familias que buscan un compromiso a corto plazo!\n\n"
-        			+ "Plan Familiar - 6 Meses ($4,194):\n"
-        			+ "- Disfruta de 6 meses de acceso ilimitado para 3 personas.\n"
-        			+ "- Mayor ahorro al elegir un plan de medio año.\n"
-        			+ "- ¡Mantente en forma con tu familia durante medio año!\n\n"
-        			+ "Plan Familiar - Anual ($8,388):\n"
-        			+ "- Disfruta de un año completo de acceso ilimitado para 3 personas.\n"
-        			+ "- Elige el plan más largo para disfrutar de la experiencia completa.\n"
-        			+ "- ¡Aprovecha el mayor ahorro y motiva a tu familia a lograr sus objetivos de fitness a largo plazo!";
-        } else  if (tipoPlan.equals("Plan dúo")) {
-        	return "Plan Dúo\n"
-        			+ "Plan Dúo - $599/mes:\n"
-        			+ "- Acceso ilimitado a todas las instalaciones del gimnasio para 3 personas.\n"
-        			+ "- Horario flexible: acceso al gimnasio 24/7.\n"
-        			+ "- Soporte continuo y atención al cliente.\n\n"
-        			+ "Plan Dúo - Trimestral ($1,797):\n"
-        			+ "- Disfruta de 3 meses de acceso ilimitado para 3 personas.\n"
-        			+ "- Ahorro frente al plan mensual individual.\n\n"
-        			+ "Plan Dúo - 6 Meses ($3,594):\n"
-        			+ "- Disfruta de 6 meses de acceso ilimitado para 3 personas.\n"
-        			+ "- Mayor ahorro al elegir un plan de medio año.\n"
-        			+ "Plan Dúo - Anual ($7,188):\n"
-        			+ "- Disfruta de un año completo de acceso ilimitado para 3 personas.\n"
-        			+ "- Elige el plan más largo para disfrutar de la experiencia completa.\n";
-        } else  if (tipoPlan.equals("Plan visitante")) {
-        	return "Plan Visitante\n"
-        			+ "Plan Visitante - $50/día:\n"
-        			+ "- Acceso ilimitado a todas las instalaciones del gimnasio durante un día.\n"
-        			+ "- Acceso a clases grupales durante el día de visita.\n"
-        			+ "- Soporte continuo y atención al cliente durante la estancia.\n"
-        			+ "- ¡Perfecto para probar nuestras instalaciones o disfrutar de un día de fitness!";
-        } 
-        else 
-        	return tipoPlan;
-    }
+        lblNewLabel = new JLabel();
+		lblNewLabel.setIcon(new ImageIcon(Sistema.class.getResource("/img/usuarioGym 2.png")));
+		lblNewLabel.setBounds(109, 27, 83, 81);
+		panelAsistencias.add(lblNewLabel);
+        
+        monthComboBox = new JComboBox<>();
+        String[] months = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+        for (String month : months) {
+            monthComboBox.addItem(month);
+        }
+        monthComboBox.setBounds(407, 90, 100, 25);
+        monthComboBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            //    cargarAsistencias((String) monthComboBox.getSelectedItem());
+            }
+        });
+        panelAsistencias.add(monthComboBox); 
+		
+        lblPeterParke = new JLabel("Peter Parker"); lblPeterParke.setBounds(87, 117, 122, 20); lblPeterParke.setHorizontalAlignment(SwingConstants.CENTER);	    lblPeterParke.setForeground(Color.BLACK);	    lblPeterParke.setFont(new Font("Arial Black", Font.PLAIN, 12));
+	    panelAsistencias.add(lblPeterParke);
+	    
+	}
+
+
 	public void instructor() {
 		panel();
 		menuB();
@@ -541,6 +653,8 @@ public class Sistema extends JFrame {
 		JButton btnReg = new JButton("Registros");
 		btnReg.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				quitarComponentes();
+				clientes();
 			}
 		});
 		confBtnMenuVertical(btnReg);
@@ -554,6 +668,7 @@ public class Sistema extends JFrame {
 		btnDetalles.addActionListener(new ActionListener()	{
         	public void actionPerformed(ActionEvent e) {
         		quitarComponentes();
+        		detallesClientes();
 		        }
         });
 		panelMenuVertical.add(btnDetalles);
@@ -575,8 +690,8 @@ public class Sistema extends JFrame {
 		btnEliminar.setBounds(0, 520, 170, 90);
 		panelMenuVertical.add(btnEliminar);
 		
-		
-		
-		
 	}
+	
+	
+	
 }
