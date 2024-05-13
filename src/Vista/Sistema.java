@@ -34,6 +34,7 @@ public class Sistema extends JFrame {
 	private final JPanel panelNegro = new JPanel();
 	JMenuBar menuBar;
 	JLabel lblTitulo, lblGym;
+	private JButton btnDetalles, btnCrear;
 
 	/**
 	 * Launch the application.
@@ -65,8 +66,8 @@ public class Sistema extends JFrame {
 		contentPane.setLayout(null);
 		setResizable(false);
 		
-	   	menuPrincipal();
-		//clientes();
+	//   	menuPrincipal();
+		clientes();
 		//menuVerticalClientes();
 	}
 	
@@ -225,7 +226,7 @@ public class Sistema extends JFrame {
 		panelNegro.setLayout(null);
 		
 		lblTitulo = new JLabel("Larry's");
-		lblTitulo.setFont(new Font("Forte", Font.BOLD, 38));
+		lblTitulo.setFont(new Font("Forte", Font.PLAIN, 38));
 		lblTitulo.setForeground(new Color(255, 255, 255));
 		lblTitulo.setBounds(20, 3, 131, 50);
 		panelNegro.add(lblTitulo);
@@ -233,7 +234,7 @@ public class Sistema extends JFrame {
 		lblGym = new JLabel("Gym");
 		lblGym.setBackground(new Color(255, 255, 255));
 		lblGym.setForeground(new Color(0, 124, 163));
-		lblGym.setFont(new Font("Forte", Font.BOLD, 38));
+		lblGym.setFont(new Font("Forte", Font.PLAIN, 38));
 		lblGym.setBounds(155, 3, 97, 50);
 		panelNegro.add(lblGym);
 		
@@ -329,9 +330,10 @@ public class Sistema extends JFrame {
 		panel();
 		menuB();
 		JLabel lblTitutlo = new JLabel("Clientes registrados");
+		lblTitutlo.setForeground(new Color(0, 0, 0));
 		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTitutlo.setFont(new Font("Forte", Font.PLAIN, 25));
-		lblTitutlo.setBounds(572, 120, 225, 33);
+		lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
+		lblTitutlo.setBounds(542, 114, 276, 33);
 		panel.add(lblTitutlo);
 		
 		String titles[]= {"ID", "Nombre", "Apellido", "Correo", "Telefono", "Fecha de ingreso", "Tipo de membresía", "Estado"};
@@ -347,8 +349,8 @@ public class Sistema extends JFrame {
 		panel.add(tablaScroll);
 		JComboBox btnFiltro = new JComboBox();
 		btnFiltro.setModel(new DefaultComboBoxModel(new String[] {"Filtrar", "Todos","Activos", "No activos"}));
-		btnFiltro.setForeground(Color.black);
-		btnFiltro.setFont(new Font("Monotype Corsiva", Font.BOLD, 20));
+		btnFiltro.setForeground(new Color(0, 0, 0));
+		btnFiltro.setFont(new Font("Arial Black", Font.BOLD, 16));
 		btnFiltro.setBounds(943, 120, 155, 30);
 		panel.add(btnFiltro);
 	}
@@ -521,79 +523,60 @@ public class Sistema extends JFrame {
 		menuB();
 	}
 	
-	
+	public void confBtnMenuVertical(JButton btn) {
+		btn.setBackground(Color.BLACK);
+		btn.setFont(new Font("Arial Black", Font.PLAIN, 20));
+		btn.setForeground(new Color(55,171,255));
+		btn.setFocusable(false);
+		btn.setBorder(null);
+	}
 	public void menuVerticalClientes()	{
 		panelMenuVertical = new JPanel();
 		panelMenuVertical.setBackground(Color.black);
 		contentPane.add(panelMenuVertical);
 		panelMenuVertical.setSize(170,620);
 		panelMenuVertical.setLocation(0,70);
-		panelMenuVertical.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		panelMenuVertical.setLayout(null);
 		
-		JMenuBar menuBarV2 = new JMenuBar();
-		menuBarV2.setBorder(null);
-		menuBarV2.setBackground(Color.black);
-		menuBarV2.setLayout(new GridLayout(0, 1)); 
-		panelMenuVertical.add(menuBarV2);
+		JButton btnReg = new JButton("Registros");
+		btnReg.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		confBtnMenuVertical(btnReg);
+		btnReg.setBounds(0, 0, 170, 90);
+		panelMenuVertical.add(btnReg);
 		
-		JMenuItem itemE_1 = new JMenuItem("<html><div style='text-align: center;'><br>Consultar<br>registros</div></html>");
-		itemE_1.setHorizontalAlignment(SwingConstants.CENTER);
-		itemE_1.setFont(new Font("Forte", Font.PLAIN, 25));
-		itemE_1.setForeground(new Color(55,171,255));
-		itemE_1.setOpaque(false);
-		itemE_1.addActionListener(new ActionListener()	{
+		
+		btnDetalles = new JButton ("Detalles");
+		btnDetalles.setBounds(0, 132, 170, 90);
+		confBtnMenuVertical(btnDetalles);
+		btnDetalles.addActionListener(new ActionListener()	{
         	public void actionPerformed(ActionEvent e) {
         		quitarComponentes();
 		        }
         });
-		menuBarV2.add(itemE_1);
+		panelMenuVertical.add(btnDetalles);
 		
-		JMenuItem itemE_2 = new JMenuItem("<html><div style='text-align: center;'><br>Detalles del<br>cliente<br></div></html>");
-		itemE_2.setHorizontalAlignment(SwingConstants.CENTER);
-		itemE_2.setFont(new Font("Forte", Font.PLAIN, 25));
-		itemE_2.setForeground(new Color(55,171,255));
-		itemE_2.setOpaque(false);
-		itemE_2.addActionListener(new ActionListener()	{
-        	public void actionPerformed(ActionEvent e) {
-        		quitarComponentes();
-        	}
-        });
-		menuBarV2.add(itemE_2);
 		
-		JMenuItem itemE_3 = new JMenuItem("Crear");
-		itemE_3.setHorizontalAlignment(SwingConstants.CENTER);
-		itemE_3.setFont(new Font("Forte", Font.PLAIN, 25));
-		itemE_3.setForeground(new Color(55,171,255));
-		itemE_3.setOpaque(false);
-		itemE_3.addActionListener(new ActionListener()	{
-        	public void actionPerformed(ActionEvent e) {
-        		quitarComponentes();
-        	}
-        });
-		menuBarV2.add(itemE_3);
+		btnCrear = new JButton("Crear");
+		confBtnMenuVertical(btnCrear);
+		btnCrear.setBounds(0, 264, 170, 90);
+		panelMenuVertical.add(btnCrear);
 		
-		JMenuItem itemE_4 = new JMenuItem("Editar");
-		itemE_4.setHorizontalAlignment(SwingConstants.CENTER);
-		itemE_4.setFont(new Font("Forte", Font.PLAIN, 25));
-		itemE_4.setForeground(new Color(55,171,255));
-		itemE_4.setOpaque(false);
-		itemE_4.addActionListener(new ActionListener()	{
-        	public void actionPerformed(ActionEvent e) {
-        		quitarComponentes();
-        	}
-        });
-		menuBarV2.add(itemE_4);
 		
-		JMenuItem itemE_5 = new JMenuItem("Eliminar");
-		itemE_5.setHorizontalAlignment(SwingConstants.CENTER);
-		itemE_5.setFont(new Font("Forte", Font.PLAIN, 25));
-		itemE_5.setForeground(new Color(55,171,255));
-		itemE_5.setOpaque(false);
-		itemE_5.addActionListener(new ActionListener()	{
-        	public void actionPerformed(ActionEvent e) {
-        		quitarComponentes();
-        	}
-        });
-		menuBarV2.add(itemE_5);
+		JButton btnEditar = new JButton("Editar");
+		confBtnMenuVertical(btnEditar);
+		btnEditar.setBounds(0, 396, 170, 90);
+		panelMenuVertical.add(btnEditar);
+		
+		JButton btnEliminar = new JButton("Eliminar");
+		confBtnMenuVertical(btnEliminar);
+		btnEliminar.setBounds(0, 520, 170, 90);
+		panelMenuVertical.add(btnEliminar);
+		
+		
+		
+		
 	}
 }
