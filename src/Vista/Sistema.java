@@ -1,6 +1,7 @@
 package Vista;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -8,6 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
@@ -29,14 +34,16 @@ import javax.swing.SpinnerDateModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.border.BevelBorder;
 
 public class Sistema extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, panel, panelSup, panelMenuVertical, panelAsistencias, panelHistorialPagos, panelCredencial, panelCrear, p2;
 	private final JPanel panelNegro = new JPanel();
-	private JButton btnBuscar, btnElim, btnVolver,btnHistorial, btnHistorialDeAsistencias, btnDescargarCredencial, btnReporte, btnGuardar, btnCancelar, btnPagar;
+	private JButton btnBuscar, btnElim, btnVolver,btnHistorial, btnHistorialDeAsistencias, btnDescargarCredencial, btnReporte, btnGuardar, btnCancelar, btnPagar, btnEditar;
 	JMenuBar menuBar;
 	JLabel lblTitulo, lblGym, lblPersona, lblCodigo, lblFecha, lblTlefono, lblCorreoElectrnico, lblFechaDeRegistro, lblMembresia, lblPeterParker, lblNewLabel;
 	private JButton btnDetalles, btnCrear;
@@ -46,6 +53,8 @@ public class Sistema extends JFrame {
 	 private JTextField textNombre, textApellidos, textEmail, textNacimiento, textTel;
 	 private JComboBox comboTipo, comboPago;
 	 String ventanaActual;
+	 private JTable table;
+	 private JLabel lblEspec;
 
 	/**
 	 * Launch the application.
@@ -78,7 +87,6 @@ public class Sistema extends JFrame {
 		setResizable(false);
 		
 	 	menuPrincipal();
-
 
 	}
 	
@@ -218,7 +226,7 @@ public class Sistema extends JFrame {
 			}
 		});
 		menuBar.add(menuClientes);
-		menuBar.add(Box.createHorizontalStrut(100)); //Separar cada menu
+		menuBar.add(Box.createHorizontalStrut(70)); //Separar cada menu
 		JMenuItem menuTarifas = new JMenuItem("Tarifas");
 		menuTarifas.setOpaque(false);
 		menuTarifas.addActionListener(new ActionListener() {
@@ -228,7 +236,7 @@ public class Sistema extends JFrame {
 			}
 		});
 		menuBar.add(menuTarifas);
-		menuBar.add(Box.createHorizontalStrut(80)); //Separar cada menu
+		menuBar.add(Box.createHorizontalStrut(70)); //Separar cada menu
 		JMenuItem menuInst = new JMenuItem("Instructores");
 		menuInst.setOpaque(false);
 		menuInst.addActionListener(new ActionListener() {
@@ -238,7 +246,7 @@ public class Sistema extends JFrame {
 			}
 		});
 		menuBar.add(menuInst);
-		menuBar.add(Box.createHorizontalStrut(80)); //Separar cada menu
+		menuBar.add(Box.createHorizontalStrut(70)); //Separar cada menu
 		JMenuItem menuClases = new JMenuItem("Clases");
 		menuClases.setOpaque(false);
 		menuClases.addActionListener(new ActionListener() {
@@ -248,7 +256,7 @@ public class Sistema extends JFrame {
 			}
 		});
 		menuBar.add(menuClases);
-		menuBar.add(Box.createHorizontalStrut(100)); //Separar cada menu
+		menuBar.add(Box.createHorizontalStrut(80)); //Separar cada menu
 		JMenuItem menuCheck = new JMenuItem("Checador");
 		menuCheck.setOpaque(false);
 		menuCheck.addActionListener(new ActionListener() {
@@ -290,7 +298,7 @@ public class Sistema extends JFrame {
 		lblTitutlo.setBounds(542, 114, 276, 33);
 		panel.add(lblTitutlo);
 		
-		String titles[]= {"ID", "Nombre", "Apellido", "Correo", "Telefono", "Fecha de ingreso", "Tipo de membresía", "Estado"};
+		String titles[]= {"ID", "Nombre", "Apellido", "Correo", "Teléfono", "Fecha de ingreso", "Tipo de membresía", "Estado"};
 		DefaultTableModel modelo = new DefaultTableModel(null, titles) {
             @Override
             public boolean isCellEditable(int row, int column) {	              
@@ -365,7 +373,7 @@ public class Sistema extends JFrame {
 	    });
 	    panel.add(textID);
 	    
-	    textField = new JTextField();
+	    textField = new JTextField(); // TEXTFIELD VACIO
 	    textField.setBounds(170, 80, 0, 0);
 	    panel.add(textField);
 	    //PANEL CREDENCIAL
@@ -494,6 +502,11 @@ public class Sistema extends JFrame {
 	    panelHistorialPagos.add(btnVolver);
 	    
 	    
+	    lblMembresia = new JLabel("Suscripción: " + "Activa");
+	    configurarLabels(lblMembresia);lblMembresia.setBounds(640, 100, 200, 20);
+	    panelHistorialPagos.add(lblMembresia);
+	    
+	    
 	    String titles[]= {"Membresía", "Fecha inicial", "Vencimiento", "Total"};
 		DefaultTableModel modelo = new DefaultTableModel(null, titles) {
             @Override
@@ -578,7 +591,7 @@ public class Sistema extends JFrame {
 	    
 	    JLabel lblAsistenciasTotales = new JLabel("Asistencias totales:");
 	    lblAsistenciasTotales.setHorizontalAlignment(SwingConstants.CENTER); lblAsistenciasTotales.setForeground(Color.BLACK);lblAsistenciasTotales.setFont(new Font("Arial Black", Font.PLAIN, 12));
-	    lblAsistenciasTotales.setBounds(588, 117, 237, 20);
+	    lblAsistenciasTotales.setBounds(588, 117, 237, 25);
 	    panelAsistencias.add(lblAsistenciasTotales);
 	    
 	}
@@ -588,20 +601,494 @@ public class Sistema extends JFrame {
 		menuB();
 	}
 
-	public void instructor() {
+	public void instructor() { // TABLA INSTRUCTOR
 		panel();
 		menuB();
+		JLabel lblTitutlo = new JLabel("Instructores registrados");
+		lblTitutlo.setForeground(new Color(0, 0, 0));
+		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
+		lblTitutlo.setBounds(427, 114, 346, 33);
+		panel.add(lblTitutlo);
+		
+		btnGuardar = new JButton("Nuevo instructor");
+	    btnGuardar.setForeground(new Color(255, 255, 255));
+	    btnGuardar.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		quitarComponentes();
+	    		nuevoInstructor();
+	    	}
+	    });
+	    btnGuardar.setFocusable(false);
+	    btnGuardar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	    btnGuardar.setBackground(new Color(0, 45, 78)); 
+	    btnGuardar.setBounds(1030, 114, 120, 40);
+	    panel.add(btnGuardar);
+	    
+	    String titles[]= {"ID", "Nombre", "Apellido", "Correo", "Telefono", "Fecha de contratación", "Especialidad"};
+		DefaultTableModel modelo = new DefaultTableModel(null, titles) {
+            @Override
+            public boolean isCellEditable(int row, int column) {	              
+                return false; //La tabla no se edita
+            }
+	     };
+	     JTable datosTabla = new JTable(modelo);
+	     JScrollPane tablaScroll = new JScrollPane(datosTabla);
+	     tablaScroll.setBounds(200,250,800,350);
+	     panel.add(tablaScroll);
+	     
+	     btnEditar = new JButton("Detalles");
+	     btnEditar.setForeground(new Color(255, 255, 255));
+	     btnEditar.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		quitarComponentes();
+	    		detallesInstructor();
+	    	}
+	     });
+	     btnEditar.setFocusable(false);
+	     btnEditar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	     btnEditar.setBackground(new Color(0, 45, 78)); 
+	     btnEditar.setBounds(885, 190, 115, 40);
+	     panel.add(btnEditar);
+	    
 	}
+	
+	public void detallesInstructor() {
+		panel(); 
+		menuB();
+		JLabel lblTitutlo = new JLabel("Detalles de instructor");
+		lblTitutlo.setForeground(new Color(0, 0, 0));
+		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
+		lblTitutlo.setBounds(427, 114, 346, 33);
+		panel.add(lblTitutlo);
+		
+		btnGuardar = new JButton("Eliminar");
+	    btnGuardar.setForeground(new Color(255, 255, 255));
+	    btnGuardar.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar este instructor?", "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
+	             if (op == JOptionPane.OK_OPTION) {
+	                 JOptionPane.showMessageDialog(null, "Instructor eliminado con éxito", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
+	                 quitarComponentes();
+	                 instructor();
+	             }
+	    	}
+	    });
+	    btnGuardar.setFocusable(false);
+	    btnGuardar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	    btnGuardar.setBackground(new Color(0, 45, 78)); 
+	    btnGuardar.setBounds(937, 114, 120, 40);
+	    panel.add(btnGuardar);
+	    
+	    btnVolver=new JButton("Volver");
+	    btnVolver.setForeground(new Color(255, 255, 255));
+	    btnVolver.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		quitarComponentes();
+	    		instructor();
+	    	}
+	    });
+	    btnVolver.setFocusable(false);
+	    btnVolver.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	    btnVolver.setBackground(new Color(0, 45, 78)); 
+	    btnVolver.setBounds(142, 114, 120, 40);
+	    panel.add(btnVolver);
+	    
+	    panelCredencial = new JPanel();
+	    panelCredencial.setBackground(new Color(217, 217, 217));
+	    panelCredencial.setBounds(142, 256, 915, 310);
+	    panel.add(panelCredencial);
+	    panelCredencial.setLayout(null);
+	    
+	    lblPersona = new JLabel();
+	    lblPersona.setIcon(new ImageIcon(Sistema.class.getResource("/img/usuarioGym 1.png")));
+	    lblPersona.setBounds(36, 23, 217, 218);
+	    panelCredencial.add(lblPersona);
+	    
+	    lblCodigo = new JLabel();
+	    lblCodigo.setIcon(new ImageIcon(Sistema.class.getResource("/img/codigoDeBarras.png")));
+	    lblCodigo.setBounds(299, 229, 327, 59);
+	    panelCredencial.add(lblCodigo);
+
+	    lblCorreoElectrnico = new JLabel("Correo electrónico: "+"Castillo2@gmail.com");
+	    configurarLabels(lblCorreoElectrnico);lblCorreoElectrnico.setBounds(299, 113, 327, 20);
+	    panelCredencial.add(lblCorreoElectrnico);
+	    
+	    lblPeterParker = new JLabel("Luis Castillo");
+	    configurarLabels(lblPeterParker);lblPeterParker.setBounds(36, 260, 217, 20);
+	    panelCredencial.add(lblPeterParker);
+	    
+	    btnHistorial = new JButton("Historial de clases");
+	    btnHistorial.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		quitarComponentes();
+	    		historialClases();
+	    	}
+	    	
+	    });
+	    botonesDetallesClientes(btnHistorial);
+	    btnHistorial.setBounds(690, 60, 215, 50);
+	    panelCredencial.add(btnHistorial);
+	    
+	    btnDescargarCredencial = new JButton("Descargar credencial");
+	    btnDescargarCredencial.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		 JOptionPane.showMessageDialog(null, "Credencial descargada correctamente", "Descarga exitosa", JOptionPane.INFORMATION_MESSAGE);
+	    	}
+	    });
+	    botonesDetallesClientes(btnDescargarCredencial);
+	    btnDescargarCredencial.setBounds(690, 132, 215, 50);
+	    panelCredencial.add(btnDescargarCredencial);
+	    
+	    btnReporte = new JButton("Descargar reporte");
+	    btnReporte.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		 JOptionPane.showMessageDialog(null, "Reporte descargado correctamente", "Descarga exitosa", JOptionPane.INFORMATION_MESSAGE);
+	    	}
+	    });
+	    botonesDetallesClientes(btnReporte);
+	    btnReporte.setBounds(690, 204, 215, 50);
+	    panelCredencial.add(btnReporte);
+	    
+	    JLabel lblEspecialidad = new JLabel("Instructor de levantamiento de pesas");
+	    configurarLabels(lblEspecialidad);
+	    lblEspecialidad.setBounds(299, 83, 327, 20);
+	    panelCredencial.add(lblEspecialidad);
+	    
+	    JLabel lblFechaDeContratacin = new JLabel("Fecha de contratación: 21/07/2022");
+	    lblFechaDeContratacin.setBounds(299, 169, 327, 20);
+	    configurarLabels(lblFechaDeContratacin);
+	    panelCredencial.add(lblFechaDeContratacin);
+	}
+
+	public void historialClases() {
+		panel();
+		menuB();
+		JLabel lblTitutlo = new JLabel("Historial de clases");
+		lblTitutlo.setForeground(new Color(0, 0, 0));
+		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
+		lblTitutlo.setBounds(427, 114, 346, 33);
+		panel.add(lblTitutlo);
+		
+		panelCrear = new JPanel();
+	    panel.add(panelCrear);
+	    panelCrear.setBackground(new Color(217, 217, 217));
+	    panelCrear.setLayout(null);
+	    panelCrear.setBounds(142, 100, 915, 550);
+		String[] columnas = {"Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"};
+        String[][] datos = {
+            {"6:00 - 7:00", "", "", "", "", ""},
+            {"7:00 - 8:00", "", "", "", "", ""},
+            {"8:00 - 9:00", "", "", "", "", ""},
+            {"9:00 - 10:00", "", "", "", "", ""},
+            {"11:00 - 12:00", "", "", "", "", ""},
+            {"12:00 - 13:00", "", "", "", "", ""},
+            {"13:00 - 14:00", "", "", "", "", ""},
+            {"14:00 - 15:00", "", "", "", "", ""},
+            {"15:00 - 16:00", "", "", "", "", ""},
+            {"16:00 - 17:00", "", "", "", "", ""},
+            {"17:00 - 18:00", "", "", "", "", ""},
+            {"18:00 - 19:00", "", "", "", "", ""},
+            {"19:00 - 20:00", "", "", "", "", ""}
+        };
+        JTable tablaHorario = new JTable(datos, columnas);
+        tablaHorario.setRowHeight(40);
+
+        // Ajustar anchos de columnas
+        for (int i = 0; i < columnas.length; i++) {
+            if (i == 0) {
+                tablaHorario.getColumnModel().getColumn(i).setPreferredWidth(100);
+            } else {
+                tablaHorario.getColumnModel().getColumn(i).setPreferredWidth(150);
+            }
+        }
+
+        // Agregar tabla a un JScrollPane
+        JScrollPane scrollPane = new JScrollPane(tablaHorario);
+        scrollPane.setBounds(100,122,715,372);
+        panelCrear.add(scrollPane, BorderLayout.CENTER);
+        
+        btnVolver = new JButton("Volver");
+	    btnVolver.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		quitarComponentes();
+	    		detallesInstructor();
+	    	}
+	    });
+	    botonesDetallesClientes(btnVolver);
+	    btnVolver.setBounds(737, 10, 151, 40);
+	    panelCrear.add(btnVolver);
+	    
+	    lblNewLabel = new JLabel();
+		lblNewLabel.setIcon(new ImageIcon(Sistema.class.getResource("/img/usuarioGym 2.png")));
+		lblNewLabel.setBounds(25, 10, 83, 81);
+		panelCrear.add(lblNewLabel);
+		
+		lblPeterParker = new JLabel("Luis Castillo");
+	    configurarLabels(lblPeterParker);lblPeterParker.setBounds(65, 71, 217, 20);
+	    panelCrear.add(lblPeterParker);
+	}
+	
+	public void nuevoInstructor() {
+		panel();
+		menuB();
+		JLabel lblTitutlo = new JLabel("Nuevo instructor");
+		lblTitutlo.setForeground(new Color(0, 0, 0));
+		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
+		lblTitutlo.setBounds(427, 114, 346, 33);
+		panel.add(lblTitutlo);
+		btnVolver = new JButton("Volver");
+	    btnVolver.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		quitarComponentes();
+	    		instructor(); // Regresa a instructores registrados
+	    	}
+	    });
+	    btnVolver.setBackground(Color.black); btnVolver.setForeground(Color.white); btnVolver.setFocusable(false);
+	    btnVolver.setBounds(142, 114, 120, 40);
+	    panel.add(btnVolver);
+	    
+	    panelCrear = new JPanel();
+	    panel.add(panelCrear);
+	    panelCrear.setBackground(new Color(217, 217, 217));
+	    panelCrear.setLayout(null);
+	    panelCrear.setBounds(142, 194, 915, 456);
+	    panel.add(panelCrear);
+	    
+	    lblTlefono = new JLabel("Teléfono:");
+	    configurarLabelsIzq(lblTlefono);lblTlefono.setBounds(360, 119, 200, 20);
+	    panelCrear.add(lblTlefono);
+	    
+	    lblCorreoElectrnico = new JLabel("Correo electrónico: ");
+	    configurarLabelsIzq(lblCorreoElectrnico);lblCorreoElectrnico.setBounds(70, 215, 200, 20);
+	    panelCrear.add(lblCorreoElectrnico);
+	    
+	    lblNombres = new JLabel("Nombre (s):");
+	    configurarLabelsIzq(lblNombres);
+	    lblNombres.setBounds(70, 33, 200, 20);
+	    panelCrear.add(lblNombres);
+	    
+	    textNombre = new JTextField();
+	    textNombre.setBounds(70, 73, 200, 30);
+	    panelCrear.add(textNombre);
+	    textNombre.setColumns(10);
+	    
+	    lblApellidos = new JLabel("Apellidos:");
+	    configurarLabelsIzq(lblApellidos);
+	    lblApellidos.setBounds(360, 33, 200, 20);
+	    panelCrear.add(lblApellidos);
+	    
+	    textApellidos = new JTextField();
+	    textApellidos.setColumns(10);
+	    textApellidos.setBounds(360, 73, 200, 30);
+	    panelCrear.add(textApellidos);
+	    
+	    textEmail = new JTextField();
+	    textEmail.setColumns(10);
+	    textEmail.setBounds(70, 255, 200, 30);
+	    panelCrear.add(textEmail);
+	    
+	    textTel = new JTextField();
+	    textTel.setColumns(10);
+	    textTel.setBounds(360, 149, 200, 30);
+	    panelCrear.add(textTel);
+	    
+	    
+	    JLabel lblFechaInicial = new JLabel("Fecha de contratación:");
+	    configurarLabelsIzq(lblFechaInicial);
+	    lblFechaInicial.setBounds(360, 215, 200, 20);
+	    panelCrear.add(lblFechaInicial);
+
+	    JSpinner spinnerFechaIn = new JSpinner(new SpinnerDateModel());
+	    JSpinner.DateEditor dateEditorFechaIn = new JSpinner.DateEditor(spinnerFechaIn, "dd/MM/yyyy");
+	    spinnerFechaIn.setEditor(dateEditorFechaIn);
+	    spinnerFechaIn.setBounds(360, 250, 200, 30);
+	    panelCrear.add(spinnerFechaIn);
+
+	    JButton btnFoto = new JButton("Subir foto");
+	    btnFoto.setForeground(new Color(255, 255, 255));
+	    btnFoto.setFocusable(false);
+	    btnFoto.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	    btnFoto.setBackground(new Color(89, 89, 89));
+	    btnFoto.setBounds(652, 270, 207, 40);
+	    panelCrear.add(btnFoto);
+	    
+	    JLabel lblFoto = new JLabel("");
+	    lblFoto.setIcon(new ImageIcon(Sistema.class.getResource("/img/usuarioGym 1.png")));
+	    lblFoto.setBounds(642, 33, 217, 221);
+	    panelCrear.add(lblFoto);
+	    
+	    JComboBox comboEspecialidad = new JComboBox();
+	    comboEspecialidad.setFont(new Font("Arial Black", Font.PLAIN, 10));
+	    comboEspecialidad.setModel(new DefaultComboBoxModel(new String[] {"Levantamiento de pesas", "Aeróbic","Gimnasia de mantenimiento", "Circuito de entrenamiento"}));
+	    comboEspecialidad.setBounds(70, 153, 200, 30);
+	    panelCrear.add(comboEspecialidad);
+	    
+	    lblEspec = new JLabel("Especialidad:");
+	    configurarLabelsIzq(lblEspec);
+	    lblEspec.setBounds(70, 119, 200, 20);
+	    panelCrear.add(lblEspec);
+	    
+	    btnPagar = new JButton("Añadir");
+	    btnPagar.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		  quitarComponentes();
+	    		  instructor(); //vuelve al panel de instructores registrados
+	    		 JOptionPane.showMessageDialog(null, "¡Nuevo instructor agregado con exito!", " ", JOptionPane.INFORMATION_MESSAGE);
+	    	}
+	    });
+		btnPagar.setForeground(new Color(255, 255, 255));
+		btnPagar.setFocusable(false);
+		btnPagar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+		btnPagar.setBackground(new Color(0, 45, 78)); 
+		btnPagar.setBounds(382, 389, 150, 40);
+	    panelCrear.add(btnPagar);  
+	}
+	
 	public void checador() {
 		panel();
 		menuB();
+		JLabel lblTitutlo = new JLabel("Checador");
+		lblTitutlo.setForeground(new Color(0, 0, 0));
+		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
+		lblTitutlo.setBounds(427, 114, 346, 33);
+		panel.add(lblTitutlo);
+		
+		btnVolver=new JButton("Volver");
+	    btnVolver.setForeground(new Color(255, 255, 255));
+	    btnVolver.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		quitarComponentes();
+	    		menuPrincipal();
+	    	}
+	    });
+	    btnVolver.setFocusable(false);
+	    btnVolver.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	    btnVolver.setBackground(new Color(0, 45, 78)); 
+	    btnVolver.setBounds(73, 114, 120, 40);
+	    panel.add(btnVolver);
+	    
+	    Date fechaActual = new Date();
+        // Formatear la fecha actual
+        DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+        String fechaFormateada = formatoFecha.format(fechaActual);
+        JLabel labelFecha = new JLabel("Fecha: " + fechaFormateada); // Crear un JLabel para mostrar la fecha
+        labelFecha.setSize(100, 20);
+        labelFecha.setLocation(258, 134);
+        
+        panel.add(labelFecha);
+	    
+	    String titles[]= {"ID", "Nombre", "Estado de la suscripción", "Hora de entrada", "Hora de salida"};
+		DefaultTableModel modelo = new DefaultTableModel(null, titles) {
+            @Override
+            public boolean isCellEditable(int row, int column) {	              
+                return false; //La tabla no se edita
+            }
+	     };
+		JTable datosTabla = new JTable(modelo);
+		JScrollPane tablaScroll = new JScrollPane(datosTabla);
+		tablaScroll.setBounds(73,170,500,470);
+		panel.add(tablaScroll);
+		
+		JLabel lblClientesActivos = new JLabel("Clientes activos: ");
+		configurarLabelsIzq(lblClientesActivos);
+		lblClientesActivos.setBounds(808, 140, 150, 20);
+		panel.add(lblClientesActivos);
+		
+		JLabel lblInstruccion1 = new JLabel("Pase su credencial por el escáner, o ingrese su ID.");
+		configurarLabelsIzq(lblInstruccion1);
+		lblInstruccion1.setBounds(670, 170, 400, 20);
+		panel.add(lblInstruccion1);
+		
+		JLabel lblIngresar = new JLabel("Ingresar ID:");
+		configurarLabelsIzq(lblIngresar);
+		lblIngresar.setBounds(733, 200, 100, 20);
+		panel.add(lblIngresar);
+	    
+		JTextField textID = new JTextField("");
+		textID.setBackground(new Color(217, 217, 217));
+		textID.setFont(new Font("Arial Black", Font.PLAIN, 14));
+	    textID.setColumns(10);
+	    textID.setForeground(Color.black);
+	    textID.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	    textID.setBounds(833, 200, 150, 20);
+	    panel.add(textID);
+	    
+	    btnBuscar = new JButton("");
+	    btnBuscar.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		
+	    	}
+	    });
+	    btnBuscar.setFocusable(false);
+	    btnBuscar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	    btnBuscar.setIcon(new ImageIcon(Sistema.class.getResource("/img/lupaChecador.png")));
+	    btnBuscar.setBackground(new Color(217, 217, 217)); 
+	    btnBuscar.setBounds(983, 200, 20, 20);
+	    panel.add(btnBuscar);
+	    
+	    JLabel lblEscanear = new JLabel("");
+	    lblEscanear.setIcon(new ImageIcon(Sistema.class.getResource("/img/escaneo-de-codigo-de-barras 1.png")));
+	    lblEscanear.setBounds(777, 230, 206, 203);
+	    panel.add(lblEscanear);
+	    
+	    JLabel lblMarco = new JLabel("");
+	    lblMarco.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+	    lblMarco.setBounds(616, 450, 510, 190);
+	    panel.add(lblMarco);
+	    
+	    JPanel panel_1 = new JPanel();
+	    panel_1.setBounds(631, 485, 480, 140);
+	    panel.add(panel_1);
+	    panel_1.setLayout(null);
+	    
+	    JLabel lblNewLabel_1 = new JLabel("Ultimo cliente identificado");
+	    lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblNewLabel_1.setBounds(616, 460, 510, 20);
+	    panel.add(lblNewLabel_1);
+	    
+	    JLabel lblLogoCheck = new JLabel("");
+	    lblLogoCheck.setIcon(new ImageIcon(Sistema.class.getResource("/img/usuarioGym Ch.png")));
+	    lblLogoCheck.setBounds(5, 5, 116, 116);
+	    panel_1.add(lblLogoCheck);
+	    
+	    JLabel lblEstadoMem = new JLabel("Estado de la membresía");
+	    lblEstadoMem.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblEstadoMem.setBounds(140, 5, 315, 20);
+	    panel_1.add(lblEstadoMem);
+	    
+	    JLabel lblEstado = new JLabel("Activo");
+	    lblEstado.setFont(new Font("Arial Black", Font.PLAIN, 14));
+	    lblEstado.setForeground(new Color(0, 128, 0));
+	    lblEstado.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblEstado.setBounds(140, 35, 315, 20);
+	    panel_1.add(lblEstado);
+	    
+	    JLabel lblInicioSus = new JLabel("Suscripcion: -");
+	    lblInicioSus.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblInicioSus.setBounds(140, 65, 315, 20);
+	    panel_1.add(lblInicioSus);
+	    
+	    JLabel lblCodigoBarra = new JLabel("");
+	    lblCodigoBarra.setIcon(new ImageIcon(Sistema.class.getResource("/img/image 10.png")));
+	    lblCodigoBarra.setBounds(140, 95, 315, 23);
+	    panel_1.add(lblCodigoBarra);
+	    
+	    JLabel lblUserCheck = new JLabel("Usuario");
+	    lblUserCheck.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblUserCheck.setBounds(0, 125, 125, 13);
+	    panel_1.add(lblUserCheck);
 	}
 	public void clases() {
 		panel();
 		menuB();
 	}
 	
-	public void confBtnMenuVertical(JButton btn) {
+	public void confBtnMenuVertical(JButton btn) { // BOTONES PARA MENU VERTICAL EN CLIENTES
 		btn.setBackground(Color.BLACK);
 		btn.setFont(new Font("Arial Black", Font.PLAIN, 20));
 		btn.setForeground(new Color(55,171,255));
