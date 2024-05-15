@@ -5,12 +5,14 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
@@ -86,7 +88,8 @@ public class Sistema extends JFrame {
 		contentPane.setLayout(null);
 		setResizable(false);
 		
-	 	menuPrincipal();
+	//	menuPrincipal();
+		clases();
 
 	}
 	
@@ -201,84 +204,53 @@ public class Sistema extends JFrame {
 		lblGym.setBounds(155, 3, 97, 50);
 		panelNegro.add(lblGym);
 		
-		menuBar = new JMenuBar();
-		menuBar.setBounds(148, 42, 101, 22);
-		panelSup.add(menuBar, BorderLayout.SOUTH);
-		menuBar.add(Box.createHorizontalStrut(100)); //Separar cada menu
-		JMenuItem menuInicio = new JMenuItem("Inicio");
-		menuInicio.setOpaque(false);
-		menuInicio.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				quitarComponentes();
-				menuPrincipal();
-			}
-		});
-		menuBar.add(menuInicio);
+		JPanel panelBar = new JPanel();
+		panelSup.add(panelBar, BorderLayout.SOUTH);
+		panelBar.setLayout(new GridLayout(1, 0, 0, 0));
 		
-		menuBar.add(Box.createHorizontalStrut(100)); //Separar cada menu
-		
-		JMenuItem menuClientes = new JMenuItem("Clientes");
-		menuClientes.setOpaque(false);
-		menuClientes.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				quitarComponentes();
-				clientes();
-			}
-		});
-		menuBar.add(menuClientes);
-		menuBar.add(Box.createHorizontalStrut(70)); //Separar cada menu
-		JMenuItem menuTarifas = new JMenuItem("Tarifas");
-		menuTarifas.setOpaque(false);
-		menuTarifas.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				quitarComponentes();
-				tarifas();
-			}
-		});
-		menuBar.add(menuTarifas);
-		menuBar.add(Box.createHorizontalStrut(70)); //Separar cada menu
-		JMenuItem menuInst = new JMenuItem("Instructores");
-		menuInst.setOpaque(false);
-		menuInst.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				quitarComponentes();
-				instructor();
-			}
-		});
-		menuBar.add(menuInst);
-		menuBar.add(Box.createHorizontalStrut(70)); //Separar cada menu
-		JMenuItem menuClases = new JMenuItem("Clases");
-		menuClases.setOpaque(false);
-		menuClases.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				quitarComponentes();
-				clases();
-			}
-		});
-		menuBar.add(menuClases);
-		menuBar.add(Box.createHorizontalStrut(80)); //Separar cada menu
-		JMenuItem menuCheck = new JMenuItem("Checador");
-		menuCheck.setOpaque(false);
-		menuCheck.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				quitarComponentes();
-				checador();
-			}
-		});
-		menuBar.add(menuCheck);
-		menuBar.add(Box.createHorizontalStrut(100)); //Separar cada menu
-		JMenuItem menuSalir = new JMenuItem("Salir");
-		menuSalir.setOpaque(false);
-		menuSalir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-				Inicio i1 = new Inicio();
-		        i1.setVisible(true);
-			}
-		}); 	
-		menuBar.add(menuSalir);
-		menuBar.add(Box.createHorizontalStrut(80));
-	
+		JButton[] botones = new JButton[7];
+		// Crear y configurar los botones
+		String[] nombres = {"Inicio","Clientes", "Tarifas", "Instructores", "Clases", "Checador", "Salir"};
+		for (int i = 0; i < botones.length; i++) {
+		    final int index = i; 
+		    botones[i] = new JButton(nombres[i]);
+		    botones[i].setForeground(Color.black);
+		    botones[i].setFont(new Font("Arial Black", Font.BOLD, 12));
+		    botones[i].setFocusable(false);
+		    botones[i].setBackground(new Color(217,217,217));
+		    botones[i].addActionListener(new ActionListener() {
+		        public void actionPerformed(ActionEvent e) {
+		            quitarComponentes();
+		            switch (index) {
+		            case 0:
+		            	menuPrincipal();
+		            	break;
+		                case 1:
+		                    clientes();
+		                    break;
+		                case 2:
+		                    tarifas();
+		                    break;
+		                case 3:
+		                    instructor();
+		                    break;
+		                case 4:
+		                    clases();
+		                    break;
+		                case 5:
+		                    checador();
+		                    break;
+		                case 6:
+		                	dispose();
+		                	Inicio i1 = new Inicio();
+		        		    i1.setVisible(true);
+		                default:
+		                    break;
+		            }
+		        }
+		    });
+		    panelBar.add(botones[i]);
+		}
 	}
 
 	public void quitarComponentes() {
@@ -597,9 +569,157 @@ public class Sistema extends JFrame {
 	}
 
 	public void tarifas() {
-		panel();
-		menuB();
+	    panel();
+	    menuB();
+	    JPanel panel_1 = new JPanel();
+	    panel_1.setBounds(36, 170, 1126, 477);
+	    panel.add(panel_1);
+	    panel_1.setLayout(new GridLayout(0, 3, 15, 15));
+
+	    JButton btnChecador = new JButton("Nueva membresía");
+        btnChecador.setForeground(Color.WHITE);
+        btnChecador.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnChecador.setFocusable(false);
+        btnChecador.setBackground(Color.BLACK);
+        btnChecador.setBounds(962, 112, 200, 30);
+        panel.add(btnChecador);
+        
+        ArrayList<String> tiposDePlan = new ArrayList<>();
+        tiposDePlan.add("Plan general");
+        tiposDePlan.add("Plan familiar");
+        tiposDePlan.add("Plan estudiante");
+        tiposDePlan.add("Plan dúo");
+        tiposDePlan.add("Plan visitante");
+
+        ArrayList<String> detallesDePlan = new ArrayList<>();
+        detallesDePlan.add("<br>Plan Estándar - $399/mes<br>$1,077/3Meses<br>$2,394/6Meses<br>$4788/1Año");
+        detallesDePlan.add("<br>Plan Estándar - $799/mes<br>$2,097/3Meses<br>$4,194/6Meses<br>$8,388/1Año");
+        detallesDePlan.add("<br>Plan Estándar - $599/mes<br>$1,797/3Meses<br>$3,594/6Meses<br>$7,188/1Año");
+        detallesDePlan.add("<br>Plan Estándar - $299/mes<br>$897/3Meses<br>$1,794/6Meses<br>$3,588/1Año");
+        detallesDePlan.add("<br>Plan Visitante - $50/Día");
+
+        ArrayList<String> infoPlan = new ArrayList<>();
+        infoPlan.add("Plan general\n" +
+                "Plan Estándar - $399/mes:\n"
+                + "- Acceso ilimitado a todas las instalaciones del gimnasio.\n"
+                + "- Horario flexible: acceso al gimnasio 24/7.\n"
+                + "- Soporte continuo y atención al cliente.\n\n"
+                + "Plan Estándar - Trimestral ($1,077):\n"
+                + "- Disfruta de 3 meses de acceso ilimitado.\n"
+                + "- Ahorro frente al plan mensual individual.\n"
+                + "- ¡Perfecto para comprometerse por un periodo corto!\n\n"
+                + "Plan Estándar - 6 Meses ($2,394):\n"
+                + "- Disfruta de 6 meses de acceso ilimitado.\n"
+                + "- Mayor ahorro al elegir un plan de medio año.\n"
+                + "- ¡Mantente en forma durante medio año!\n\n"
+                + "Plan Estándar - Anual ($4,788):\n"
+                + "- Disfruta de un año completo de acceso ilimitado.\n"
+                + "- Elige el plan más largo para la experiencia completa.\n"
+                + "- ¡Aprovecha el mayor ahorro y logra tus objetivos de fitness a largo plazo!");
+        infoPlan.add("Plan Familiar\n"
+                + "Plan Familiar - $699/mes:\n"
+                + "- Acceso ilimitado a todas las instalaciones del gimnasio para 3 personas.\n"
+                + "- Horario flexible: acceso al gimnasio 24/7.\n"
+                + "- Soporte continuo y atención al cliente.\n\n"
+                + "Plan Familiar - Trimestral ($2,097):\n"
+                + "- Disfruta de 3 meses de acceso ilimitado para 3 personas.\n"
+                + "- Ahorro frente al plan mensual individual.\n"
+                + "- ¡Perfecto para familias que buscan un compromiso a corto plazo!\n\n"
+                + "Plan Familiar - 6 Meses ($4,194):\n"
+                + "- Disfruta de 6 meses de acceso ilimitado para 3 personas.\n"
+                + "- Mayor ahorro al elegir un plan de medio año.\n"
+                + "- ¡Mantente en forma con tu familia durante medio año!\n\n"
+                + "Plan Familiar - Anual ($8,388):\n"
+                + "- Disfruta de un año completo de acceso ilimitado para 3 personas.\n"
+                + "- Elige el plan más largo para disfrutar de la experiencia completa.\n"
+                + "- ¡Aprovecha el mayor ahorro y motiva a tu familia a lograr sus objetivos de fitness a largo plazo!");
+        infoPlan.add("Plan Estudiante\n" +
+                "Plan Estudiante - $299/mes:\n" +
+                "- Acceso ilimitado a todas las instalaciones del gimnasio.\n" +
+                "- Horario flexible: acceso al gimnasio 24/7.\n" +
+                "- Soporte continuo y atención al cliente.\n\n" +
+                "Plan Estudiante - Trimestral ($897):\n" +
+                "- Disfruta de 3 meses de acceso ilimitado.\n" +
+                "- Ahorro frente al plan mensual individual.\n" +
+                "- ¡Ideal para estudiantes comprometidos con sus objetivos de fitness!\n\n" +
+                "Plan Estudiante - 6 Meses ($1,794):\n" +
+                "- Disfruta de 6 meses de acceso ilimitado.\n" +
+                "- Mayor ahorro al elegir un plan de medio año.\n" +
+                "- ¡Mantente en forma durante medio año mientras estudias!\n\n" +
+                "Plan Estudiante - Anual ($3,588):\n" +
+                "- Disfruta de un año completo de acceso ilimitado.\n" +
+                "- Elige el plan más largo para la experiencia completa.\n" +
+                "- ¡Aprovecha el mayor ahorro y mantente en forma durante todo el año académico!");
+        infoPlan.add("Plan Dúo\n"
+                + "Plan Dúo - $599/mes:\n"
+                + "- Acceso ilimitado a todas las instalaciones del gimnasio para 3 personas.\n"
+                + "- Horario flexible: acceso al gimnasio 24/7.\n"
+                + "- Soporte continuo y atención al cliente.\n\n"
+                + "Plan Dúo - Trimestral ($1,797):\n"
+                + "- Disfruta de 3 meses de acceso ilimitado para 3 personas.\n"
+                + "- Ahorro frente al plan mensual individual.\n\n"
+                + "Plan Dúo - 6 Meses ($3,594):\n"
+                + "- Disfruta de 6 meses de acceso ilimitado para 3 personas.\n"
+                + "- Mayor ahorro al elegir un plan de medio año.\n"
+                + "Plan Dúo - Anual ($7,188):\n"
+                + "- Disfruta de un año completo de acceso ilimitado para 3 personas.\n"
+                + "- Elige el plan más largo para disfrutar de la experiencia completa.\n");
+        infoPlan.add("Plan Visitante\n"
+                + "Plan Visitante - $50/día:\n"
+                + "- Acceso ilimitado a todas las instalaciones del gimnasio durante un día.\n"
+                + "- Acceso a clases grupales durante el día de visita.\n"
+                + "- Soporte continuo y atención al cliente durante la estancia.\n"
+                + "- ¡Perfecto para probar nuestras instalaciones o disfrutar de un día de fitness!");
+
+	    for (int i = 0; i < tiposDePlan.size(); i++) {
+	    	int index = i;
+	        JPanel panelTarifa = new JPanel(new BorderLayout());
+	        JLabel info = new JLabel("<html><div style='text-align: center;'>" + tiposDePlan.get(i) + "<br>" + detallesDePlan.get(i) + "</div></html>");
+	        info.setFont(new Font("Arial Black", Font.PLAIN, 16));
+	        info.setBorder(BorderFactory.createLineBorder(Color.black, 3));
+	        info.setHorizontalAlignment(SwingConstants.CENTER);
+	        info.setVerticalAlignment(SwingConstants.CENTER);
+	        info.setOpaque(true);
+	        info.setForeground(Color.black);
+	        info.setBackground(new Color(148, 182, 223));
+	        panelTarifa.add(info, BorderLayout.CENTER);
+
+	        JButton btnDetalles = new JButton("Detalles");
+	        btnDetalles.setBackground(Color.black);
+	        btnDetalles.addActionListener(new ActionListener() {
+		    	public void actionPerformed(ActionEvent e) {
+		    		JOptionPane.showMessageDialog(null, infoPlan.get(index));
+		    	}
+		    });
+	        btnDetalles.setForeground(Color.white);
+	        btnDetalles.setFocusable(false);
+	        btnDetalles.setBorder(null);
+
+	        JButton btnEditar = new JButton("Editar");
+	        btnEditar.setForeground(Color.white);
+	        btnEditar.setFocusable(false);
+	        btnEditar.setBorder(null);
+	        btnEditar.setBackground(new Color(0, 33, 83));
+
+	        JPanel panelBotones = new JPanel(new GridLayout(1, 2, 5, 5));
+	        panelBotones.add(btnDetalles);
+	        panelBotones.add(btnEditar);
+	        panelBotones.setBackground(new Color(119, 182, 255));
+	        panelTarifa.add(panelBotones, BorderLayout.SOUTH);
+
+	        panel_1.add(panelTarifa);
+	    }
+
+	    JLabel lblTitutlo = new JLabel("Tarifas");
+	    lblTitutlo.setForeground(new Color(0, 0, 0));
+	    lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
+	    lblTitutlo.setBounds(427, 114, 346, 33);
+	    panel.add(lblTitutlo);
+	    
+	    
 	}
+
 
 	public void instructor() { // TABLA INSTRUCTOR
 		panel();
@@ -977,7 +1097,7 @@ public class Sistema extends JFrame {
         DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
         String fechaFormateada = formatoFecha.format(fechaActual);
         JLabel labelFecha = new JLabel("Fecha: " + fechaFormateada); // Crear un JLabel para mostrar la fecha
-        labelFecha.setSize(100, 20);
+        labelFecha.setSize(150, 20);
         labelFecha.setLocation(258, 134);
         
         panel.add(labelFecha);
@@ -1086,6 +1206,75 @@ public class Sistema extends JFrame {
 	public void clases() {
 		panel();
 		menuB();
+		JPanel panel_1 = new JPanel();
+	    panel_1.setBounds(36, 170, 1126, 477);
+	    panel.add(panel_1);
+	    panel_1.setLayout(new GridLayout(0, 3, 15, 15));
+
+	    JButton btnChecador = new JButton("Nueva clase");
+        btnChecador.setForeground(Color.WHITE);
+        btnChecador.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnChecador.setFocusable(false);
+        btnChecador.setBackground(new Color(0,33,81));
+        btnChecador.setBounds(962, 112, 200, 30);
+        panel.add(btnChecador);
+        
+        ArrayList<String> tiposClase = new ArrayList<>();
+        tiposClase.add("Cardio");
+        tiposClase.add("Entrenamientos de fuerza");
+        tiposClase.add("Entrenamientos de resistencia");
+        tiposClase.add("Flexibilidad y equilibrio");
+
+        ArrayList<String> detallesDeClase = new ArrayList<>();
+        detallesDeClase.add("<br>De lunes a domingo<br>Horarios disponibles:<br>6:00 - 20:00");
+        detallesDeClase.add("<br>De lunes a domingo<br>Horarios disponibles:<br>6:00 - 20:00");
+        detallesDeClase.add("<br>De lunes a domingo<br>Horarios disponibles:<br>6:00 - 20:00");
+        detallesDeClase.add("<br>De lunes a domingo<br>Horarios disponibles:<br>6:00 - 20:00");
+
+       
+	    for (int i = 0; i < tiposClase.size(); i++) {
+	        JPanel panelTarifa = new JPanel(new BorderLayout());
+	        JLabel info = new JLabel("<html><div style='text-align: center;'>" + tiposClase.get(i) + "<br>" + detallesDeClase.get(i) + "</div></html>");
+	        info.setFont(new Font("Arial Black", Font.PLAIN, 16));
+	        info.setBorder(BorderFactory.createLineBorder(Color.black, 3));
+	        info.setHorizontalAlignment(SwingConstants.CENTER);
+	        info.setVerticalAlignment(SwingConstants.CENTER);
+	        info.setOpaque(true);
+	        info.setForeground(Color.black);
+	        info.setBackground(new Color(148, 182, 223));
+	        panelTarifa.add(info, BorderLayout.CENTER);
+
+	        JButton btnDetalles = new JButton("Detalles");
+	        btnDetalles.setBackground(Color.black);
+	        btnDetalles.addActionListener(new ActionListener() {
+		    	public void actionPerformed(ActionEvent e) {
+		    	}
+		    });
+	        btnDetalles.setForeground(Color.white);
+	        btnDetalles.setFocusable(false);
+	        btnDetalles.setBorder(null);
+
+	        JButton btnEditar = new JButton("Inscribirse");
+	        btnEditar.setForeground(Color.white);
+	        btnEditar.setFocusable(false);
+	        btnEditar.setBorder(null);
+	        btnEditar.setBackground(new Color(0, 33, 83));
+
+	        JPanel panelBotones = new JPanel(new GridLayout(1, 2, 5, 5));
+	        panelBotones.add(btnDetalles);
+	        panelBotones.add(btnEditar);
+	        panelBotones.setBackground(new Color(119, 182, 255));
+	        panelTarifa.add(panelBotones, BorderLayout.SOUTH);
+
+	        panel_1.add(panelTarifa);
+	    }
+
+	    JLabel lblTitutlo = new JLabel("Clases");
+	    lblTitutlo.setForeground(new Color(0, 0, 0));
+	    lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
+	    lblTitutlo.setBounds(427, 114, 346, 33);
+	    panel.add(lblTitutlo);
 	}
 	
 	public void confBtnMenuVertical(JButton btn) { // BOTONES PARA MENU VERTICAL EN CLIENTES
