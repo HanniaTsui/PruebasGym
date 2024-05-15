@@ -39,6 +39,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.border.BevelBorder;
+import javax.swing.JCheckBox;
 
 public class Sistema extends JFrame {
 
@@ -57,6 +58,14 @@ public class Sistema extends JFrame {
 	 String ventanaActual;
 	 private JTable table;
 	 private JLabel lblEspec;
+	 private JTextField textField_1;
+	 private JTextField textField_2;
+	 private JTextField textField_3;
+	 private JTextField textField_4;
+	 private JTextField textField_5;
+	 private JTextField textField_6;
+	 private JTextField textField_7;
+	 private JTextField textField_8;
 
 	/**
 	 * Launch the application.
@@ -88,8 +97,7 @@ public class Sistema extends JFrame {
 		contentPane.setLayout(null);
 		setResizable(false);
 		
-	//	menuPrincipal();
-		clases();
+		menuPrincipal();
 
 	}
 	
@@ -297,15 +305,21 @@ public class Sistema extends JFrame {
 	    btn.setFont(new Font("Arial Black", Font.PLAIN, 13));
 	}
 	
-	public void configurarLabels(JLabel lbl) {
+	public void configurarLabels(JLabel lbl) { // configurar Labels al centro
 		lbl.setForeground(new Color(0, 0, 0));
 		lbl.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl.setFont(new Font("Arial Black", Font.PLAIN, 14));
 	}
 	
-	public void configurarLabelsIzq(JLabel lbl) {
+	public void configurarLabelsIzq(JLabel lbl) { // Configurar Labels a la izquierda  
 		lbl.setForeground(new Color(0, 0, 0));
 		lbl.setHorizontalAlignment(SwingConstants.LEFT);
+		lbl.setFont(new Font("Arial Black", Font.PLAIN, 14));
+	}
+	
+	public void configurarLabelsDer(JLabel lbl) { // Configurar Labels a la derecha  
+		lbl.setForeground(new Color(0, 0, 0));
+		lbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		lbl.setFont(new Font("Arial Black", Font.PLAIN, 14));
 	}
 
@@ -580,6 +594,12 @@ public class Sistema extends JFrame {
         btnChecador.setForeground(Color.WHITE);
         btnChecador.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnChecador.setFocusable(false);
+        btnChecador.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		quitarComponentes();
+	    		nuevaTarifa();
+	    	}
+	    });
         btnChecador.setBackground(Color.BLACK);
         btnChecador.setBounds(962, 112, 200, 30);
         panel.add(btnChecador);
@@ -696,6 +716,12 @@ public class Sistema extends JFrame {
 	        btnDetalles.setBorder(null);
 
 	        JButton btnEditar = new JButton("Editar");
+	        btnEditar.addActionListener(new ActionListener() {
+		    	public void actionPerformed(ActionEvent e) {
+		    		quitarComponentes();
+		    		editarTarifa();
+		    	}
+		    });
 	        btnEditar.setForeground(Color.white);
 	        btnEditar.setFocusable(false);
 	        btnEditar.setBorder(null);
@@ -720,7 +746,255 @@ public class Sistema extends JFrame {
 	    
 	}
 
+	public void editarTarifa() {
+		panel();
+		menuB();
+		elementosEditarNuevaTarifas();
+		JLabel lblTitutlo = new JLabel("Editar tarifa");
+		lblTitutlo.setForeground(new Color(0, 0, 0));
+		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
+		lblTitutlo.setBounds(427, 114, 346, 33);
+		panel.add(lblTitutlo);
+		
+		JPanel panelAzul = new JPanel();
+		panelAzul.setBackground(new Color(148, 182, 223));
+		panelAzul.setBounds(650, 185, 441, 448);
+		panel.add(panelAzul);
+		panelAzul.setLayout(null);
 
+		JButton btnGuardar_1 = new JButton("Guardar");
+		btnGuardar_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "¡Nuevos cambios realizados con éxito!", "Edición exitosa", JOptionPane.INFORMATION_MESSAGE);
+                quitarComponentes();
+                tarifas();
+			}
+		});
+		btnGuardar_1.setForeground(Color.WHITE);
+		btnGuardar_1.setFocusable(false);
+		btnGuardar_1.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+		btnGuardar_1.setBackground(Color.BLACK);
+		btnGuardar_1.setBounds(194, 593, 120, 40);
+		panel.add(btnGuardar_1);
+		
+		JButton btnEliminar_1 = new JButton("Eliminar");
+		btnEliminar_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar esta tarifa?", "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
+	             if (op == JOptionPane.OK_OPTION) {
+	                 JOptionPane.showMessageDialog(null, "Tarifa eliminada con éxito", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
+	                 quitarComponentes();
+	                 tarifas();
+	             }
+			}
+		});
+		btnEliminar_1.setForeground(Color.WHITE);
+		btnEliminar_1.setFocusable(false);
+		btnEliminar_1.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+		btnEliminar_1.setBackground(new Color(0, 33, 83));
+		btnEliminar_1.setBounds(345, 593, 120, 40);
+		panel.add(btnEliminar_1);
+		
+	    
+	}
+	
+	public void elementosEditarNuevaTarifas() {
+		btnVolver=new JButton("Volver");
+	    btnVolver.setForeground(new Color(255, 255, 255));
+	    btnVolver.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		quitarComponentes();
+	    		tarifas();
+	    	}
+	    });
+	    btnVolver.setFocusable(false);
+	    btnVolver.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	    btnVolver.setBackground(new Color(0,0,0)); 
+	    btnVolver.setBounds(109, 114, 120, 40);
+	    panel.add(btnVolver);
+	    
+	    JLabel lblNombrePlan = new JLabel("Nombre del plan:");
+		lblNombrePlan.setBounds(109, 185, 189, 30);
+		configurarLabelsDer(lblNombrePlan);
+		panel.add(lblNombrePlan);
+		
+		JLabel lblPrecioMensual = new JLabel("Precio mensual:");
+		lblPrecioMensual.setBounds(109, 235, 189, 30); configurarLabelsDer(lblPrecioMensual);
+		panel.add(lblPrecioMensual);
+		
+		JLabel lblDescuentoMeses = new JLabel("Descuento 3 meses:");
+		lblDescuentoMeses.setBounds(109, 285, 189, 30); configurarLabelsDer(lblDescuentoMeses);
+		panel.add(lblDescuentoMeses);
+		
+		JLabel lblDescuentoMeses_1 = new JLabel("Descuento 6 meses:");
+		lblDescuentoMeses_1.setBounds(109, 335, 189, 30); configurarLabelsDer(lblDescuentoMeses_1);
+		panel.add(lblDescuentoMeses_1);
+		
+		JLabel lblDescuentoAo = new JLabel("Descuento 1 año:");
+		lblDescuentoAo.setBounds(109, 385, 189, 30); configurarLabelsDer(lblDescuentoAo);
+		panel.add(lblDescuentoAo);
+		
+		JLabel lblTotal = new JLabel("Total:");
+		lblTotal.setBounds(410, 284, 50, 30); configurarLabelsIzq(lblTotal);
+		panel.add(lblTotal);
+		
+		JLabel lblTotal_1 = new JLabel("Total:");
+		lblTotal_1.setBounds(410, 334, 50, 30); configurarLabelsIzq(lblTotal_1);
+		panel.add(lblTotal_1);
+		
+		JLabel lblTotal_1_1 = new JLabel("Total:");
+		lblTotal_1_1.setBounds(410, 384, 50, 30); configurarLabelsIzq(lblTotal_1_1);
+		panel.add(lblTotal_1_1);
+		
+		JCheckBox box1 = new JCheckBox("Acceso ilimitado a las instalaciones del gimnasio.");
+		box1.setFont(new Font("Arial Black", Font.PLAIN, 14));
+		box1.setOpaque(false);
+		box1.setFocusable(false);
+		box1.setBounds(109, 445, 513, 20);
+		panel.add(box1);
+		
+		JCheckBox box2 = new JCheckBox("Horario flexible, acceso al gimnasio 24/7.");
+		box2.setFont(new Font("Arial Black", Font.PLAIN, 14));
+		box2.setOpaque(false);
+		box2.setFocusable(false);
+		box2.setBounds(109, 485, 513, 20);
+		panel.add(box2);
+		
+		JCheckBox box3 = new JCheckBox("Entrenador personal.");
+		box3.setFont(new Font("Arial Black", Font.PLAIN, 14));
+		box3.setOpaque(false);
+		box3.setFocusable(false);
+		box3.setBounds(109, 525, 513, 20);
+		panel.add(box3);
+		
+		textField_1 = new JTextField();
+		textField_1.setBounds(320, 185, 230, 30);
+		panel.add(textField_1);
+		textField_1.setColumns(10);
+		
+		textField_2 = new JTextField();
+		textField_2.setColumns(10);
+		textField_2.setBounds(320, 235, 230, 30);
+		panel.add(textField_2);
+		
+		textField_3 = new JTextField();
+		textField_3.setBounds(320, 285, 70, 30);
+		panel.add(textField_3);
+		textField_3.setColumns(10);
+		
+		textField_4 = new JTextField();
+		textField_4.setColumns(10);
+		textField_4.setBounds(320, 335, 70, 30);
+		panel.add(textField_4);
+		
+		textField_5 = new JTextField();
+		textField_5.setColumns(10);
+		textField_5.setBounds(320, 385, 70, 30);
+		panel.add(textField_5);
+		
+		textField_6 = new JTextField();
+		textField_6.setColumns(10);
+		textField_6.setBounds(480, 285, 70, 30);
+		panel.add(textField_6);
+		
+		textField_7 = new JTextField();
+		textField_7.setColumns(10);
+		textField_7.setBounds(480, 335, 70, 30);
+		panel.add(textField_7);
+		
+		textField_8 = new JTextField();
+		textField_8.setColumns(10);
+		textField_8.setBounds(480, 385, 70, 30);
+		panel.add(textField_8);
+	    
+		
+	}
+	public void nuevaTarifa() {
+		panel();
+		menuB();
+		elementosEditarNuevaTarifas();
+		JLabel lblTitutlo = new JLabel("Nueva tarifa");
+		lblTitutlo.setForeground(new Color(0, 0, 0));
+		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
+		lblTitutlo.setBounds(427, 114, 346, 33);
+		panel.add(lblTitutlo);
+		
+		JButton btnGuardar_1 = new JButton("Guardar");
+		btnGuardar_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "¡Nueva tarifa agregada correctamente!", "Añadido exitoso", JOptionPane.INFORMATION_MESSAGE);
+                quitarComponentes();
+                tarifas();
+			}
+		});
+		btnGuardar_1.setForeground(Color.WHITE);
+		btnGuardar_1.setFocusable(false);
+		btnGuardar_1.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+		btnGuardar_1.setBackground(Color.BLACK);
+		btnGuardar_1.setBounds(465, 593, 120, 40);
+		panel.add(btnGuardar_1);
+		
+		JButton btnEliminar_1 = new JButton("Eliminar");
+		btnEliminar_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar esta tarifa?", "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
+	             if (op == JOptionPane.OK_OPTION) {
+	                 JOptionPane.showMessageDialog(null, "Tarifa eliminada con éxito", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
+	                 quitarComponentes();
+	                 nuevaTarifa();
+	             }
+			}
+		});
+		btnEliminar_1.setForeground(Color.WHITE);
+		btnEliminar_1.setFocusable(false);
+		btnEliminar_1.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+		btnEliminar_1.setBackground(new Color(0, 33, 83));
+		btnEliminar_1.setBounds(615, 593, 120, 40);
+		panel.add(btnEliminar_1);
+		
+		JLabel lblMesesInfo = new JLabel("3 meses info:");
+		lblMesesInfo.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblMesesInfo.setForeground(Color.BLACK);
+		lblMesesInfo.setFont(new Font("Arial Black", Font.PLAIN, 14));
+		lblMesesInfo.setBounds(550, 185, 189, 30);
+		panel.add(lblMesesInfo);
+		
+		JTextArea textArea = new JTextArea();
+		textArea.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textArea.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		textArea.setBounds(761, 185, 230, 80);
+		
+		panel.add(textArea);
+		
+		JLabel lblMesesInfo_3 = new JLabel("6 meses info:");
+		lblMesesInfo_3.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblMesesInfo_3.setForeground(Color.BLACK);
+		lblMesesInfo_3.setFont(new Font("Arial Black", Font.PLAIN, 14));
+		lblMesesInfo_3.setBounds(550, 285, 189, 30);
+		panel.add(lblMesesInfo_3);
+		
+		JTextArea textArea_1 = new JTextArea();
+		textArea_1.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textArea_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		textArea_1.setBounds(761, 285, 230, 80);
+		panel.add(textArea_1);
+		
+		JLabel lblAoInfo = new JLabel("1 año info:");
+		lblAoInfo.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblAoInfo.setForeground(Color.BLACK);
+		lblAoInfo.setFont(new Font("Arial Black", Font.PLAIN, 14));
+		lblAoInfo.setBounds(550, 385, 189, 30);
+		panel.add(lblAoInfo);
+		
+		JTextArea textArea_2 = new JTextArea();
+		textArea_2.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textArea_2.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		textArea_2.setBounds(761, 385, 230, 80);
+		panel.add(textArea_2);
+		
+	}
 	public void instructor() { // TABLA INSTRUCTOR
 		panel();
 		menuB();
