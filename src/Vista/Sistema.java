@@ -34,6 +34,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -47,9 +48,9 @@ import javax.swing.JCheckBox;
 public class Sistema extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane, panel, panelSup, panelMenuVertical, panelAsistencias, panelHistorialPagos, panelCredencial, panelCrear, p2;
+	private JPanel contentPane, panel, panelSup, panelMenuVertical, panelInfo, panelCredencial, panelCrear, p2;
 	private final JPanel panelNegro = new JPanel();
-	private JButton btnBuscar, btnElim, btnVolver,btnHistorial, btnHistorialDeAsistencias, btnDescargarCredencial, btnReporte, btnGuardar, btnCancelar, btnPagar, btnEditar;
+	private JButton btnBuscar, btnElim, btnVolver,btnHistorial, btnDescargarCredencial, btnReporte, btnGuardar, btnCancelar, btnPagar, btnEditar;
 	JMenuBar menuBar;
 	JLabel lblTitulo, lblGym, lblPersona, lblCodigo, lblFecha, lblTlefono, lblCorreoElectrnico, lblFechaDeRegistro, lblMembresia, lblPeterParker, lblNewLabel;
 	private JButton btnDetalles, btnCrear, btnRegistros;
@@ -64,6 +65,11 @@ public class Sistema extends JFrame {
 	 private JTextField textField_1, textField_2, textField_3, textField_4, textField_5, textField_6, textField_7, textField_8;
 	 private JLabel lblUsuariosInscritos, lblNewLabel_2, lblNewLabel_3,lblNewLabel_4, lblNewLabel_5, lblEspec;
 	 private JButton btnEdit, btnEliminar_2;
+	 Color colorBtnVolver = new Color(174,174,174);
+	 Color colorBtnGuardar = new Color(0,47,78); 
+	 Color colorBtnEliminar = new Color(0,0,0); 
+	 Color colorBtnEditar = new Color(89,89,89); 
+	 
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -89,7 +95,8 @@ public class Sistema extends JFrame {
 		contentPane.setLayout(null);
 		setResizable(false);
 		
-		menuPrincipal();
+	//	menuPrincipal();
+detallesClase();
 	}
 	
 	public void panel() {
@@ -284,7 +291,7 @@ public class Sistema extends JFrame {
 		JComboBox btnFiltro = new JComboBox();
 		btnFiltro.setModel(new DefaultComboBoxModel(new String[] {"Filtrar", "Todos","Activos", "No activos"}));
 		btnFiltro.setForeground(new Color(0, 0, 0));
-		btnFiltro.setBounds(943, 120, 155, 30);
+		btnFiltro.setBounds(943, 120, 187, 30);
 		panel.add(btnFiltro);
 	}
 
@@ -351,19 +358,72 @@ public class Sistema extends JFrame {
 	    textField = new JTextField(); // TEXTFIELD VACIO
 	    textField.setBounds(170, 80, 0, 0);
 	    panel.add(textField);
-	    //PANEL CREDENCIAL
-	    panelCredencial = new JPanel();
-	    panelCredencial.setBackground(new Color(217, 217, 217));
-	    panelCredencial.setBounds(222, 306, 915, 310);
-	    panel.add(panelCredencial);
-	    panelCredencial.setVisible(false);
-	    panelCredencial.setLayout(null);
 	    
-	    btnBuscar = new JButton("");
+	    int[] boundsX = {222, 405, 588, 771, 954};
+	    JButton[] botones = new JButton[5];
+		// Crear y configurar los botones
+		String[] nombres = {"Información","Historial de pago", "Historial de asistencias", "Descargar reporte", "Credencial"};
+		panelInfo = new JPanel();
+	    panelInfo.setBackground(new Color(217, 217, 217));
+	    panelInfo.setBounds(222, 290, 915, 350);
+	    panelInfo.setVisible(false);
+	    panel.add(panelInfo);
+	    panelInfo.setLayout(null);
+		for (int i = 0; i < botones.length; i++) {
+		    final int index = i; 
+		    botones[i] = new JButton(nombres[i]);
+		    botones[i].setForeground(Color.black);
+		    botones[i].setFocusable(false);
+		    botones[i].setEnabled(false);  
+		    botones[i].setBackground(new Color(174,174,174));
+		    botones[i].setBounds(boundsX[i],250, 183, 40);
+		    botones[i].addActionListener(new ActionListener() {
+		        public void actionPerformed(ActionEvent e) {
+		        	 panelInfo.removeAll();
+		        	 panelInfo.repaint();
+		        	 panelInfo.revalidate();
+		        	 panelInfo.setVisible(true);
+		             // Resetear el color de todos los botones
+		             for (JButton boton : botones) {
+		                 boton.setBackground(new Color(174, 174, 174));
+		             }
+		             // Establecer el color del botón actual
+		             botones[index].setBackground(new Color(217, 217, 217));
+		             switch (index) {
+		            	case 0:
+		            		detallesInformacion();
+		            	break;
+		                case 1:
+		                	detallesHistorialPago();
+		                    break;
+		                case 2:
+		                	detallesHistorialAsistencia();
+		                    break;
+		                case 3:
+		                	detallesInformacion();
+		                	JOptionPane.showMessageDialog(null, "¡Descarga exitosa!", "", JOptionPane.INFORMATION_MESSAGE);        
+		                	break;
+		                case 4:
+		                	credencialCliente();
+		                    break;
+		                default:
+		                    break;
+		            }
+		            panelInfo.repaint();
+		            panelInfo.revalidate();
+		        }
+		    });
+		    panel.add(botones[i]);
+		}
+		
+		btnBuscar = new JButton("");
 	    btnBuscar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		panelCredencial.setVisible(true);
-	    	}
+	            // Habilitar los botones cuando se presiona el botón Buscar
+	            for (JButton boton : botones) {
+	                boton.setEnabled(true);
+	            }
+	        }
 	    });
 	    btnBuscar.setFocusable(false);
 	    btnBuscar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
@@ -372,112 +432,83 @@ public class Sistema extends JFrame {
 	    btnBuscar.setBounds(783, 172, 50, 50);
 	    panel.add(btnBuscar);
 	    
-	    lblPersona = new JLabel();
-	    lblPersona.setIcon(new ImageIcon(Sistema.class.getResource("/img/usuarioGym 1.png")));
-	    lblPersona.setBounds(36, 23, 217, 218);
-	    panelCredencial.add(lblPersona);
-	    
-	    lblCodigo = new JLabel();
-	    lblCodigo.setIcon(new ImageIcon(Sistema.class.getResource("/img/codigoDeBarras.png")));
-	    lblCodigo.setBounds(299, 229, 327, 59);
-	    panelCredencial.add(lblCodigo);
-	    
-	    lblFecha = new JLabel("Fecha de nacimiento: " + "12/09/2004");
-	    configurarLabels(lblFecha);lblFecha.setBounds(299, 33, 327, 20);
-	    panelCredencial.add(lblFecha);
-	    
-	    lblTlefono = new JLabel("Teléfono: "+"2346546734");
-	    lblTlefono.setBounds(299, 73, 327, 20); configurarLabels(lblTlefono);
-	    panelCredencial.add(lblTlefono);
-	    
-	    lblCorreoElectrnico = new JLabel("Correo electrónico: "+"peterBp1@gmail.com");
-	    configurarLabels(lblCorreoElectrnico);lblCorreoElectrnico.setBounds(299, 113, 327, 20);
-	    panelCredencial.add(lblCorreoElectrnico);
-	    
-	    lblFechaDeRegistro = new JLabel("Fecha de registro: "+"21/07/2023");
-	    configurarLabels(lblFechaDeRegistro); lblFechaDeRegistro.setBounds(299, 153, 327, 20);
-	    panelCredencial.add(lblFechaDeRegistro);
-	    
-	    lblMembresia = new JLabel("Suscripción: -");
-	    configurarLabels(lblMembresia);lblMembresia.setBounds(299, 193, 327, 20);
-	    panelCredencial.add(lblMembresia);
-	    
-	    lblPeterParker = new JLabel("Peter Parker");
-	    configurarLabels(lblPeterParker);lblPeterParker.setBounds(36, 260, 217, 20);
-	    panelCredencial.add(lblPeterParker);
-	    
-	    panelHistorialPagos = new JPanel();
-	    panelHistorialPagos.setBackground(new Color(217, 217, 217));
-	    panelHistorialPagos.setBounds(222, 250, 915, 400);
-	    panel.add(panelHistorialPagos);
-	    panelHistorialPagos.setVisible(false);
-	    panelHistorialPagos.setLayout(null);
-	    
-	    btnHistorial = new JButton("Historial de pagos");
-	    btnHistorial.addActionListener(new ActionListener() {
-	    	public void actionPerformed(ActionEvent e) {
-	    		panelCredencial.setVisible(false);
-	    		panelHistorialPagos.setVisible(true);
-	    	}
-	    	
-	    });
-	    botonesDetallesClientes(btnHistorial);
-	    btnHistorial.setBounds(690, 22, 215, 50);
-	    panelCredencial.add(btnHistorial);
-	    
-	    btnHistorialDeAsistencias = new JButton("Historial de asistencias");
-	    btnHistorialDeAsistencias.addActionListener(new ActionListener() {
-	    	public void actionPerformed(ActionEvent e) {
-	    		panelCredencial.setVisible(false);
-	    		panelAsistencias.setVisible(true);
-	    	}
-	    });
-	    botonesDetallesClientes(btnHistorialDeAsistencias);
-	    btnHistorialDeAsistencias.setBounds(690, 94, 215, 50);
-	    panelCredencial.add(btnHistorialDeAsistencias);
-	    
-	    btnDescargarCredencial = new JButton("Descargar credencial");
-	    btnDescargarCredencial.addActionListener(new ActionListener() {
-	    	public void actionPerformed(ActionEvent e) {
-	    		 JOptionPane.showMessageDialog(null, "Credencial descargada correctamente", "Descarga exitosa", JOptionPane.INFORMATION_MESSAGE);
-	    	}
-	    });
-	    botonesDetallesClientes(btnDescargarCredencial);
-	    btnDescargarCredencial.setBounds(690, 238, 215, 50);
-	    panelCredencial.add(btnDescargarCredencial);
-	    
-	    btnReporte = new JButton("Renovar suscripción");
+		btnReporte = new JButton("Renovar suscripción");
 	    btnReporte.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		renovar();         
             }
 	    });
-	    botonesDetallesClientes(btnReporte);
-	    btnReporte.setBounds(690, 166, 215, 50);
-	    panelCredencial.add(btnReporte);
+	    btnReporte.setForeground(Color.white);
+	    btnReporte.setFocusable(false);
+	    btnReporte.setBackground(colorBtnGuardar);
+	    btnReporte.setBounds(954, 177, 183, 40);
+	    panel.add(btnReporte);
 	    
-	    //PANEL HISTORIAL PAGOS
-	    lblTitulo = new JLabel("Historial de pagos");
-		lblTitulo.setForeground(new Color(0, 0, 0));
-		lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTitulo.setFont(new Font("Arial Black", Font.PLAIN, 25));
-		lblTitulo.setBounds(320, 27, 276, 33);
-		panelHistorialPagos.add(lblTitulo);
+	}
+	
+	public void panelDetalles() {
+	    JLabel id = new JLabel("ID del cliente: ");
+	    configurarLabelsIzq(id);
+	    panelInfo.add(id);
+	    id.setBounds(87, 20, 500, 20);
+	    
+	    JLabel nombre = new JLabel("Nombre: ");
+	    configurarLabelsIzq(nombre);
+	    panelInfo.add(nombre);
+	    nombre.setBounds(600, 20, 300, 20);
+	}
+	
+	public void detallesInformacion() {
+
+	    JLabel lblPlanDeLa = new JLabel("Plan de la membresía:");configurarLabelsIzq(lblPlanDeLa);
+		 lblPlanDeLa.setBounds(80, 180, 200, 20);
+		 panelInfo.add(lblPlanDeLa);
+		 
+		 JLabel lblNombre = new JLabel("Nombre: ");configurarLabelsIzq(lblNombre);
+		 lblNombre.setBounds(80, 20, 200, 20);
+		 panelInfo.add(lblNombre);
+		 
+		 JLabel id_1 = new JLabel("Correo electrónico:"); configurarLabelsIzq(id_1);
+		 id_1.setBounds(80, 100, 200, 20);
+		 panelInfo.add(id_1);
+		 
+		 JLabel lblTel = new JLabel("Teléfono:");configurarLabelsIzq(lblTel);
+		 configurarLabelsIzq(lblTel);
+		 lblTel.setBounds(400, 100, 200, 20);
+		 panelInfo.add(lblTel);
+		 
+		 JLabel lblApellido = new JLabel("Apellido:");
+		 configurarLabelsIzq(lblApellido);
+		 lblApellido.setBounds(400, 20, 200, 20);
+		 panelInfo.add(lblApellido);
+		 
+		 JLabel lblTipoDeLa = new JLabel("Tipo de la membresía:");
+		 configurarLabelsIzq(lblTipoDeLa);
+		 lblTipoDeLa.setBounds(400, 180, 200, 20);
+		 panelInfo.add(lblTipoDeLa);
+		 
+		 JLabel lblFechaInicial = new JLabel("Fecha inicial: ");
+		 configurarLabelsIzq(lblFechaInicial);
+		 lblFechaInicial.setBounds(80, 260, 200, 20);
+		 panelInfo.add(lblFechaInicial);
+		 
+		 JLabel lblFechaFinal = new JLabel("Fecha final:");
+		 configurarLabelsIzq(lblFechaFinal);
+		 lblFechaFinal.setBounds(400, 260, 200, 20);
+		 panelInfo.add(lblFechaFinal);
+		 
+		 lblNewLabel = new JLabel();
+		 lblNewLabel.setIcon(new ImageIcon(Sistema.class.getResource("/img/usuarioGym 1.png")));
+	     lblNewLabel.setBounds(650, 20, 217, 218);
+	     panelInfo.add(lblNewLabel);
 		
-		btnVolver = new JButton("Volver");
-	    btnVolver.addActionListener(new ActionListener() {
-	    	public void actionPerformed(ActionEvent e) {
-	    		panelHistorialPagos.setVisible(false);
-	    		panelCredencial.setVisible(true);
-	    	}
-	    });
-	    botonesDetallesClientes(btnVolver);
-	    btnVolver.setBounds(676, 27, 151, 40);
-	    panelHistorialPagos.add(btnVolver);
-	    
-	    lblMembresia = new JLabel("Suscripción: " + "Activa");
-	    configurarLabels(lblMembresia);lblMembresia.setBounds(640, 100, 200, 20);
-	    panelHistorialPagos.add(lblMembresia);
+	}
+	
+	public void detallesHistorialPago() { // HistorialPago clientes
+		panelDetalles();
+	    lblMembresia = new JLabel("Suscripción: " );
+	    configurarLabelsIzq(lblMembresia);lblMembresia.setBounds(87, 55, 200, 20);
+	    panelInfo.add(lblMembresia);
 	    
 	    String titles[]= {"Membresía", "Fecha inicial", "Vencimiento", "Total"};
 		DefaultTableModel modelo = new DefaultTableModel(null, titles) {
@@ -488,86 +519,41 @@ public class Sistema extends JFrame {
 	     };
 		JTable datosTabla = new JTable(modelo);
 		JScrollPane tablaScroll = new JScrollPane(datosTabla);
-		tablaScroll.setBounds(87, 160, 740, 210);
-		panelHistorialPagos.add(tablaScroll);
-		
-		lblNewLabel = new JLabel();
-		lblNewLabel.setIcon(new ImageIcon(Sistema.class.getResource("/img/usuarioGym 2.png")));
-		lblNewLabel.setBounds(109, 27, 83, 81);
-		panelHistorialPagos.add(lblNewLabel);
-		
-	    JLabel lblPeterParke = new JLabel("Peter Parker");
-	    configurarLabels(lblPeterParke);
-	    panelHistorialPagos.add(lblPeterParke);
-	    lblPeterParke.setBounds(87, 117, 122, 20);
-
-	    
-	    //PANEL ASISTENCIAS
-	    panelAsistencias = new JPanel();
-	    panelAsistencias.setBackground(new Color(217, 217, 217));
-	    panelAsistencias.setBounds(222, 250, 915, 400);
-	    panel.add(panelAsistencias);
-	    panelAsistencias.setVisible(false);
-	    panelAsistencias.setLayout(null);
-	    JLabel titulo2 = new JLabel("Historial de asistencia");
-	    titulo2.setForeground(new Color(0, 0, 0));
-	    titulo2.setHorizontalAlignment(SwingConstants.CENTER);
-	    titulo2.setFont(new Font("Arial Black", Font.PLAIN, 20));
-	    titulo2.setBounds(0, 27, 915, 33);
-		panelAsistencias.add(titulo2);
-		
-		JButton btnVolver2 = new JButton("Volver");
-		 btnVolver2.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    		panelAsistencias.setVisible(false);
-		    		panelCredencial.setVisible(true);
-		    	}
-		    	
-		  });
-		  botonesDetallesClientes(btnVolver2);
-		  btnVolver2.setBounds(676, 27, 151, 40);
-		  panelAsistencias.add(btnVolver2);
-		    
-		  String titulo[]= {"Fecha", "Hora de entrada", "Hora de salida"};
-		  DefaultTableModel modelo2 = new DefaultTableModel(null, titulo) {
-		      @Override
-		      public boolean isCellEditable(int row, int column) {	              
-		          return false; //La tabla no se edita
-		    }
-		 }; 
-		JTable datosTabla2 = new JTable(modelo2);
-		JScrollPane tablaScroll2 = new JScrollPane(datosTabla2);
-		tablaScroll2.setBounds(87, 160, 740, 210);
-        panelAsistencias.add(tablaScroll2);
-	
-        lblNewLabel = new JLabel();
-		lblNewLabel.setIcon(new ImageIcon(Sistema.class.getResource("/img/usuarioGym 2.png")));
-		lblNewLabel.setBounds(109, 27, 83, 81);
-		panelAsistencias.add(lblNewLabel);
-        
-        comboMes = new JComboBox<>();
-        String[] months = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-        for (String month : months) {
-            comboMes.addItem(month);
-        }
-        comboMes.setBounds(407, 90, 100, 25);
-        comboMes.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            //    cargarAsistencias((String) monthComboBox.getSelectedItem());
-            }
-        });
-        panelAsistencias.add(comboMes); 
-		
-        lblPeterParke = new JLabel("Peter Parker"); lblPeterParke.setBounds(87, 117, 122, 20); lblPeterParke.setHorizontalAlignment(SwingConstants.CENTER);	    lblPeterParke.setForeground(Color.BLACK);	    lblPeterParke.setFont(new Font("Arial Black", Font.PLAIN, 12));
-	    panelAsistencias.add(lblPeterParke);
-	    
-	    JLabel lblAsistenciasTotales = new JLabel("Asistencias totales:");
-	    lblAsistenciasTotales.setHorizontalAlignment(SwingConstants.CENTER); lblAsistenciasTotales.setForeground(Color.BLACK);lblAsistenciasTotales.setFont(new Font("Arial Black", Font.PLAIN, 12));
-	    lblAsistenciasTotales.setBounds(588, 117, 237, 25);
-	    panelAsistencias.add(lblAsistenciasTotales);
-	    
+		tablaScroll.setBounds(87, 95, 730, 200);
+		panelInfo.add(tablaScroll);
 	}
 	
+	public void detallesHistorialAsistencia() { //HistorialAsistencia clientes
+		panelDetalles();
+		String titulo[]= {"Fecha", "Hora de entrada", "Hora de salida"};
+		DefaultTableModel modelo2 = new DefaultTableModel(null, titulo) {
+		    @Override
+		    public boolean isCellEditable(int row, int column) {	              
+		        return false; //La tabla no se edita
+		  }
+		}; 
+		JTable datosTabla2 = new JTable(modelo2);
+		JScrollPane tablaScroll2 = new JScrollPane(datosTabla2);
+		tablaScroll2.setBounds(87, 95, 730, 210);
+        panelInfo.add(tablaScroll2);
+       
+       comboMes = new JComboBox<>();
+       String[] months = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+       for (String month : months) {
+           comboMes.addItem(month);
+       }
+       comboMes.setBounds(600, 60, 215, 25);
+       comboMes.addActionListener(new ActionListener() {
+           public void actionPerformed(ActionEvent e) {
+           //    cargarAsistencias((String) monthComboBox.getSelectedItem());
+           }
+       });
+       panelInfo.add(comboMes); 
+	   JLabel lblAsistenciasTotales = new JLabel("Asistencias totales:");
+	   configurarLabelsIzq(lblAsistenciasTotales); lblAsistenciasTotales.setBounds(87, 55, 237, 25);
+	   panelInfo.add(lblAsistenciasTotales);
+	
+	}
 	public void renovar() {
 		// Crear una nueva ventana para editar la clase 
         JFrame renovar = new JFrame("Renovar membresía");
@@ -661,7 +647,7 @@ public class Sistema extends JFrame {
 	    panel();
 	    menuB();
 	    JPanel panel_1 = new JPanel();
-	    panel_1.setBounds(36, 170, 1126, 477);
+	    panel_1.setBounds(36, 170, 1120, 477);
 	    panel.add(panel_1);
 	    panel_1.setLayout(new GridLayout(0, 3, 15, 15));
 
@@ -674,8 +660,8 @@ public class Sistema extends JFrame {
 	    		nuevaTarifa();
 	    	}
 	    });
-        btnChecador.setBackground(Color.BLACK);
-        btnChecador.setBounds(962, 112, 200, 30);
+        btnChecador.setBackground(colorBtnGuardar);
+        btnChecador.setBounds(880, 114, 200, 30);
         panel.add(btnChecador);
         
         ArrayList<String> tiposDePlan = new ArrayList<>();
@@ -799,7 +785,7 @@ public class Sistema extends JFrame {
 	        btnEditar.setForeground(Color.white);
 	        btnEditar.setFocusable(false);
 	        btnEditar.setBorder(null);
-	        btnEditar.setBackground(new Color(0, 33, 83));
+	        btnEditar.setBackground(colorBtnGuardar);
 
 	        JPanel panelBotones = new JPanel(new GridLayout(1, 2, 5, 5));
 	        panelBotones.add(btnDetalles);
@@ -848,7 +834,7 @@ public class Sistema extends JFrame {
 		btnGuardar_1.setForeground(Color.WHITE);
 		btnGuardar_1.setFocusable(false);
 		btnGuardar_1.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		btnGuardar_1.setBackground(Color.BLACK);
+		btnGuardar_1.setBackground(colorBtnGuardar);
 		btnGuardar_1.setBounds(194, 593, 120, 40);
 		panel.add(btnGuardar_1);
 		
@@ -863,10 +849,10 @@ public class Sistema extends JFrame {
 	             }
 			}
 		});
-		btnEliminar_1.setForeground(Color.WHITE);
+		btnEliminar_1.setForeground(Color.white);
 		btnEliminar_1.setFocusable(false);
 		btnEliminar_1.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		btnEliminar_1.setBackground(new Color(0, 33, 83));
+		btnEliminar_1.setBackground(colorBtnEliminar);
 		btnEliminar_1.setBounds(345, 593, 120, 40);
 		panel.add(btnEliminar_1);  
 	}
@@ -1003,7 +989,7 @@ public class Sistema extends JFrame {
 		btnGuardar_1.setForeground(Color.WHITE);
 		btnGuardar_1.setFocusable(false);
 		btnGuardar_1.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		btnGuardar_1.setBackground(Color.BLACK);
+		btnGuardar_1.setBackground(colorBtnGuardar);
 		btnGuardar_1.setBounds(465, 593, 120, 40);
 		panel.add(btnGuardar_1);
 		
@@ -1021,7 +1007,7 @@ public class Sistema extends JFrame {
 		btnEliminar_1.setForeground(Color.WHITE);
 		btnEliminar_1.setFocusable(false);
 		btnEliminar_1.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		btnEliminar_1.setBackground(new Color(0, 33, 83));
+		btnEliminar_1.setBackground(colorBtnEliminar);
 		btnEliminar_1.setBounds(615, 593, 120, 40);
 		panel.add(btnEliminar_1);
 		
@@ -1075,19 +1061,19 @@ public class Sistema extends JFrame {
 		lblTitutlo.setBounds(427, 114, 346, 33);
 		panel.add(lblTitutlo);
 		
-		btnGuardar = new JButton("Nuevo instructor");
-	    btnGuardar.setForeground(new Color(255, 255, 255));
-	    btnGuardar.addActionListener(new ActionListener() {
+		JButton btnEditar = new JButton("Editar");
+		btnEditar.setForeground(new Color(255, 255, 255));
+		btnEditar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		quitarComponentes();
-	    		nuevoInstructor();
+	    		editarInstructor();
 	    	}
 	    });
-	    btnGuardar.setFocusable(false);
-	    btnGuardar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-	    btnGuardar.setBackground(new Color(0, 45, 78)); 
-	    btnGuardar.setBounds(1030, 114, 120, 40);
-	    panel.add(btnGuardar);
+		btnEditar.setFocusable(false);
+		btnEditar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+		btnEditar.setBackground(new Color(0, 0, 0)); 
+		btnEditar.setBounds(739, 190, 120, 40);
+	    panel.add(btnEditar);
 	    
 	    String titles[]= {"ID", "Nombre", "Apellido", "Correo", "Telefono", "Fecha de contratación", "Especialidad"};
 		DefaultTableModel modelo = new DefaultTableModel(null, titles) {
@@ -1114,6 +1100,20 @@ public class Sistema extends JFrame {
 	     btnEditar.setBackground(new Color(0, 45, 78)); 
 	     btnEditar.setBounds(885, 190, 115, 40);
 	     panel.add(btnEditar);
+	     
+	     JButton btnGuardar_1 = new JButton("Nuevo instructor");
+	     btnGuardar_1.setForeground(Color.WHITE);
+	     btnGuardar_1.setFocusable(false);
+	     btnGuardar_1.addActionListener(new ActionListener() {
+		    	public void actionPerformed(ActionEvent e) {
+		    		quitarComponentes();
+		    		nuevoInstructor();
+		    	}
+		    });
+	     btnGuardar_1.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	     btnGuardar_1.setBackground(new Color(0, 45, 78));
+	     btnGuardar_1.setBounds(593, 190, 120, 40);
+	     panel.add(btnGuardar_1);
 	    
 	}
 	
@@ -1128,7 +1128,7 @@ public class Sistema extends JFrame {
 		panel.add(lblTitutlo);
 		
 		btnGuardar = new JButton("Eliminar");
-	    btnGuardar.setForeground(new Color(255, 255, 255));
+	    btnGuardar.setForeground(new Color(255,255,255));
 	    btnGuardar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar este instructor?", "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
@@ -1141,7 +1141,7 @@ public class Sistema extends JFrame {
 	    });
 	    btnGuardar.setFocusable(false);
 	    btnGuardar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-	    btnGuardar.setBackground(new Color(0, 45, 78)); 
+	    btnGuardar.setBackground(colorBtnEliminar); 
 	    btnGuardar.setBounds(937, 114, 120, 40);
 	    panel.add(btnGuardar);
 	    
@@ -1155,7 +1155,7 @@ public class Sistema extends JFrame {
 	    });
 	    btnVolver.setFocusable(false);
 	    btnVolver.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-	    btnVolver.setBackground(new Color(0, 45, 78)); 
+	    btnVolver.setBackground(Color.black); 
 	    btnVolver.setBounds(142, 114, 120, 40);
 	    panel.add(btnVolver);
 	    
@@ -1271,7 +1271,7 @@ public class Sistema extends JFrame {
 
         // Agregar tabla a un JScrollPane
         JScrollPane scrollPane = new JScrollPane(tablaHorario);
-        scrollPane.setBounds(100,122,715,372);
+        scrollPane.setBounds(80,130,755,372);
         panelCrear.add(scrollPane, BorderLayout.CENTER);
         
         btnVolver = new JButton("Volver");
@@ -1281,17 +1281,20 @@ public class Sistema extends JFrame {
 	    		detallesInstructor();
 	    	}
 	    });
-	    botonesDetallesClientes(btnVolver);
-	    btnVolver.setBounds(737, 10, 151, 40);
+	    btnVolver.setFocusable(false);
+	    btnVolver.setForeground(Color.white);
+	    btnVolver.setBackground(Color.black);
+	    btnVolver.setFont(new Font("Arial Black", Font.PLAIN, 13));
+	    btnVolver.setBounds(80, 45, 132, 40);
 	    panelCrear.add(btnVolver);
 	    
 	    lblNewLabel = new JLabel();
 		lblNewLabel.setIcon(new ImageIcon(Sistema.class.getResource("/img/usuarioGym 2.png")));
-		lblNewLabel.setBounds(25, 10, 83, 81);
+		lblNewLabel.setBounds(727, 23, 83, 85);
 		panelCrear.add(lblNewLabel);
 		
-		lblPeterParker = new JLabel("Luis Castillo");
-	    configurarLabels(lblPeterParker);lblPeterParker.setBounds(65, 71, 217, 20);
+		lblPeterParker = new JLabel("Usuario");
+	    configurarLabels(lblPeterParker);lblPeterParker.setBounds(693, 105, 142, 20);
 	    panelCrear.add(lblPeterParker);
 	}
 	
@@ -1421,6 +1424,136 @@ public class Sistema extends JFrame {
 	    panelCrear.add(btnPagar);  
 	}
 	
+	public void editarInstructor() {
+		panel();
+		menuB();
+		JLabel lblTitutlo = new JLabel("Editar instructor");
+		lblTitutlo.setForeground(new Color(0, 0, 0));
+		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
+		lblTitutlo.setBounds(427, 114, 346, 33);
+		panel.add(lblTitutlo);
+		
+	    panelCrear = new JPanel();
+	    panel.add(panelCrear);
+	    panelCrear.setBackground(new Color(217, 217, 217));
+	    panelCrear.setLayout(null);
+	    panelCrear.setBounds(142, 194, 915, 456);
+	    panel.add(panelCrear);
+	    
+	    lblTlefono = new JLabel("Teléfono:");
+	    configurarLabelsIzq(lblTlefono);lblTlefono.setBounds(360, 119, 200, 20);
+	    panelCrear.add(lblTlefono);
+	    
+	    lblCorreoElectrnico = new JLabel("Correo electrónico: ");
+	    configurarLabelsIzq(lblCorreoElectrnico);lblCorreoElectrnico.setBounds(70, 215, 200, 20);
+	    panelCrear.add(lblCorreoElectrnico);
+	    
+	    lblNombres = new JLabel("Nombre (s):");
+	    configurarLabelsIzq(lblNombres);
+	    lblNombres.setBounds(70, 33, 200, 20);
+	    panelCrear.add(lblNombres);
+	    
+	    textNombre = new JTextField();
+	    textNombre.setBounds(70, 73, 200, 30);
+	    panelCrear.add(textNombre);
+	    textNombre.setColumns(10);
+	    
+	    lblApellidos = new JLabel("Apellidos:");
+	    configurarLabelsIzq(lblApellidos);
+	    lblApellidos.setBounds(360, 33, 200, 20);
+	    panelCrear.add(lblApellidos);
+	    
+	    textApellidos = new JTextField();
+	    textApellidos.setColumns(10);
+	    textApellidos.setBounds(360, 73, 200, 30);
+	    panelCrear.add(textApellidos);
+	    
+	    textEmail = new JTextField();
+	    textEmail.setColumns(10);
+	    textEmail.setBounds(70, 255, 200, 30);
+	    panelCrear.add(textEmail);
+	    
+	    textTel = new JTextField();
+	    textTel.setColumns(10);
+	    textTel.setBounds(360, 149, 200, 30);
+	    panelCrear.add(textTel);
+	        
+	    JLabel lblFechaInicial = new JLabel("Fecha de contratación:");
+	    configurarLabelsIzq(lblFechaInicial);
+	    lblFechaInicial.setBounds(360, 215, 200, 20);
+	    panelCrear.add(lblFechaInicial);
+
+	    JSpinner spinnerFechaIn = new JSpinner(new SpinnerDateModel());
+	    JSpinner.DateEditor dateEditorFechaIn = new JSpinner.DateEditor(spinnerFechaIn, "dd/MM/yyyy");
+	    spinnerFechaIn.setEditor(dateEditorFechaIn);
+	    spinnerFechaIn.setBounds(360, 250, 200, 30);
+	    panelCrear.add(spinnerFechaIn);
+
+	    JButton btnFoto = new JButton("Subir foto");
+	    btnFoto.setForeground(new Color(255, 255, 255));
+	    btnFoto.setFocusable(false);
+	    btnFoto.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				subirFoto();
+				 if (selectedFile != null) {
+	                    lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
+	                    revalidate(); repaint();
+	              }
+			}
+	    });
+	    btnFoto.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	    btnFoto.setBackground(new Color(89, 89, 89));
+	    btnFoto.setBounds(652, 270, 207, 40);
+	    panelCrear.add(btnFoto);
+	    
+	    lblFoto = new JLabel("");
+	    lblFoto.setIcon(new ImageIcon(Sistema.class.getResource("/img/usuarioGym 1.png")));
+	    lblFoto.setBounds(642, 33, 217, 221);
+	    panelCrear.add(lblFoto);
+	    
+	    JComboBox comboEspecialidad = new JComboBox();
+	    comboEspecialidad.setModel(new DefaultComboBoxModel(new String[] {"Levantamiento de pesas", "Aeróbic","Gimnasia de mantenimiento", "Circuito de entrenamiento"}));
+	    comboEspecialidad.setBounds(70, 153, 200, 30);
+	    panelCrear.add(comboEspecialidad);
+	    
+	    lblEspec = new JLabel("Especialidad:");
+	    configurarLabelsIzq(lblEspec);
+	    lblEspec.setBounds(70, 119, 200, 20);
+	    panelCrear.add(lblEspec);
+	    
+	    btnGuardar = new JButton("Guardar");
+	    btnGuardar.setForeground(new Color(255, 255, 255));
+	    btnGuardar.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		JOptionPane.showMessageDialog(null, "¡Cambios de instructor realizados con éxito!", "Edición exitosa", JOptionPane.INFORMATION_MESSAGE);
+                quitarComponentes();
+	    		instructor();
+	    	}
+	    });
+	    btnGuardar.setFocusable(false);
+	    btnGuardar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	    btnGuardar.setBackground(new Color(0, 45, 78)); 
+	    btnGuardar.setBounds(326, 380, 120, 40);
+	    panelCrear.add(btnGuardar);
+	    
+	    btnCancelar = new JButton("Cancelar");
+	    btnCancelar.setForeground(new Color(255, 255, 255));
+	    btnCancelar.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		quitarComponentes();
+	    		instructor();
+	    	}
+	    });
+	    btnCancelar.setFocusable(false);
+	    btnCancelar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	    btnCancelar.setBackground(new Color(0, 0, 0)); 
+	    btnCancelar.setBounds(466, 380, 120, 40);
+	    panelCrear.add(btnCancelar);
+		
+	}
+	
 	public void checador() {
 		panel();
 		menuB();
@@ -1441,7 +1574,7 @@ public class Sistema extends JFrame {
 	    });
 	    btnVolver.setFocusable(false);
 	    btnVolver.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-	    btnVolver.setBackground(new Color(0, 45, 78)); 
+	    btnVolver.setBackground(Color.black); 
 	    btnVolver.setBounds(73, 114, 120, 40);
 	    panel.add(btnVolver);
 	    
@@ -1572,7 +1705,7 @@ public class Sistema extends JFrame {
 			}
         });
         btnChecador.setBackground(new Color(0,33,81));
-        btnChecador.setBounds(962, 112, 200, 30);
+        btnChecador.setBounds(890, 112, 200, 30);
         panel.add(btnChecador);
         
         ArrayList<String> tiposClase = new ArrayList<>();
@@ -1600,7 +1733,7 @@ public class Sistema extends JFrame {
 	        info.setBackground(new Color(148, 182, 223));
 	        panelTarifa.add(info, BorderLayout.CENTER);
 
-	        JButton btnDetalles = new JButton("Detalles");
+	        JButton btnDetalles = new JButton("Editar");
 	        btnDetalles.setBackground(Color.black);
 	        btnDetalles.addActionListener(new ActionListener() {
 		    	public void actionPerformed(ActionEvent e) {
@@ -1670,7 +1803,7 @@ public class Sistema extends JFrame {
 		btnPagar.setForeground(new Color(255, 255, 255));
 		btnPagar.setFocusable(false);
 		btnPagar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		btnPagar.setBackground(new Color(0,0,0)); 
+		btnPagar.setBackground(new Color(0,47,78)); 
 		btnPagar.setBounds(525, 580, 150, 40);
 		panel.add(btnPagar);
 		
@@ -1685,11 +1818,11 @@ public class Sistema extends JFrame {
 	    		 
 	    	}
 	    });
-		btnRegistros.setForeground(new Color(255, 255, 255));
+		btnRegistros.setForeground(Color.white);
 		btnRegistros.setFocusable(false);
 		btnRegistros.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		btnRegistros.setBackground(new Color(153, 3, 3)); 
-		btnRegistros.setBounds(907, 114, 150, 40);
+		btnRegistros.setBackground(colorBtnEliminar); 
+		btnRegistros.setBounds(937, 114, 120, 40);
 		panel.add(btnRegistros);
 	    panelInscribirseDetallesClase();
 	}
@@ -1794,10 +1927,10 @@ public class Sistema extends JFrame {
 	    		 JOptionPane.showMessageDialog(null, "¡Cliente inscrito correctamente!", " ", JOptionPane.INFORMATION_MESSAGE);
 	    	}
 	    });
-		btnPagar.setForeground(new Color(255, 255, 255));
+		btnPagar.setForeground(Color.white);
 		btnPagar.setFocusable(false);
 		btnPagar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		btnPagar.setBackground(new Color(0,0,0)); 
+		btnPagar.setBackground(new Color(0,47,78)); 
 		btnPagar.setBounds(525, 580, 150, 40);
 		panel.add(btnPagar);
 		
@@ -1809,10 +1942,10 @@ public class Sistema extends JFrame {
 	    		 
 	    	}
 	    });
-		btnRegistros.setForeground(new Color(255, 255, 255));
+		btnRegistros.setForeground(Color.white);
 		btnRegistros.setFocusable(false);
 		btnRegistros.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		btnRegistros.setBackground(new Color(0,0,0)); 
+		btnRegistros.setBackground(new Color(0,47,78)); 
 		btnRegistros.setBounds(907, 114, 150, 40);
 		panel.add(btnRegistros);
 	    panelInscribirseDetallesClase();
@@ -1863,7 +1996,8 @@ public class Sistema extends JFrame {
 		
 		btnEdit = new JButton("Editar");
 		btnEdit.setBorder(new LineBorder(new Color(0, 0, 0)));
-		btnEdit.setBackground(new Color(255, 255, 255));
+		btnEdit.setBackground(colorBtnGuardar);
+		btnEdit.setForeground(Color.white);
 		btnEdit.setFocusable(false);
 		btnEdit.addActionListener(new ActionListener() {
             @Override
@@ -1902,7 +2036,6 @@ public class Sistema extends JFrame {
         	    editarHorario.setLocationRelativeTo(null);              
             }
         });
-		btnEdit.setIcon(new ImageIcon(Sistema.class.getResource("/img/editarBtnClase.png")));
 		btnEdit.setBounds(630, 20, 111, 30);
 		panelCrear.add(btnEdit);
 		
@@ -1918,9 +2051,8 @@ public class Sistema extends JFrame {
 	             
 	    	}
 	    });
-		btnEliminar_2.setIcon(new ImageIcon(Sistema.class.getResource("/img/eliminarBtnClase.png")));
-		btnEliminar_2.setFocusable(false);
-		btnEliminar_2.setBackground(Color.WHITE);
+		btnEliminar_2.setFocusable(false); btnEliminar_2.setForeground(Color.white);
+		btnEliminar_2.setBackground(colorBtnEliminar);
 		btnEliminar_2.setBounds(763, 20, 111, 30);
 		panelCrear.add(btnEliminar_2);
 	}
@@ -1947,7 +2079,7 @@ public class Sistema extends JFrame {
 	    panelCrear.setBounds(109, 218, 948, 432);    
 	}
 	
-	public void detallesClase() {
+	public void detallesClase() { //EDITAR CLASE
 		panel();
 		menuB();
 		JLabel lblTitutlo = new JLabel("Clase de ");
@@ -1957,7 +2089,7 @@ public class Sistema extends JFrame {
 	    lblTitutlo.setBounds(0, 114, 1200, 33);
 	    panel.add(lblTitutlo);
 	    
-	    lblUsuariosInscritos = new JLabel("Detalles de la clase ");
+	    lblUsuariosInscritos = new JLabel("Editar la clase ");
 	    configurarLabels(lblUsuariosInscritos);
 	    lblUsuariosInscritos.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblUsuariosInscritos.setBounds(0, 250, 1200, 20);
@@ -1973,11 +2105,11 @@ public class Sistema extends JFrame {
 	    		 JOptionPane.showMessageDialog(null, "¡Cambios guardados con éxito!", " ", JOptionPane.INFORMATION_MESSAGE);
 	    	}
 	    });
-		btnPagar.setForeground(new Color(255, 255, 255));
+		btnPagar.setForeground(new Color(255,255,255));
 		btnPagar.setFocusable(false);
 		btnPagar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		btnPagar.setBackground(new Color(0,0,0)); 
-		btnPagar.setBounds(525, 580, 150, 40);
+		btnPagar.setBackground(new Color(0,47,78)); 
+		btnPagar.setBounds(440, 580, 150, 40);
 		panel.add(btnPagar);
 		
 		btnRegistros = new JButton("Eliminar");
@@ -1991,11 +2123,11 @@ public class Sistema extends JFrame {
 	    		 
 	    	}
 	    });
-		btnRegistros.setForeground(new Color(255, 255, 255));
+		btnRegistros.setForeground(new Color(255,255,255));
 		btnRegistros.setFocusable(false);
 		btnRegistros.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		btnRegistros.setBackground(new Color(153, 3, 3)); 
-		btnRegistros.setBounds(907, 114, 150, 40);
+		btnRegistros.setBackground(colorBtnEliminar); 
+		btnRegistros.setBounds(610, 580, 150, 40);
 		panel.add(btnRegistros);
 	    panelInscribirseDetallesClase();
 	    
@@ -2223,7 +2355,7 @@ public class Sistema extends JFrame {
 	    panelCrear.add(textTel);
 	    
 	    JComboBox comboMembresia = new JComboBox();
-	    comboMembresia.setModel(new DefaultComboBoxModel(new String[] {"  ", "General", "Estudiante","Familiar", "Dúo"}));
+	    comboMembresia.setModel(new DefaultComboBoxModel(new String[] {"General", "Estudiante","Familiar", "Dúo"}));
 	    comboMembresia.setBounds(360, 255, 200, 30);
 	    panelCrear.add(comboMembresia);
 	    
@@ -2345,7 +2477,7 @@ public class Sistema extends JFrame {
 	    panelCrear.setBackground(new Color(217, 217, 217));
 	    panelCrear.setLayout(null);
 	    panelCrear.setVisible(false);
-	    panelCrear.setBounds(52, 200, 915, 550);
+	    panelCrear.setBounds(52, 175, 915, 550);
 	    
 	    lblFecha = new JLabel("Fecha de nacimiento: ");
 	    configurarLabelsIzq(lblFecha);lblFecha.setBounds(360, 33, 200, 20);
@@ -2479,7 +2611,7 @@ public class Sistema extends JFrame {
 	    btnCancelar.setFocusable(false);
 	    btnCancelar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 	    btnCancelar.setBackground(new Color(0, 0, 0)); 
-	    btnCancelar.setBounds(292, 490, 150, 40);
+	    btnCancelar.setBounds(302, 490, 120, 40);
 	    panelCrear.add(btnCancelar);
 		
 		JTextField textID = new JTextField("Ingrese ID");
@@ -2522,7 +2654,6 @@ public class Sistema extends JFrame {
 	    btnBuscar.setBackground(new Color(217, 217, 217)); 
 	    btnBuscar.setBounds(609, 102, 50, 50);
 	    p2.add(btnBuscar);
-	    
 		
 		btnGuardar = new JButton("Guardar");
 	    btnGuardar.setForeground(new Color(255, 255, 255));
@@ -2535,7 +2666,7 @@ public class Sistema extends JFrame {
 	    btnGuardar.setFocusable(false);
 	    btnGuardar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 	    btnGuardar.setBackground(new Color(0, 45, 78)); 
-	    btnGuardar.setBounds(472, 490, 150, 40);
+	    btnGuardar.setBounds(462, 490, 120, 40);
 	    panelCrear.add(btnGuardar);
 		
 		
@@ -2554,10 +2685,74 @@ public class Sistema extends JFrame {
         }
       
 	}
+	public void credencialCliente() {
+	    btnElim = new JButton("Descargar");
+	    btnElim.setFocusable(false);
+	    btnElim.setBackground(new Color(89,89,89));
+	    btnElim.setForeground(Color.white);
+	    btnElim.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		JOptionPane.showMessageDialog(null, "¡Descarga exitosa!", "", JOptionPane.INFORMATION_MESSAGE);           	
+	    	}
+	    });
+	    btnElim.setFocusable(false);
+	    btnElim.setBounds(690, 135, 190, 50);
+	    panelInfo.add(btnElim);
+	    
+	    lblPersona = new JLabel();
+	    lblPersona.setIcon(new ImageIcon(Sistema.class.getResource("/img/usuarioGym 1.png")));
+	    lblPersona.setBounds(36, 33, 217, 218);
+	    panelInfo.add(lblPersona);
+	    
+	    lblCodigo = new JLabel();
+	    lblCodigo.setIcon(new ImageIcon(Sistema.class.getResource("/img/codigoDeBarras.png")));
+	    lblCodigo.setBounds(299, 241, 327, 59);
+	    panelInfo.add(lblCodigo);
+	    
+	    lblFecha = new JLabel("Fecha de nacimiento: " );
+	    configurarLabels(lblFecha);
+	    lblFecha.setBounds(299, 33, 327, 20);
+	    panelInfo.add(lblFecha);
+	    
+	    lblTlefono = new JLabel("Teléfono: ");
+	    configurarLabels(lblTlefono);lblTlefono.setBounds(299, 73, 327, 20);
+	    panelInfo.add(lblTlefono);
+	    
+	    lblCorreoElectrnico = new JLabel("Correo electrónico: ");
+	    configurarLabels(lblCorreoElectrnico);lblCorreoElectrnico.setBounds(299, 113, 327, 20);
+	    panelInfo.add(lblCorreoElectrnico);
+	    
+	    lblFechaDeRegistro = new JLabel("Fecha de registro: ");
+	    configurarLabels(lblFechaDeRegistro); lblFechaDeRegistro.setBounds(299, 153, 327, 20);
+	    panelInfo.add(lblFechaDeRegistro);
+	    
+	    lblMembresia = new JLabel("Suscripción: ");
+	    configurarLabels(lblMembresia);lblMembresia.setBounds(299, 193, 327, 20);
+	    panelInfo.add(lblMembresia);
+	    
+	    lblPeterParker = new JLabel("Usuario");
+	    configurarLabels(lblPeterParker);lblPeterParker.setBounds(36, 270, 217, 20);
+	    panelInfo.add(lblPeterParker);
+	}
+	
+	public void panelCrearEditar() {
+		p2 = new JPanel();
+		p2.setBackground(new Color(255, 255, 255));
+		p2.setPreferredSize(new Dimension(p2.getWidth(), 750)); 
+		p2.setLayout(null); 
+	    
+	    JScrollPane scrollPane = new JScrollPane(p2);
+	    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+	    scrollPane.setBounds(170, 67, 1020, 620); 
+	    panel.add(scrollPane);
+
+	}
+	
 	public void eliminarCliente() {
 		menuVerticalClientes();
 		panel();
 		menuB();
+		
 		JLabel lblTitutlo = new JLabel("Eliminar cliente");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
 		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -2616,20 +2811,20 @@ public class Sistema extends JFrame {
 	    
 	    btnElim = new JButton("Eliminar");
 	    btnElim.setFocusable(false);
-	    btnElim.setBackground(new Color(146, 25, 25));
+	    btnElim.setBackground(colorBtnEliminar);
 	    btnElim.setForeground(new Color(255, 255, 255));
 	    btnElim.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		 int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar este cliente?", "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
 	             if (op == JOptionPane.OK_OPTION) {
-	                 JOptionPane.showMessageDialog(null, "¡Cliente eliminado con éxito!", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
+	                 JOptionPane.showMessageDialog(null, "Cliente eliminado con éxito", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
 	                 panelCredencial.setVisible(false);
 	             } 
 	             
 	    	}
 	    });
-	    botonesDetallesClientes(btnElim);
-	    btnElim.setBounds(690, 130, 215, 50);
+	    btnElim.setFocusable(false);
+	    btnElim.setBounds(690, 130, 180, 50);
 	    panelCredencial.add(btnElim);
 	    
 	    lblPersona = new JLabel();
@@ -2642,42 +2837,30 @@ public class Sistema extends JFrame {
 	    lblCodigo.setBounds(299, 229, 327, 59);
 	    panelCredencial.add(lblCodigo);
 	    
-	    lblFecha = new JLabel("Fecha de nacimiento: " + "12/09/2004");
+	    lblFecha = new JLabel("Fecha de nacimiento: ");
 	    configurarLabels(lblFecha);
 	    lblFecha.setBounds(299, 33, 327, 20);
 	    panelCredencial.add(lblFecha);
 	    
-	    lblTlefono = new JLabel("Teléfono: "+"2346546734");
+	    lblTlefono = new JLabel("Teléfono: ");
 	    configurarLabels(lblTlefono);lblTlefono.setBounds(299, 73, 327, 20);
 	    panelCredencial.add(lblTlefono);
 	    
-	    lblCorreoElectrnico = new JLabel("Correo electrónico: "+"peterBp1@gmail.com");
+	    lblCorreoElectrnico = new JLabel("Correo electrónico: ");
 	    configurarLabels(lblCorreoElectrnico);lblCorreoElectrnico.setBounds(299, 113, 327, 20);
 	    panelCredencial.add(lblCorreoElectrnico);
 	    
-	    lblFechaDeRegistro = new JLabel("Fecha de registro: "+"21/07/2023");
+	    lblFechaDeRegistro = new JLabel("Fecha de registro: ");
 	    configurarLabels(lblFechaDeRegistro); lblFechaDeRegistro.setBounds(299, 153, 327, 20);
 	    panelCredencial.add(lblFechaDeRegistro);
 	    
-	    lblMembresia = new JLabel("Membresía: " + "Individual");
+	    lblMembresia = new JLabel("Membresía: ");
 	    configurarLabels(lblMembresia);lblMembresia.setBounds(299, 193, 327, 20);
 	    panelCredencial.add(lblMembresia);
 	    
-	    lblPeterParker = new JLabel("Peter Parker");
+	    lblPeterParker = new JLabel("Usuario");
 	    configurarLabels(lblPeterParker);lblPeterParker.setBounds(36, 260, 217, 20);
 	    panelCredencial.add(lblPeterParker);
 	}
-	
-	public void panelCrearEditar() {
-		p2 = new JPanel();
-		p2.setBackground(new Color(255, 255, 255));
-		p2.setPreferredSize(new Dimension(p2.getWidth(), 750)); 
-		p2.setLayout(null); 
-	    
-	    JScrollPane scrollPane = new JScrollPane(p2);
-	    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-	    scrollPane.setBounds(170, 67, 1020, 619); 
-	    panel.add(scrollPane);
 
-	}
 }

@@ -88,8 +88,8 @@ public class Inicio extends JFrame {
 				login();
 			}
 		});
-		btnIniciar.setForeground(new Color(255, 255, 255));
-		btnIniciar.setBackground(new Color(128, 0, 0));
+		btnIniciar.setForeground(new Color(0, 0, 0));
+		btnIniciar.setBackground(new Color(119, 182, 255));
 		btnIniciar.setFont(new Font("Arial Black", Font.BOLD, 32));
 		btnIniciar.setBounds(638, 556, 355, 50);
 		btnIniciar.setFocusable(false);
@@ -225,7 +225,7 @@ public class Inicio extends JFrame {
 	public void elementos() {
 		panel = new JPanel();
 		panel.setBounds(0, 0, 1200, 720);
-		panel.setBackground(new Color(152,166,178));
+		panel.setBackground(new Color(217,217,217));
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
