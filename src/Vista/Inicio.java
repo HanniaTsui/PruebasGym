@@ -53,7 +53,6 @@ public class Inicio extends JFrame {
 		contentPane.setLayout(null);
 		setResizable(false);
 		iniciar();
-	//	registro();
 
 	}
 	
@@ -118,7 +117,7 @@ public class Inicio extends JFrame {
 		btnAcceder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				Sistema c1 = new Sistema();
+				MenuPrincipal c1 = new MenuPrincipal();
 		        c1.setVisible(true);
 			}
 		});
