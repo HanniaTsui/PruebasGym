@@ -31,7 +31,8 @@ import javax.swing.table.DefaultTableModel;
 public class Clases extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane, panel, panelCrear;
+	private JPanel contentPane, panel, panelCrear, panelSup;
+	private final JPanel panelNegro = new JPanel();
 	private JButton btnBuscar, btnVolver, btnPagar;
 	JLabel lblTitulo, lblGym, lblPersona, lblCodigo, lblFecha, lblTlefono, lblCorreoElectrnico, lblFechaDeRegistro, lblMembresia, lblPeterParker, lblNewLabel;
 	private JButton btnRegistros;
@@ -42,14 +43,8 @@ public class Clases extends JFrame {
 	 Color colorBtnGuardar = new Color(0,47,78); 
 	 Color colorBtnEliminar = new Color(0,0,0); 
 	 Color colorBtnEditar = new Color(89,89,89); 
-	 MenuBar menuBar;
 	 
-	 MenuPrincipal mainFrame;
-	   Checador check;
-	    Tarifas tf;
-	    Clientes cl;
-	    Clases clase;
-	    Instructor ins;
+	 
 	 
 	/**
 	 * Launch the application.
@@ -83,16 +78,10 @@ public class Clases extends JFrame {
 		
 		clases();
 	}
-	
-	public void menuBar() {
-		menuBar = new MenuBar(mainFrame, check, tf, cl, this, ins);
-        menuBar.setBounds(0, 0, 1200, 70);
-        panel.add(menuBar);
-	}
+
 	
 	public void clases() {
 		panel();
-		menuBar();
 		JPanel panel_1 = new JPanel();
 	    panel_1.setBounds(36, 170, 1126, 477);
 	    panel.add(panel_1);
@@ -179,8 +168,6 @@ public class Clases extends JFrame {
 	
 	public void nuevaClase() {
 		panel();
-		menuBar();
-	    
 		JLabel lblTitutlo = new JLabel("Nueva clase ");
 	    lblTitutlo.setForeground(new Color(0, 0, 0));
 	    lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -233,7 +220,6 @@ public class Clases extends JFrame {
 	
 	public void inscribirseClase() {
 		panel();
-		menuBar();
 		JLabel lblTitutlo = new JLabel("Clase de ");
 	    lblTitutlo.setForeground(new Color(0, 0, 0));
 	    lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -357,7 +343,6 @@ public class Clases extends JFrame {
 	
 	public void registrosClase() {
 		panel();
-		menuBar();
 		btnVolver=new JButton("Volver");
 	    btnVolver.setForeground(new Color(255, 255, 255));
 	    btnVolver.addActionListener(new ActionListener() {
@@ -485,7 +470,6 @@ public class Clases extends JFrame {
 	
 	public void detallesClase() { //EDITAR CLASE
 		panel();
-		menuBar();
 		JLabel lblTitutlo = new JLabel("Clase de ");
 	    lblTitutlo.setForeground(new Color(0, 0, 0));
 	    lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -625,6 +609,7 @@ public class Clases extends JFrame {
 		panel.setBackground(Color.white);
 		contentPane.add(panel);
 		panel.setLayout(null);
+		menuB();
 	}
 	
 	public void quitarComponentes() {
@@ -644,4 +629,124 @@ public class Clases extends JFrame {
 		lbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		lbl.setFont(new Font("Arial Black", Font.PLAIN, 14));
 	}
+	
+	public void menuB() { // Menu bar 
+		panelSup = new JPanel();
+		panelSup.setBounds(0, 0, 1200, 70);
+		panel.add(panelSup);
+		panelSup.setLayout(new BorderLayout(0, 0));
+		panelSup.add(panelNegro, BorderLayout.CENTER);
+		panelNegro.setOpaque(true);
+		panelNegro.setBackground(new Color(0, 0, 0));
+		panelNegro.setLayout(null);
+		
+		lblTitulo = new JLabel("Larry's");
+		lblTitulo.setVerticalAlignment(SwingConstants.TOP);
+		lblTitulo.setFont(new Font("Forte", Font.PLAIN, 35));
+		lblTitulo.setForeground(new Color(255, 255, 255));
+		lblTitulo.setBounds(20, 3, 131, 40);
+		panelNegro.add(lblTitulo);
+		
+		lblGym = new JLabel("Gym");
+		lblGym.setVerticalAlignment(SwingConstants.TOP);
+		lblGym.setBackground(new Color(255, 255, 255));
+		lblGym.setForeground(new Color(0, 124, 163));
+		lblGym.setFont(new Font("Forte", Font.PLAIN, 35));
+		lblGym.setBounds(155, 3, 97, 40);
+		panelNegro.add(lblGym);
+		
+		JPanel panelBar = new JPanel();
+		panelSup.add(panelBar, BorderLayout.SOUTH);
+		panelBar.setLayout(new GridLayout(1, 0, 0, 0));
+		
+		JButton btnInicio = new JButton("Inicio");
+		btnInicio.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				dispose();
+				MenuPrincipal menuP = new MenuPrincipal();
+				menuP.setVisible(true);
+			}
+		 });
+	     configurarBotones(btnInicio);
+	     JButton btnClientes = new JButton("Clientes");
+	     btnClientes.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					dispose();
+					Clientes cl = new Clientes();
+					cl.setVisible(true);
+				}
+			 });
+	     configurarBotones(btnClientes);
+	     JButton btnTarifas = new JButton("Tarifas");
+	     btnTarifas.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					dispose();
+					Tarifas tf = new Tarifas();
+					tf.setVisible(true);
+				}
+			 });
+	     configurarBotones(btnTarifas);
+	     JButton btnInstructor = new JButton("Instructores");
+	     btnInstructor.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					dispose();
+					 Instructor ins = new Instructor();
+					ins.setVisible(true);
+				}
+			 });
+	     configurarBotones(btnInstructor);
+	     JButton btnClases = new JButton("Clases");
+	     btnClases.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					quitarComponentes();
+					clases();
+				}
+			 });
+	     configurarBotones(btnClases);
+	     JButton btnChecador = new JButton("Checador");
+	     btnChecador.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					dispose();
+				     Checador check = new Checador();
+				     
+					check.setVisible(true);
+				}
+			 });
+	     configurarBotones(btnChecador);
+	     JButton btnSalir = new JButton("Salir");
+	     btnSalir.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					dispose();
+					 Inicio i1 = new Inicio();
+					i1.setVisible(true);
+				}
+			 });
+	     configurarBotones(btnSalir);
+	        
+	        panelBar.add(btnInicio);
+	        panelBar.add(btnClientes);
+	        panelBar.add(btnTarifas);
+	        panelBar.add(btnInstructor);
+	        panelBar.add(btnClases);
+	        panelBar.add(btnChecador);
+	        panelBar.add(btnSalir);
+		}
+
+	public void configurarBotones(JButton btn) {
+    	btn.setForeground(Color.black);
+    	btn.setFont(new Font("Arial Black", Font.BOLD, 12));
+    	btn.setFocusable(false);
+    	btn.setBackground(new Color(217, 217, 217)); 
+    }
+
 }

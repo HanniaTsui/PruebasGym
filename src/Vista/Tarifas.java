@@ -25,21 +25,16 @@ import javax.swing.border.LineBorder;
 public class Tarifas extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane, panel;
-	MenuBar menuBar;
+	private JPanel contentPane, panel, panelSup;
+	JLabel lblTitulo, lblGym;
+	private final JPanel panelNegro = new JPanel();
 	 Color colorBtnVolver = new Color(174,174,174);
 	 Color colorBtnGuardar = new Color(0,47,78); 
 	 Color colorBtnEliminar = new Color(0,0,0); 
 	 Color colorBtnEditar = new Color(89,89,89); 
 	 private JTextField textField_1, textField_2, textField_3, textField_4, textField_5, textField_6, textField_7, textField_8;
 	 JButton btnVolver;
-	 MenuPrincipal mainFrame;
-	   Checador check;
-	    Tarifas tf;
-	    Clientes cl;
-	    Clases clase;
-	    Instructor ins;
-     Inicio i1 = new Inicio();
+
 	/**
 	 * Launch the application.
 	 */
@@ -73,16 +68,10 @@ public class Tarifas extends JFrame {
 		tarifas();
 
 	}
-	
-	public void menuBar() {
-		menuBar = new MenuBar(mainFrame, check, this, cl, clase, ins);
-        menuBar.setBounds(0, 0, 1200, 70);
-        panel.add(menuBar);
-	}
+
 	public void tarifas() {
 	    panel();
 	    
-	    menuBar();
 	    JPanel panel_1 = new JPanel();
 	    panel_1.setBounds(36, 170, 1120, 477);
 	    panel.add(panel_1);
@@ -245,7 +234,6 @@ public class Tarifas extends JFrame {
 
 	public void editarTarifa() {
 		panel();
-		menuBar();
 		elementosEditarNuevaTarifas();
 		JLabel lblTitutlo = new JLabel("Editar tarifa");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
@@ -406,7 +394,6 @@ public class Tarifas extends JFrame {
 	}
 	public void nuevaTarifa() {
 		panel();
-		menuBar();
 		elementosEditarNuevaTarifas();
 		JLabel lblTitutlo = new JLabel("Nueva tarifa");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
@@ -501,6 +488,7 @@ public class Tarifas extends JFrame {
 		panel.setBackground(Color.white);
 		contentPane.add(panel);
 		panel.setLayout(null);
+		menuB();
 	}
 	
 	public void quitarComponentes() {
@@ -520,5 +508,124 @@ public class Tarifas extends JFrame {
 		lbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		lbl.setFont(new Font("Arial Black", Font.PLAIN, 14));
 	}
+	
+	public void menuB() { // Menu bar 
+		panelSup = new JPanel();
+		panelSup.setBounds(0, 0, 1200, 70);
+		panel.add(panelSup);
+		panelSup.setLayout(new BorderLayout(0, 0));
+		panelSup.add(panelNegro, BorderLayout.CENTER);
+		panelNegro.setOpaque(true);
+		panelNegro.setBackground(new Color(0, 0, 0));
+		panelNegro.setLayout(null);
+		
+		lblTitulo = new JLabel("Larry's");
+		lblTitulo.setVerticalAlignment(SwingConstants.TOP);
+		lblTitulo.setFont(new Font("Forte", Font.PLAIN, 35));
+		lblTitulo.setForeground(new Color(255, 255, 255));
+		lblTitulo.setBounds(20, 3, 131, 40);
+		panelNegro.add(lblTitulo);
+		
+		lblGym = new JLabel("Gym");
+		lblGym.setVerticalAlignment(SwingConstants.TOP);
+		lblGym.setBackground(new Color(255, 255, 255));
+		lblGym.setForeground(new Color(0, 124, 163));
+		lblGym.setFont(new Font("Forte", Font.PLAIN, 35));
+		lblGym.setBounds(155, 3, 97, 40);
+		panelNegro.add(lblGym);
+		
+		JPanel panelBar = new JPanel();
+		panelSup.add(panelBar, BorderLayout.SOUTH);
+		panelBar.setLayout(new GridLayout(1, 0, 0, 0));
+		
+		JButton btnInicio = new JButton("Inicio");
+		btnInicio.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				dispose();
+				MenuPrincipal menuP = new MenuPrincipal();
+				menuP.setVisible(true);
+			}
+		 });
+	     configurarBotones(btnInicio);
+	     JButton btnClientes = new JButton("Clientes");
+	     btnClientes.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					dispose();
+					Clientes cl = new Clientes();
+					cl.setVisible(true);
+				}
+			 });
+	     configurarBotones(btnClientes);
+	     JButton btnTarifas = new JButton("Tarifas");
+	     btnTarifas.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					quitarComponentes();
+					tarifas();
+				}
+			 });
+	     configurarBotones(btnTarifas);
+	     JButton btnInstructor = new JButton("Instructores");
+	     btnInstructor.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					dispose();
+					 Instructor ins = new Instructor();
+					ins.setVisible(true);
+				}
+			 });
+	     configurarBotones(btnInstructor);
+	     JButton btnClases = new JButton("Clases");
+	     btnClases.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					dispose();
+					Clases clase = new Clases();
+					clase.setVisible(true);
+				}
+			 });
+	     configurarBotones(btnClases);
+	     JButton btnChecador = new JButton("Checador");
+	     btnChecador.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					dispose();
+				     Checador check = new Checador();
+					check.setVisible(true);
+				}
+			 });
+	     configurarBotones(btnChecador);
+	     JButton btnSalir = new JButton("Salir");
+	     btnSalir.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					dispose();
+					 Inicio i1 = new Inicio();
+					i1.setVisible(true);
+				}
+			 });
+	     configurarBotones(btnSalir);
+	        
+	        panelBar.add(btnInicio);
+	        panelBar.add(btnClientes);
+	        panelBar.add(btnTarifas);
+	        panelBar.add(btnInstructor);
+	        panelBar.add(btnClases);
+	        panelBar.add(btnChecador);
+	        panelBar.add(btnSalir);
+		}
+
+	public void configurarBotones(JButton btn) {
+    	btn.setForeground(Color.black);
+    	btn.setFont(new Font("Arial Black", Font.BOLD, 12));
+    	btn.setFocusable(false);
+    	btn.setBackground(new Color(217, 217, 217)); 
+    }
+
 
 }
