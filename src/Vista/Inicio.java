@@ -6,15 +6,18 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 public class Inicio extends JFrame {
 
@@ -111,21 +114,6 @@ public class Inicio extends JFrame {
 		lblContrasea.setBounds(87, 401, 206, 25);
 		panel.add(lblContrasea);
 		
-		JButton btnAcceder = new JButton("Acceder");
-		btnAcceder.setForeground(new Color(255, 255, 255));
-		btnAcceder.setBackground(new Color(1, 28, 45));
-		btnAcceder.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-				MenuPrincipal c1 = new MenuPrincipal();
-		        c1.setVisible(true);
-			}
-		});
-		btnAcceder.setFont(new Font("Arial Black", Font.BOLD, 24));
-		btnAcceder.setBounds(87, 556, 355, 45);
-		btnAcceder.setFocusable(false);
-		panel.add(btnAcceder);
-		
 		textNombre = new JTextField();
 		textNombre.setBounds(87, 296, 355, 45);
 		textNombre.setFont(new Font("Tahoma", Font.PLAIN, 18));
@@ -137,6 +125,49 @@ public class Inicio extends JFrame {
 		textPass.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		textPass.setBounds(87, 436, 355, 45);
 		panel.add(textPass);
+		
+		System.out.println("Nombre: usuario   \nContraseña: 123"); //ELIMINAR
+		JButton btnAcceder = new JButton("Acceder");
+		btnAcceder.setForeground(new Color(255, 255, 255));
+		btnAcceder.setBackground(new Color(1, 28, 45));
+		btnAcceder.addActionListener(new ActionListener()	{
+        	public void actionPerformed(ActionEvent e) {
+        		String usr = textNombre.getText();
+				String pwd = new String (textPass.getPassword());
+				if (usr.length()<=0){
+					textNombre.setBorder(BorderFactory.createLineBorder(Color.red,3));
+				} else {
+					textNombre.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+				}
+				if(pwd.length()<=0) {
+					textPass.setBorder(BorderFactory.createLineBorder(Color.red,3));
+				} else {
+					textPass.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+				}
+				if (usr.isEmpty() || pwd.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Debe completar todos los campos", "Campos Vacíos", JOptionPane.WARNING_MESSAGE);
+                    return; 
+                }
+				if(usr.equals("usuario")) { //TEMPORAL 
+					if(pwd.equals("123")) 	{
+						dispose();
+						MenuPrincipal c1 = new MenuPrincipal();
+				        c1.setVisible(true);
+					}
+					else {
+		                JOptionPane.showMessageDialog(null, "Usuario o ontraseña incorrecta", "Error", JOptionPane.WARNING_MESSAGE);
+		            }
+				}else {
+					JOptionPane.showMessageDialog(null, "Usuario no encontrado","Error", JOptionPane.WARNING_MESSAGE);
+				}
+                
+			}});      
+		panel.add(btnAcceder);
+		btnAcceder.setFont(new Font("Arial Black", Font.BOLD, 24));
+		btnAcceder.setBounds(87, 556, 355, 45);
+		btnAcceder.setFocusable(false);
+		panel.add(btnAcceder);
+		
 		
 		JLabel lblRegis = new JLabel("______");
 		lblRegis.setForeground(new Color(0, 0, 0));
