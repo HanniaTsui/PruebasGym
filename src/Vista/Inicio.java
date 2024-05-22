@@ -134,12 +134,12 @@ public class Inicio extends JFrame {
         	public void actionPerformed(ActionEvent e) {
         		String usr = textNombre.getText();
 				String pwd = new String (textPass.getPassword());
-				if (usr.length()<=0){
+				if (usr.isEmpty()){
 					textNombre.setBorder(BorderFactory.createLineBorder(Color.red,3));
 				} else {
 					textNombre.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 				}
-				if(pwd.length()<=0) {
+				if(pwd.isEmpty()) {
 					textPass.setBorder(BorderFactory.createLineBorder(Color.red,3));
 				} else {
 					textPass.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
@@ -198,6 +198,14 @@ public class Inicio extends JFrame {
 		btnAceptar.setFocusable(false);
 		btnAceptar.setFont(new Font("Arial Black", Font.BOLD, 24));
 		btnAceptar.setBounds(87, 600, 355, 45);
+		btnAceptar.addActionListener(new ActionListener() {
+	        public void actionPerformed(ActionEvent e) {
+	            if (validarCampos()) {
+	                JOptionPane.showMessageDialog(panel, "Registro exitoso");
+	                // AGREGAR CAMBIAR A MENU PRINCIPAL
+	            }
+	        }
+	    });
 		panel.add(btnAceptar);
 		
 		textNombre = new JTextField();
@@ -318,4 +326,58 @@ public class Inicio extends JFrame {
 		lblNewLabel.setBounds(87, 162, 360, 28);
 		panel.add(lblNewLabel);
 	}
+	
+	private boolean validarCampos() { // Validación de campos de registro
+	    String nombre = textNombre.getText().trim();
+	    String email = textEmail.getText().trim();
+	    String password = new String(textPass.getPassword());
+	    String confirmarPassword = new String(textPass2.getPassword());
+	    
+	    textNombre.setBorder(new JTextField().getBorder());
+        textEmail.setBorder(new JTextField().getBorder());
+        textPass.setBorder(new JTextField().getBorder());
+        textPass2.setBorder(new JTextField().getBorder());
+        
+	    if (nombre.isEmpty()) {
+	    	textNombre.setBorder(new LineBorder(Color.RED, 3));
+	    }
+	    if (email.isEmpty()) {
+	    	 textEmail.setBorder(new LineBorder(Color.RED, 3));
+	    }
+	    
+	    if (password.isEmpty()) {
+	    	textPass.setBorder(new LineBorder(Color.RED, 3));
+	    }
+	    if (confirmarPassword.isEmpty()) {
+	    	textPass2.setBorder(new LineBorder(Color.RED, 3));
+	    }
+	    if (nombre.isEmpty() || email.isEmpty() || password.isEmpty() || confirmarPassword.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Debe completar todos los campos", "Campos Vacíos", JOptionPane.WARNING_MESSAGE);
+            return false; 
+        }
+	    if (!esEmailValido(email)) {
+	    	JOptionPane.showMessageDialog(null, "Correo electrónico no válido", "Error", JOptionPane.WARNING_MESSAGE);
+	    	return false;
+	    }
+   	  
+
+	    if (!password.equals(confirmarPassword)) {
+	    	textPass.setBorder(new LineBorder(Color.RED, 3));
+            textPass2.setBorder(new LineBorder(Color.RED, 3));
+	        JOptionPane.showMessageDialog(panel, "Las contraseñas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
+	        return false;
+	    } 
+	    return true;
+	}
+	
+	private boolean esEmailValido(String email) {
+		String[] dominios = {".com", ".mx"};
+        for (String dominio : dominios) {
+            if (email.endsWith(dominio)) {
+                return true;
+            }
+        }
+        return false;
+	}
+
 }
