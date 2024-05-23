@@ -148,6 +148,7 @@ public class Inicio extends JFrame {
                     JOptionPane.showMessageDialog(null, "Debe completar todos los campos", "Campos Vacíos", JOptionPane.WARNING_MESSAGE);
                     return; 
                 }
+				
 				if(usr.equals("usuario")) { //TEMPORAL 
 					if(pwd.equals("123")) 	{
 						dispose();
@@ -159,8 +160,7 @@ public class Inicio extends JFrame {
 		            }
 				}else {
 					JOptionPane.showMessageDialog(null, "Usuario no encontrado","Error", JOptionPane.WARNING_MESSAGE);
-				}
-                
+				}               
 			}});      
 		panel.add(btnAcceder);
 		btnAcceder.setFont(new Font("Arial Black", Font.BOLD, 24));

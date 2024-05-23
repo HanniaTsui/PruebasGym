@@ -38,20 +38,16 @@ public class Clientes extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, panel, panelInfo, panelCrear, panelMenuVertical, panelCredencial, p2, panelSup;
 	private final JPanel panelNegro = new JPanel();
-	private JButton btnBuscar, btnElim, btnVolver,btnHistorial, btnDescargarCredencial, btnReporte, btnGuardar, btnCancelar, btnPagar, btnEditar;
+	private JButton btnBuscar, btnElim, btnReporte, btnGuardar, btnCancelar, btnPagar, btnEditar;
 	JLabel lblTitulo, lblGym, lblPersona, lblCodigo, lblFecha, lblTlefono, lblCorreoElectrnico, lblFechaDeRegistro, lblMembresia, lblPeterParker, lblNewLabel;
-	private JButton btnDetalles, btnCrear, btnRegistros;
+	private JButton btnDetalles, btnCrear;
 	private JTextField textField;
 	 private JComboBox<String> comboMes;
 	 private JLabel lblNombres, lblApellidos, lblTotalPago, lblMembresia_1, lblMtodoDePago, lblFoto;
 	 private JTextField textNombre, textApellidos, textEmail, textNacimiento, textTel;
 	 private JComboBox comboTipo, comboPago;
 	 String ventanaActual;
-	 private JTable table;
 	 private File selectedFile;
-	 private JTextField textField_1, textField_2, textField_3, textField_4, textField_5, textField_6, textField_7, textField_8;
-	 private JLabel lblUsuariosInscritos, lblNewLabel_2, lblNewLabel_3,lblNewLabel_4, lblNewLabel_5, lblEspec;
-	 private JButton btnEdit, btnEliminar_2;
 	 Color colorBtnVolver = new Color(174,174,174);
 	 Color colorBtnGuardar = new Color(0,47,78); 
 	 Color colorBtnEliminar = new Color(0,0,0); 
@@ -292,10 +288,11 @@ public class Clientes extends JFrame {
 	    textEmail.setBounds(70, 255, 200, 30);
 	    panelCrear.add(textEmail);
 	    
-	    textNacimiento = new JTextField();
-	    textNacimiento.setColumns(10);
-	    textNacimiento.setBounds(360, 73, 200, 30);
-	    panelCrear.add(textNacimiento);
+	    JSpinner spinnerFechaNacimiento = new JSpinner(new SpinnerDateModel());
+	    JSpinner.DateEditor dateEditorFechaNac= new JSpinner.DateEditor(spinnerFechaNacimiento, "dd/MM/yyyy");
+	    spinnerFechaNacimiento.setEditor(dateEditorFechaNac);
+	    spinnerFechaNacimiento.setBounds(360, 73, 200, 30);
+	    panelCrear.add(spinnerFechaNacimiento);
 	    
 	    textTel = new JTextField();
 	    textTel.setColumns(10);
@@ -467,10 +464,11 @@ public class Clientes extends JFrame {
 	    textEmail.setBounds(70, 255, 200, 30);
 	    panelCrear.add(textEmail);
 	    
-	    textNacimiento = new JTextField();
-	    textNacimiento.setColumns(10);
-	    textNacimiento.setBounds(360, 73, 200, 30);
-	    panelCrear.add(textNacimiento);
+	    JSpinner spinnerFechaNacimiento = new JSpinner(new SpinnerDateModel());
+	    JSpinner.DateEditor dateEditorFechaNac= new JSpinner.DateEditor(spinnerFechaNacimiento, "dd/MM/yyyy");
+	    spinnerFechaNacimiento.setEditor(dateEditorFechaNac);
+	    spinnerFechaNacimiento.setBounds(360, 73, 200, 30);
+	    panelCrear.add(spinnerFechaNacimiento);
 	    
 	    textTel = new JTextField();
 	    textTel.setColumns(10);
