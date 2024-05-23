@@ -1,5 +1,8 @@
 package Vista;
 
+import controlador.ClientesControlador;
+import controlador.MenuControlador;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -33,7 +36,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
-public class Clientes extends JFrame {
+public class Clientes {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, panel, panelInfo, panelCrear, panelMenuVertical, panelCredencial, p2, panelSup;
@@ -51,44 +54,20 @@ public class Clientes extends JFrame {
 	 Color colorBtnVolver = new Color(174,174,174);
 	 Color colorBtnGuardar = new Color(0,47,78); 
 	 Color colorBtnEliminar = new Color(0,0,0); 
-	 Color colorBtnEditar = new Color(89,89,89); 
+	 Color colorBtnEditar = new Color(89,89,89);
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Clientes frame = new Clientes();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	 private ClientesControlador controlador;
 
 	/**
 	 * Create the frame.
 	 */
-	public Clientes() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(1200,720);
-		setTitle("Larry's Gym");
-		setLocationRelativeTo(null);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		setResizable(false);
-		
-		clientes();
+	public Clientes(ClientesControlador controlador) {
+		this.controlador = controlador;
 	}
 	
-	public void clientes()  { // Clientes registrados
-		menuVerticalClientes();
-		panel();
+	public JPanel clientes()  {
+		JPanel panel = getMenu();
+		panel.add(menuVerticalClientes());
 		JLabel lblTitutlo = new JLabel("Clientes registrados");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
 		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -113,6 +92,8 @@ public class Clientes extends JFrame {
 		btnFiltro.setForeground(new Color(0, 0, 0));
 		btnFiltro.setBounds(943, 120, 187, 30);
 		panel.add(btnFiltro);
+
+		return panel;
 	}
 
 	public void botonesDetallesClientes(JButton btn) {
@@ -147,11 +128,12 @@ public class Clientes extends JFrame {
 		btn.setFocusable(false);
 		btn.setBorder(null);
 	}
+
+
 	
-	public void menuVerticalClientes()	{
+	public JPanel menuVerticalClientes() {
 		panelMenuVertical = new JPanel();
 		panelMenuVertical.setBackground(Color.black);
-		contentPane.add(panelMenuVertical);
 		panelMenuVertical.setSize(170,620);
 		panelMenuVertical.setLocation(0,70);
 		panelMenuVertical.setLayout(null);
@@ -159,8 +141,7 @@ public class Clientes extends JFrame {
 		JButton btnReg = new JButton("Registros");
 		btnReg.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				quitarComponentes();
-				clientes();
+				controlador.clientes();
 			}
 		});
 		confBtnMenuVertical(btnReg);
@@ -173,8 +154,7 @@ public class Clientes extends JFrame {
 		confBtnMenuVertical(btnDetalles);
 		btnDetalles.addActionListener(new ActionListener()	{
         	public void actionPerformed(ActionEvent e) {
-        		quitarComponentes();
-        		detallesClientes();
+        		controlador.detallesCliente();
 		        }
         });
 		panelMenuVertical.add(btnDetalles);
@@ -184,9 +164,8 @@ public class Clientes extends JFrame {
 		confBtnMenuVertical(btnCrear);
 		btnCrear.addActionListener(new ActionListener()	{
         	public void actionPerformed(ActionEvent e) {
-        		quitarComponentes();
-        		crearCliente();
-		        }
+        		controlador.crearClientes();
+			}
         });
 		btnCrear.setBounds(0, 264, 170, 90);
 		panelMenuVertical.add(btnCrear);
@@ -196,8 +175,7 @@ public class Clientes extends JFrame {
 		confBtnMenuVertical(btnEditar);
 		btnEditar.addActionListener(new ActionListener()	{
         	public void actionPerformed(ActionEvent e) {
-        		quitarComponentes();
-        		editarClientes();
+        		controlador.editarCliente();
 		        }
         });
 		btnEditar.setBounds(0, 396, 170, 90);
@@ -206,33 +184,35 @@ public class Clientes extends JFrame {
 		JButton btnEliminar = new JButton("Eliminar");
 		btnEliminar.addActionListener(new ActionListener()	{
         	public void actionPerformed(ActionEvent e) {
-        		quitarComponentes();
-        		eliminarCliente();
+        		controlador.eliminarCliente();
 		        }
         });
 		confBtnMenuVertical(btnEliminar);
 		btnEliminar.setBounds(0, 520, 170, 90);
 		panelMenuVertical.add(btnEliminar);
-		
+
+		return panelMenuVertical;
 	}
 	
-	public void panelCrearEditar() {
-		p2 = new JPanel();
+	public JPanel panelCrearEditar() {
+		JPanel p2 = new JPanel();
 		p2.setBackground(new Color(255, 255, 255));
 		p2.setPreferredSize(new Dimension(p2.getWidth(), 750)); 
-		p2.setLayout(null); 
-	    
-	    JScrollPane scrollPane = new JScrollPane(p2);
-	    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-	    scrollPane.setBounds(170, 67, 1020, 620); 
-	    panel.add(scrollPane);
+		p2.setLayout(null);
 
+		return p2;
 	}
 	
-	public void crearCliente() {
-		menuVerticalClientes();
-		panel();
-		panelCrearEditar();
+	public JPanel crearCliente() {
+		JPanel panel = getMenu();
+		panel.add(menuVerticalClientes());
+
+		JPanel p2 = panelCrearEditar();
+
+		JScrollPane scrollPane = new JScrollPane(p2);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setBounds(170, 67, 1020, 620);
+		panel.add(scrollPane);
 		
 		JLabel lblTitutlo = new JLabel("Nuevo cliente");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
@@ -355,7 +335,7 @@ public class Clientes extends JFrame {
 				subirFoto();
 				 if (selectedFile != null) {
 	                    lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
-	                    revalidate(); repaint();
+	                    panel.revalidate(); panel.repaint();
 	              }	
 			}
 	    });
@@ -388,7 +368,6 @@ public class Clientes extends JFrame {
 		btnPagar.addActionListener(new ActionListener() {
     	public void actionPerformed(ActionEvent e) {
     		ticket();
-    	//	quitarComponentes(); crearCliente(); // Despues de imprimir, se deben limpiar los elementos
     		}
 	    });
 		btnPagar.setFocusable(false);
@@ -401,13 +380,20 @@ public class Clientes extends JFrame {
 	    configurarLabelsIzq(lblTotalPago);
 	    lblTotalPago.setBounds(652, 338, 130, 20);
 	    panelCrear.add(lblTotalPago);
-	    
+
+		return panel;
 	}
 	
-	public void editarClientes() {
-		menuVerticalClientes();
-		panel();
-		panelCrearEditar();
+	public JPanel editarClientes() {
+		JPanel panel = getMenu();
+		panel.add(menuVerticalClientes());
+
+		JPanel p2 = panelCrearEditar();
+
+		JScrollPane scrollPane = new JScrollPane(p2);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setBounds(170, 67, 1020, 620);
+		panel.add(scrollPane);
 		
 		JLabel lblTitutlo = new JLabel("Editar cliente");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
@@ -531,7 +517,7 @@ public class Clientes extends JFrame {
 			subirFoto();
 			 if (selectedFile != null) {
                    lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
-                   revalidate(); repaint();
+                   panel.revalidate(); panel.repaint();
              }
 			}
 	    });
@@ -614,13 +600,14 @@ public class Clientes extends JFrame {
 	    btnGuardar.setBounds(462, 490, 120, 40);
 	    panelCrear.add(btnGuardar);
 		
-		
+		return panel;
 	}
 	
 
-	public void detallesClientes() {
-		menuVerticalClientes();
-		panel();
+	public JPanel detallesClientes() {
+		JPanel panel = getMenu();
+		panel.add(menuVerticalClientes());
+
 		JLabel lblTitutlo = new JLabel("Detalles del cliente");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
 		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -680,7 +667,6 @@ public class Clientes extends JFrame {
 		        	 panelInfo.repaint();
 		        	 panelInfo.revalidate();
 		        	 panelInfo.setVisible(true);
-		             // Resetear el color de todos los botones
 		             for (JButton boton : botones) {
 		                 boton.setBackground(new Color(174, 174, 174));
 		             }
@@ -740,7 +726,8 @@ public class Clientes extends JFrame {
 	    btnReporte.setBackground(colorBtnGuardar);
 	    btnReporte.setBounds(954, 177, 183, 40);
 	    panel.add(btnReporte);
-	    
+
+		return panel;
 	}
 	
 	public void panelDetalles() {
@@ -998,20 +985,16 @@ public class Clientes extends JFrame {
         if (returnValue == JFileChooser.APPROVE_OPTION) {
              selectedFile = fileChooser.getSelectedFile();
         } else {
-            JOptionPane.showMessageDialog(this, "Agrega una imagen valida");
+            JOptionPane.showMessageDialog(null, "Agrega una imagen valida");
         }
       
 	}
-	
-	
-	public void panel() {
-		panel = new JPanel();
-		panel.setBounds(0, 0, 1200, 720);
-		panel.setBackground(Color.white);
-		contentPane.add(panel);
-		panel.setLayout(null);
-		menuB();
+
+	public JPanel getMenu() {
+		MenuControlador menuControlador = new MenuControlador();
+		return menuControlador.getPanelMenu();
 	}
+	
 	
 	public void quitarComponentes() {
 		contentPane.removeAll();
@@ -1019,9 +1002,10 @@ public class Clientes extends JFrame {
         contentPane.repaint();
 	}
 	
-	public void eliminarCliente() {
-		menuVerticalClientes();
-		panel();
+	public JPanel eliminarCliente() {
+		JPanel panel = getMenu();
+		panel.add(menuVerticalClientes());
+
 		JLabel lblTitutlo = new JLabel("Eliminar cliente");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
 		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -1130,119 +1114,10 @@ public class Clientes extends JFrame {
 	    lblPeterParker = new JLabel("Usuario");
 	    configurarLabels(lblPeterParker);lblPeterParker.setBounds(36, 260, 217, 20);
 	    panelCredencial.add(lblPeterParker);
+
+		return panel;
 	}
 	
-	public void menuB() { // Menu bar 
-		panelSup = new JPanel();
-		panelSup.setBounds(0, 0, 1200, 70);
-		panel.add(panelSup);
-		panelSup.setLayout(new BorderLayout(0, 0));
-		panelSup.add(panelNegro, BorderLayout.CENTER);
-		panelNegro.setOpaque(true);
-		panelNegro.setBackground(new Color(0, 0, 0));
-		panelNegro.setLayout(null);
-		
-		lblTitulo = new JLabel("Larry's");
-		lblTitulo.setVerticalAlignment(SwingConstants.TOP);
-		lblTitulo.setFont(new Font("Forte", Font.PLAIN, 35));
-		lblTitulo.setForeground(new Color(255, 255, 255));
-		lblTitulo.setBounds(20, 3, 131, 40);
-		panelNegro.add(lblTitulo);
-		
-		lblGym = new JLabel("Gym");
-		lblGym.setVerticalAlignment(SwingConstants.TOP);
-		lblGym.setBackground(new Color(255, 255, 255));
-		lblGym.setForeground(new Color(0, 124, 163));
-		lblGym.setFont(new Font("Forte", Font.PLAIN, 35));
-		lblGym.setBounds(155, 3, 97, 40);
-		panelNegro.add(lblGym);
-		
-		JPanel panelBar = new JPanel();
-		panelSup.add(panelBar, BorderLayout.SOUTH);
-		panelBar.setLayout(new GridLayout(1, 0, 0, 0));
-		
-		JButton btnInicio = new JButton("Inicio");
-		btnInicio.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				dispose();
-				MenuPrincipal menuP = new MenuPrincipal();
-				menuP.setVisible(true);
-			}
-		 });
-	     configurarBotones(btnInicio);
-	     JButton btnClientes = new JButton("Clientes");
-	     btnClientes.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub
-					quitarComponentes();
-					clientes();
-				}
-			 });
-	     configurarBotones(btnClientes);
-	     JButton btnTarifas = new JButton("Tarifas");
-	     btnTarifas.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dispose();
-					Tarifas tf = new Tarifas();
-					tf.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnTarifas);
-	     JButton btnInstructor = new JButton("Instructores");
-	     btnInstructor.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dispose();
-					 Instructor ins = new Instructor();
-					ins.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnInstructor);
-	     JButton btnClases = new JButton("Clases");
-	     btnClases.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dispose();
-					Clases clase = new Clases();
-					clase.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnClases);
-	     JButton btnChecador = new JButton("Checador");
-	     btnChecador.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dispose();
-				     Checador check = new Checador();
-				     
-					check.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnChecador);
-	     JButton btnSalir = new JButton("Salir");
-	     btnSalir.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub
-					dispose();
-					 Inicio i1 = new Inicio();
-					i1.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnSalir);
-	        
-	        panelBar.add(btnInicio);
-	        panelBar.add(btnClientes);
-	        panelBar.add(btnTarifas);
-	        panelBar.add(btnInstructor);
-	        panelBar.add(btnClases);
-	        panelBar.add(btnChecador);
-	        panelBar.add(btnSalir);
-		}
 
 	public void configurarBotones(JButton btn) {
     	btn.setForeground(Color.black);
