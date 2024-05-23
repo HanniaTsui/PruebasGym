@@ -19,6 +19,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import Controlador.Controlador;
+
 public class Inicio extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -26,25 +28,10 @@ public class Inicio extends JFrame {
 	private JTextField textNombre, textEmail;
 	private JPasswordField textPass,  textPass2;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Inicio frame = new Inicio();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
+	public JButton btnIniciar, btnAcceder,btnAceptar,botonRegistro,btnInicio;
+	
+	Controlador controlador;
+	
 	public Inicio() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(1200,720);
@@ -55,6 +42,7 @@ public class Inicio extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		setResizable(false);
+		controlador=new Controlador(this);
 		iniciar();
 
 	}
@@ -83,7 +71,7 @@ public class Inicio extends JFrame {
 		lblInicio.setBounds(440, 82, 750, 202);
 		panel.add(lblInicio);
 		
-		JButton btnIniciar = new JButton("Iniciar");
+		btnIniciar = new JButton("Iniciar");
 		btnIniciar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				quitarComponentes();
@@ -126,7 +114,7 @@ public class Inicio extends JFrame {
 		textPass.setBounds(87, 436, 355, 45);
 		panel.add(textPass);
 		
-		System.out.println("Nombre: usuario   \nContraseña: 123"); //ELIMINAR
+		
 		JButton btnAcceder = new JButton("Acceder");
 		btnAcceder.setForeground(new Color(255, 255, 255));
 		btnAcceder.setBackground(new Color(1, 28, 45));
@@ -148,19 +136,15 @@ public class Inicio extends JFrame {
                     JOptionPane.showMessageDialog(null, "Debe completar todos los campos", "Campos Vacíos", JOptionPane.WARNING_MESSAGE);
                     return; 
                 }
-				
-				if(usr.equals("usuario")) { //TEMPORAL 
-					if(pwd.equals("123")) 	{
+				if(controlador.validacion(usr, pwd)) { //valida con la base de datos mediante metodo validacion en controlador 
 						dispose();
 						MenuPrincipal c1 = new MenuPrincipal();
 				        c1.setVisible(true);
-					}
-					else {
-		                JOptionPane.showMessageDialog(null, "Usuario o ontraseña incorrecta", "Error", JOptionPane.WARNING_MESSAGE);
-		            }
+		
 				}else {
-					JOptionPane.showMessageDialog(null, "Usuario no encontrado","Error", JOptionPane.WARNING_MESSAGE);
-				}               
+					JOptionPane.showMessageDialog(null, "Usuario y contraseña incorrecta","Error", JOptionPane.WARNING_MESSAGE);
+				}
+                
 			}});      
 		panel.add(btnAcceder);
 		btnAcceder.setFont(new Font("Arial Black", Font.BOLD, 24));
@@ -176,6 +160,25 @@ public class Inicio extends JFrame {
 		lblRegis.setBounds(87, 133, 224, 98);
 		panel.add(lblRegis);
 	}
+	//getters
+		/*public JTextField getTextNombre() {
+			return textNombre;
+		}
+
+		public JPasswordField getTextPass() {
+			return textPass;
+		}
+		public JTextField getTextEmail() {
+			return textEmail;
+		}
+
+
+		public JPasswordField getTextPass2() {
+			return textPass2;
+		}
+		*/
+	
+
 	
 	public void registro() {
 		elementos();
@@ -246,7 +249,7 @@ public class Inicio extends JFrame {
 		textPass2.setBounds(87, 535, 355, 40);
 		panel.add(textPass2);
 		
-		JLabel lblRegis = new JLabel("_____");
+		JLabel lblRegis = new JLabel("___");
 		lblRegis.setForeground(new Color(0, 0, 0));
 		lblRegis.setVerticalAlignment(SwingConstants.TOP);
 		lblRegis.setFont(new Font("Tahoma", Font.BOLD, 50));
@@ -319,7 +322,7 @@ public class Inicio extends JFrame {
 		lblPesa.setBounds(174, 25, 182, 116);
 		panel.add(lblPesa);
 		
-		JLabel lblNewLabel = new JLabel("_______________________");
+		JLabel lblNewLabel = new JLabel("_________");
 		lblNewLabel.setForeground(new Color(0, 0, 0));
 		lblNewLabel.setVerticalAlignment(SwingConstants.TOP);
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 24));
@@ -367,7 +370,12 @@ public class Inicio extends JFrame {
 	        JOptionPane.showMessageDialog(panel, "Las contraseñas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
 	        return false;
 	    } 
+
+	    controlador.registrar(nombre, password,email);
 	    return true;
+	    
+
+	   
 	}
 	
 	private boolean esEmailValido(String email) {
@@ -378,6 +386,11 @@ public class Inicio extends JFrame {
             }
         }
         return false;
+
+
 	}
 
-}
+	}
+
+
+
