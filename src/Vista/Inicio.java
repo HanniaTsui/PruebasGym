@@ -252,11 +252,11 @@ public class Inicio {
 		textPass2.setBounds(87, 535, 355, 40);
 		panel.add(textPass2);
 		
-		JLabel lblRegis = new JLabel("___");
+		JLabel lblRegis = new JLabel("____");
 		lblRegis.setForeground(new Color(0, 0, 0));
 		lblRegis.setVerticalAlignment(SwingConstants.TOP);
-		lblRegis.setFont(new Font("Tahoma", Font.BOLD, 50));
-		lblRegis.setBounds(285, 133, 180, 98);
+		lblRegis.setFont(new Font("Tahoma", Font.BOLD, 55));
+		lblRegis.setBounds(291, 128, 195, 98);
 		panel.add(lblRegis);
 
 		return panel;
@@ -311,11 +311,11 @@ public class Inicio {
 		lblPesa.setBounds(174, 25, 182, 116);
 		panel.add(lblPesa);
 		
-		JLabel lblNewLabel = new JLabel("_________");
+		JLabel lblNewLabel = new JLabel("_______________________");
 		lblNewLabel.setForeground(new Color(0, 0, 0));
 		lblNewLabel.setVerticalAlignment(SwingConstants.TOP);
-		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 24));
-		lblNewLabel.setBounds(87, 162, 360, 28);
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 23));
+		lblNewLabel.setBounds(87, 162, 420, 28);
 		panel.add(lblNewLabel);
 
 		return panel;
