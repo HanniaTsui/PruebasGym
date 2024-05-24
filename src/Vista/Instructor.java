@@ -138,8 +138,7 @@ public class Instructor{
 	    		int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar este instructor?", "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
 	             if (op == JOptionPane.OK_OPTION) {
 	                 JOptionPane.showMessageDialog(null, "Instructor eliminado con éxito", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
-	                 quitarComponentes();
-	                 instructor();
+	                 controlador.instructor();
 	             }
 	    	}
 	    });
@@ -571,11 +570,7 @@ public class Instructor{
 		lbl.setHorizontalAlignment(SwingConstants.LEFT);
 		lbl.setFont(new Font("Arial Black", Font.PLAIN, 14));
 	}
-	public void quitarComponentes() {
-		contentPane.removeAll();
-        contentPane.revalidate();
-        contentPane.repaint();
-	}
+	
 	
 	public void configurarLabels(JLabel lbl) { // configurar Labels al centro
 		lbl.setForeground(new Color(0, 0, 0));
