@@ -31,8 +31,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
-import Controlador.InstructorControlador;
-import Controlador.MenuControlador;
+import controlador.InstructorControlador;
+import controlador.MenuControlador;
 
 public class Instructor{
 

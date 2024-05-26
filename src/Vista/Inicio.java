@@ -16,8 +16,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
-import Controlador.InicioControlador;
-import Controlador.MenuControlador;
+import controlador.InicioControlador;
+import controlador.MenuControlador;
 
 public class Inicio {
 

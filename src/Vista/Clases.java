@@ -1,8 +1,5 @@
 package Vista;
 
-import Controlador.ClasesControlador;
-import Controlador.MenuControlador;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -30,6 +27,9 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
+
+import controlador.ClasesControlador;
+import controlador.MenuControlador;
 
 public class Clases {
 

@@ -1,7 +1,5 @@
 package Vista;
 
-import Controlador.InicioControlador;
-import Controlador.MenuControlador;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -22,6 +20,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+
+import controlador.InicioControlador;
+import controlador.MenuControlador;
 
 
 public class MenuPrincipal {

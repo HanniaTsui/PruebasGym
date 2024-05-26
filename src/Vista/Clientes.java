@@ -1,8 +1,5 @@
 package Vista;
 
-import Controlador.ClientesControlador;
-import Controlador.MenuControlador;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -35,6 +32,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+
+import controlador.ClientesControlador;
+import controlador.MenuControlador;
 
 public class Clientes {
 
