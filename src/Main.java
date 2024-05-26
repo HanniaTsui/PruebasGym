@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 import java.awt.EventQueue;
 
 import Controlador.Controlador;
@@ -23,29 +23,3 @@ public class Main {
 	}
 
 }
-=======
-import java.awt.EventQueue;
-
-import Controlador.Controlador;
-import Modelo.BaseDatos;
-import Vista.Inicio;
-
-public class Main {
-
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Inicio inicio1= new Inicio();
-					BaseDatos.optenerIstancia().cargarBase();
-					inicio1.setVisible(true);
-					//Controlador controlador = new Controlador(inicio1);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-}
->>>>>>> 286ecf773d53f264f29560c74bf480289b9f25c3
