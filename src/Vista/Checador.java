@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,13 +29,14 @@ import javax.swing.table.DefaultTableModel;
 import controlador.ChecadorControlador;
 import controlador.MenuControlador;
 
-public class Checador extends JFrame {
+public class Checador extends JFrame  {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, panel, panelSup;
 	private final JPanel panelNegro = new JPanel();
 	JLabel lblTitulo, lblGym;
 	JButton btnVolver,btnBuscar;
+	JTextField textID;
 	
 	private ChecadorControlador controlador;
 
@@ -104,12 +107,29 @@ public class Checador extends JFrame {
 		lblIngresar.setBounds(733, 200, 100, 20);
 		panel.add(lblIngresar);
 	    
-		JTextField textID = new JTextField("");
+		textID = new JTextField("");
 		textID.setBackground(new Color(217, 217, 217));
 	    textID.setColumns(10);
 	    textID.setForeground(Color.black);
 	    textID.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 	    textID.setBounds(833, 200, 150, 20);
+	    textID.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char l = e.getKeyChar();
+                if (!Character.isDigit(l)) {
+                    e.consume();
+                }
+            }
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+            }
+		});
+		textID.setColumns(10);
 	    panel.add(textID);
 	    
 	    btnBuscar = new JButton("");
