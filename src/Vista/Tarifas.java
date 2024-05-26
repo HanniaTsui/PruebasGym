@@ -1,5 +1,9 @@
 package Vista;
 
+import Controlador.ClientesControlador;
+import Controlador.MenuControlador;
+import Controlador.TarifasControlador;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -22,7 +26,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-public class Tarifas extends JFrame {
+public class Tarifas {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, panel, panelSup;
@@ -35,43 +39,19 @@ public class Tarifas extends JFrame {
 	 private JTextField textField_1, textField_2, textField_3, textField_4, textField_5, textField_6, textField_7, textField_8;
 	 JButton btnVolver;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Tarifas frame = new Tarifas();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	 private TarifasControlador controlador;
 
 	/**
 	 * Create the frame.
 	 */
-	public Tarifas() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(1200,720);
-		setTitle("Larry's Gym");
-		setLocationRelativeTo(null);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		setResizable(false);
+	public Tarifas(TarifasControlador controlador) {
 		
-		tarifas();
-
+		this.controlador = controlador;
 	}
 
-	public void tarifas() {
-	    panel();
-	    
+	public JPanel tarifas() {
+	    JPanel panel = getMenu();
+
 	    JPanel panel_1 = new JPanel();
 	    panel_1.setBounds(36, 170, 1120, 477);
 	    panel.add(panel_1);
@@ -82,8 +62,7 @@ public class Tarifas extends JFrame {
         btnChecador.setFocusable(false);
         btnChecador.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		quitarComponentes();
-	    		nuevaTarifa();
+				controlador.nuevaTarifa();
 	    	}
 	    });
         btnChecador.setBackground(colorBtnGuardar);
@@ -204,8 +183,7 @@ public class Tarifas extends JFrame {
 	        JButton btnEditar = new JButton("Editar");
 	        btnEditar.addActionListener(new ActionListener() {
 		    	public void actionPerformed(ActionEvent e) {
-		    		quitarComponentes();
-		    		editarTarifa();
+					controlador.editarTarifa();
 		    	}
 		    });
 	        btnEditar.setForeground(Color.white);
@@ -229,12 +207,13 @@ public class Tarifas extends JFrame {
 	    lblTitutlo.setBounds(427, 114, 346, 33);
 	    panel.add(lblTitutlo);
 	    
-	    
+	    return panel;
 	}
 
-	public void editarTarifa() {
-		panel();
-		elementosEditarNuevaTarifas();
+	public JPanel editarTarifa() {
+		JPanel panel = getMenu();
+
+		elementosEditarNuevaTarifas(panel);
 		JLabel lblTitutlo = new JLabel("Editar tarifa");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
 		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -252,8 +231,7 @@ public class Tarifas extends JFrame {
 		btnGuardar_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "¡Nuevos cambios realizados con éxito!", "Edición exitosa", JOptionPane.INFORMATION_MESSAGE);
-                quitarComponentes();
-                tarifas();
+                controlador.tarifas();
 			}
 		});
 		btnGuardar_1.setForeground(Color.WHITE);
@@ -269,8 +247,7 @@ public class Tarifas extends JFrame {
 				int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar esta tarifa?", "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
 	             if (op == JOptionPane.OK_OPTION) {
 	                 JOptionPane.showMessageDialog(null, "Tarifa eliminada con éxito", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
-	                 quitarComponentes();
-	                 tarifas();
+					 controlador.tarifas();
 	             }
 			}
 		});
@@ -279,16 +256,17 @@ public class Tarifas extends JFrame {
 		btnEliminar_1.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 		btnEliminar_1.setBackground(colorBtnEliminar);
 		btnEliminar_1.setBounds(345, 593, 120, 40);
-		panel.add(btnEliminar_1);  
+		panel.add(btnEliminar_1);
+
+		return panel;
 	}
 	
-	public void elementosEditarNuevaTarifas() {
+	public void elementosEditarNuevaTarifas(JPanel panel) {
 		btnVolver=new JButton("Volver");
 	    btnVolver.setForeground(new Color(255, 255, 255));
 	    btnVolver.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		quitarComponentes();
-	    		tarifas();
+				controlador.tarifas();
 	    	}
 	    });
 	    btnVolver.setFocusable(false);
@@ -392,9 +370,9 @@ public class Tarifas extends JFrame {
 		panel.add(textField_8);
 	
 	}
-	public void nuevaTarifa() {
-		panel();
-		elementosEditarNuevaTarifas();
+	public JPanel nuevaTarifa() {
+		JPanel panel = getMenu();
+		elementosEditarNuevaTarifas(panel);
 		JLabel lblTitutlo = new JLabel("Nueva tarifa");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
 		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -406,8 +384,7 @@ public class Tarifas extends JFrame {
 		btnGuardar_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "¡Nueva tarifa agregada correctamente!", "Añadido exitoso", JOptionPane.INFORMATION_MESSAGE);
-                quitarComponentes();
-                tarifas();
+				controlador.tarifas();
 			}
 		});
 		btnGuardar_1.setForeground(Color.WHITE);
@@ -423,8 +400,7 @@ public class Tarifas extends JFrame {
 				int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar esta tarifa?", "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
 	             if (op == JOptionPane.OK_OPTION) {
 	                 JOptionPane.showMessageDialog(null, "Tarifa eliminada con éxito", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
-	                 quitarComponentes();
-	                 nuevaTarifa();
+	                 controlador.nuevaTarifa();
 	             }
 			}
 		});
@@ -473,28 +449,13 @@ public class Tarifas extends JFrame {
 		textArea_2.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		textArea_2.setBounds(761, 385, 230, 80);
 		panel.add(textArea_2);
-		
+		return panel;
 	}
 	
 	public void configurarLabelsIzq(JLabel lbl) { // Configurar Labels a la izquierda  
 		lbl.setForeground(new Color(0, 0, 0));
 		lbl.setHorizontalAlignment(SwingConstants.LEFT);
 		lbl.setFont(new Font("Arial Black", Font.PLAIN, 14));
-	}
-	
-	public void panel() {
-		panel = new JPanel();
-		panel.setBounds(0, 0, 1200, 720);
-		panel.setBackground(Color.white);
-		contentPane.add(panel);
-		panel.setLayout(null);
-		menuB();
-	}
-	
-	public void quitarComponentes() {
-		contentPane.removeAll();
-        contentPane.revalidate();
-        contentPane.repaint();
 	}
 	
 	public void configurarLabels(JLabel lbl) { // configurar Labels al centro
@@ -508,117 +469,12 @@ public class Tarifas extends JFrame {
 		lbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		lbl.setFont(new Font("Arial Black", Font.PLAIN, 14));
 	}
+
+	public JPanel getMenu() {
+		MenuControlador menuControlador = new MenuControlador();
+		return menuControlador.getPanelMenu();
+	}
 	
-	public void menuB() { // Menu bar 
-		panelSup = new JPanel();
-		panelSup.setBounds(0, 0, 1200, 70);
-		panel.add(panelSup);
-		panelSup.setLayout(new BorderLayout(0, 0));
-		panelSup.add(panelNegro, BorderLayout.CENTER);
-		panelNegro.setOpaque(true);
-		panelNegro.setBackground(new Color(0, 0, 0));
-		panelNegro.setLayout(null);
-		
-		lblTitulo = new JLabel("Larry's");
-		lblTitulo.setVerticalAlignment(SwingConstants.TOP);
-		lblTitulo.setFont(new Font("Forte", Font.PLAIN, 35));
-		lblTitulo.setForeground(new Color(255, 255, 255));
-		lblTitulo.setBounds(20, 3, 131, 40);
-		panelNegro.add(lblTitulo);
-		
-		lblGym = new JLabel("Gym");
-		lblGym.setVerticalAlignment(SwingConstants.TOP);
-		lblGym.setBackground(new Color(255, 255, 255));
-		lblGym.setForeground(new Color(0, 124, 163));
-		lblGym.setFont(new Font("Forte", Font.PLAIN, 35));
-		lblGym.setBounds(155, 3, 97, 40);
-		panelNegro.add(lblGym);
-		
-		JPanel panelBar = new JPanel();
-		panelSup.add(panelBar, BorderLayout.SOUTH);
-		panelBar.setLayout(new GridLayout(1, 0, 0, 0));
-		
-		JButton btnInicio = new JButton("Inicio");
-		btnInicio.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				dispose();
-				MenuPrincipal menuP = new MenuPrincipal();
-				menuP.setVisible(true);
-			}
-		 });
-	     configurarBotones(btnInicio);
-	     JButton btnClientes = new JButton("Clientes");
-	     btnClientes.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub
-					dispose();
-					Clientes cl = new Clientes();
-					cl.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnClientes);
-	     JButton btnTarifas = new JButton("Tarifas");
-	     btnTarifas.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					quitarComponentes();
-					tarifas();
-				}
-			 });
-	     configurarBotones(btnTarifas);
-	     JButton btnInstructor = new JButton("Instructores");
-	     btnInstructor.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dispose();
-					 Instructor ins = new Instructor();
-					ins.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnInstructor);
-	     JButton btnClases = new JButton("Clases");
-	     btnClases.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dispose();
-					Clases clase = new Clases();
-					clase.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnClases);
-	     JButton btnChecador = new JButton("Checador");
-	     btnChecador.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dispose();
-				     Checador check = new Checador();
-					check.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnChecador);
-	     JButton btnSalir = new JButton("Salir");
-	     btnSalir.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub
-					dispose();
-					 Inicio i1 = new Inicio();
-					i1.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnSalir);
-	        
-	        panelBar.add(btnInicio);
-	        panelBar.add(btnClientes);
-	        panelBar.add(btnTarifas);
-	        panelBar.add(btnInstructor);
-	        panelBar.add(btnClases);
-	        panelBar.add(btnChecador);
-	        panelBar.add(btnSalir);
-		}
 
 	public void configurarBotones(JButton btn) {
     	btn.setForeground(Color.black);

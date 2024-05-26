@@ -1,12 +1,20 @@
 package Vista;
 
+import Controlador.InicioControlador;
+import Controlador.MenuControlador;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,57 +23,26 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-public class MenuPrincipal extends JFrame {
+
+public class MenuPrincipal {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, panel, panelSup;
 	private final JPanel panelNegro = new JPanel();
 	
 	JLabel lblTitulo, lblGym;
-	Checador check = new Checador();
-	Tarifas tf = new Tarifas();
-	Clientes cl = new Clientes();
-	Clases clase = new Clases();
-	Instructor ins = new Instructor();
-	Inicio i1 = new Inicio();
+	File fontFile;
+	Font forte;
+	private MenuControlador controlador;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MenuPrincipal frame = new MenuPrincipal();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
-	public MenuPrincipal() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(1200,720);
-		setTitle("Larry's Gym");
-		setLocationRelativeTo(null);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		setResizable(false);
-		menuPrincipal();
-		
+	public MenuPrincipal(MenuControlador controlador) {
+		this.controlador = controlador;
 	}
 	
 
-	public void menuPrincipal() { // Con botones
-		panel();
-
+	public JPanel menuPrincipal() { // Con botones
+		JPanel panel = getMenu();
+		
 		// Crear un arreglo de JButton
 		JButton[] botones = new JButton[5];
 		// Crear y configurar los botones
@@ -84,23 +61,21 @@ public class MenuPrincipal extends JFrame {
 		    
 		    botones[i].addActionListener(new ActionListener() {
 		        public void actionPerformed(ActionEvent e) {
-		            quitarComponentes();
-		            dispose();
 		            switch (index) {
 		                case 0:
-		                	cl.setVisible(true);
+		                	controlador.clientes();
 		                    break;
 		                case 1:
-		                	tf.setVisible(true);
+							controlador.tarifas();
 		                    break;
 		                case 2:
-		                	ins.setVisible(true);
+		                	controlador.instructor();
 		                    break;
 		                case 3:
-		                	clase.setVisible(true);
+		                	controlador.clases();
 		                    break;
 		                case 4:
-		                	check.setVisible(true);
+		                	controlador.checador();
 		                    break;
 		                default:
 		                    break;
@@ -110,10 +85,10 @@ public class MenuPrincipal extends JFrame {
 		    panel.add(botones[i]);
 		}
 
-		JLabel lblTitulo_1 = new JLabel("Larry's");
+		JLabel lblTitulo_1 = new JLabel("Larrys");
 		lblTitulo_1.setForeground(new Color(0, 0, 0));
 		lblTitulo_1.setFont(new Font("Forte", Font.BOLD, 38));
-		lblTitulo_1.setBounds(128, 323, 125, 50);
+		lblTitulo_1.setBounds(120, 323, 165, 50);
 		panel.add(lblTitulo_1);
 		
 		JLabel lblGym_1 = new JLabel("Gym");
@@ -142,25 +117,24 @@ public class MenuPrincipal extends JFrame {
 		    lblColores[i].setIcon(new ImageIcon(MenuPrincipal.class.getResource(imagenes[i])));
 		    panel.add(lblColores[i]);
 		}
+
+		return panel;
 	}
-	
-	
-	public void panel() {
-		panel = new JPanel();
+
+	public JPanel getMenu() {
+		
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		 try {
+	            fontFile = new File(getClass().getResource("/Fuente/Forte.ttf").getPath());
+	            forte = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+	            ge.registerFont(forte);
+	        } catch (FontFormatException | IOException e) {
+	        }
+		JPanel panel = new JPanel();
 		panel.setBounds(0, 0, 1200, 720);
 		panel.setBackground(Color.white);
-		contentPane.add(panel);
 		panel.setLayout(null);
-		menuB();
-	}
-	
-	public void quitarComponentes() {
-		contentPane.removeAll();
-        contentPane.revalidate();
-        contentPane.repaint();
-	}
-	
-	public void menuB() { // Menu bar 
+
 		panelSup = new JPanel();
 		panelSup.setBounds(0, 0, 1200, 70);
 		panel.add(panelSup);
@@ -169,100 +143,90 @@ public class MenuPrincipal extends JFrame {
 		panelNegro.setOpaque(true);
 		panelNegro.setBackground(new Color(0, 0, 0));
 		panelNegro.setLayout(null);
-		
-		lblTitulo = new JLabel("Larry's");
+
+		lblTitulo = new JLabel("Larrys");
 		lblTitulo.setVerticalAlignment(SwingConstants.TOP);
-		lblTitulo.setFont(new Font("Forte", Font.PLAIN, 35));
+		lblTitulo.setFont(forte.deriveFont(34f));
 		lblTitulo.setForeground(new Color(255, 255, 255));
 		lblTitulo.setBounds(20, 3, 131, 40);
 		panelNegro.add(lblTitulo);
-		
+
 		lblGym = new JLabel("Gym");
 		lblGym.setVerticalAlignment(SwingConstants.TOP);
 		lblGym.setBackground(new Color(255, 255, 255));
 		lblGym.setForeground(new Color(0, 124, 163));
-		lblGym.setFont(new Font("Forte", Font.PLAIN, 35));
+		lblGym.setFont(forte.deriveFont(34f));
 		lblGym.setBounds(155, 3, 97, 40);
 		panelNegro.add(lblGym);
-		
+
 		JPanel panelBar = new JPanel();
 		panelSup.add(panelBar, BorderLayout.SOUTH);
 		panelBar.setLayout(new GridLayout(1, 0, 0, 0));
-		
-		 JButton btnInicio = new JButton("Inicio");
-		 btnInicio.addActionListener(new ActionListener() {
+
+		JButton btnInicio = new JButton("Inicio");
+		btnInicio.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				menuPrincipal();
+				controlador.menu();
 			}
-		 });
-	     configurarBotones(btnInicio);
-	     JButton btnClientes = new JButton("Clientes");
-	     btnClientes.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub
-					dispose();
-					cl.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnClientes);
-	     JButton btnTarifas = new JButton("Tarifas");
-	     btnTarifas.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dispose();
-					tf.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnTarifas);
-	     JButton btnInstructor = new JButton("Instructores");
-	     btnInstructor.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dispose();
-					ins.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnInstructor);
-	     JButton btnClases = new JButton("Clases");
-	     btnClases.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dispose();
-					clase.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnClases);
-	     JButton btnChecador = new JButton("Checador");
-	     btnChecador.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dispose();
-					check.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnChecador);
-	     JButton btnSalir = new JButton("Salir");
-	     btnSalir.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub
-					dispose();
-					i1.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnSalir);
-	        
-	        panelBar.add(btnInicio);
-	        panelBar.add(btnClientes);
-	        panelBar.add(btnTarifas);
-	        panelBar.add(btnInstructor);
-	        panelBar.add(btnClases);
-	        panelBar.add(btnChecador);
-	        panelBar.add(btnSalir);
-		}
+		});
+		configurarBotones(btnInicio);
+		JButton btnClientes = new JButton("Clientes");
+		btnClientes.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controlador.clientes();
+			}
+		});
+		configurarBotones(btnClientes);
+		JButton btnTarifas = new JButton("Tarifas");
+		btnTarifas.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controlador.tarifas();
+			}
+		});
+		configurarBotones(btnTarifas);
+		JButton btnInstructor = new JButton("Instructores");
+		btnInstructor.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controlador.instructor();
+			}
+		});
+		configurarBotones(btnInstructor);
+		JButton btnClases = new JButton("Clases");
+		btnClases.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controlador.clases();
+			}
+		});
+		configurarBotones(btnClases);
+		JButton btnChecador = new JButton("Checador");
+		btnChecador.addActionListener(e -> controlador.checador());
+		configurarBotones(btnChecador);
+		JButton btnSalir = new JButton("Salir");
+		btnSalir.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				InicioControlador controlador=new InicioControlador();
+				controlador.inicio();
+			}
+		});
+		configurarBotones(btnSalir);
+
+		panelBar.add(btnInicio);
+		panelBar.add(btnClientes);
+		panelBar.add(btnTarifas);
+		panelBar.add(btnInstructor);
+		panelBar.add(btnClases);
+		panelBar.add(btnChecador);
+		panelBar.add(btnSalir);
+
+		return panel;
+	}
 
 	public void configurarBotones(JButton btn) {
     	btn.setForeground(Color.black);

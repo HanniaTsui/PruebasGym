@@ -1,5 +1,8 @@
 package Vista;
 
+import Controlador.ChecadorControlador;
+import Controlador.MenuControlador;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -31,45 +34,19 @@ public class Checador extends JFrame {
 	private final JPanel panelNegro = new JPanel();
 	JLabel lblTitulo, lblGym;
 	JButton btnVolver,btnBuscar;
-
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Checador frame = new Checador();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	
+	private ChecadorControlador controlador;
 
 	/**
 	 * Create the frame.
 	 */
-	public Checador() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(1200,720);
-		setTitle("Larry's Gym");
-		setLocationRelativeTo(null);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		setResizable(false);
-		
-		checador();
+	public Checador(ChecadorControlador controlador) {
+		this.controlador = controlador;
 	}
 
 
-	public void checador() {
-		
-		panel();
+	public JPanel checador() {
+		JPanel panel = getMenu();
 		JLabel lblTitutlo = new JLabel("Checador");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
 		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -81,9 +58,8 @@ public class Checador extends JFrame {
 	    btnVolver.setForeground(new Color(255, 255, 255));
 	    btnVolver.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		dispose();
-	    		MenuPrincipal menu = new MenuPrincipal();
-	    		menu.setVisible(true);
+	    		MenuControlador menu=new MenuControlador();
+	    		menu.menu();
 	    	}
 	    });
 	    btnVolver.setFocusable(false);
@@ -200,12 +176,19 @@ public class Checador extends JFrame {
 	    lblUserCheck.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblUserCheck.setBounds(0, 125, 125, 13);
 	    panel_1.add(lblUserCheck);
+
+		return panel;
 	}
 
 	public void configurarLabelsIzq(JLabel lbl) { // Configurar Labels a la izquierda  
 		lbl.setForeground(new Color(0, 0, 0));
 		lbl.setHorizontalAlignment(SwingConstants.LEFT);
 		lbl.setFont(new Font("Arial Black", Font.PLAIN, 14));
+	}
+
+	public JPanel getMenu() {
+		MenuControlador menuControlador = new MenuControlador();
+		return menuControlador.getPanelMenu();
 	}
 	
 	public void panel() {
@@ -258,8 +241,8 @@ public class Checador extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				dispose();
-				MenuPrincipal menuP = new MenuPrincipal();
-				menuP.setVisible(true);
+				//MenuPrincipal menuP = new MenuPrincipal();
+				//menuP.setVisible(true);
 			}
 		 });
 	     configurarBotones(btnInicio);
@@ -269,8 +252,8 @@ public class Checador extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					// TODO Auto-generated method stub
 					dispose();
-					Clientes cl = new Clientes();
-					cl.setVisible(true);
+					//Clientes cl = new Clientes();
+					//cl.setVisible(true);
 				}
 			 });
 	     configurarBotones(btnClientes);
@@ -279,8 +262,8 @@ public class Checador extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					dispose();
-					Tarifas tf = new Tarifas();
-					tf.setVisible(true);
+					//Tarifas tf = new Tarifas();
+					//tf.setVisible(true);
 				}
 			 });
 	     configurarBotones(btnTarifas);
@@ -289,8 +272,6 @@ public class Checador extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					dispose();
-					Instructor ins = new Instructor();
-					ins.setVisible(true);
 				}
 			 });
 	     configurarBotones(btnInstructor);
@@ -299,8 +280,8 @@ public class Checador extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					dispose();
-					Clases clase = new Clases();
-					clase.setVisible(true);
+					//Clases clase = new Clases();
+					//clase.setVisible(true);
 				}
 			 });
 	     configurarBotones(btnClases);
@@ -319,8 +300,8 @@ public class Checador extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					// TODO Auto-generated method stub
 					dispose();
-					Inicio i1 = new Inicio();
-					i1.setVisible(true);
+					//Inicio i1 = new Inicio();
+					//i1.setVisible(true);
 				}
 			 });
 	     configurarBotones(btnSalir);

@@ -31,7 +31,10 @@ import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
-public class Instructor extends JFrame {
+import Controlador.InstructorControlador;
+import Controlador.MenuControlador;
+
+public class Instructor{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, panel, panelCrear, panelCredencial, panelSup;
@@ -46,43 +49,19 @@ public class Instructor extends JFrame {
 	 Color colorBtnVolver = new Color(174,174,174);
 	 Color colorBtnGuardar = new Color(0,47,78); 
 	 Color colorBtnEliminar = new Color(0,0,0); 
-	 Color colorBtnEditar = new Color(89,89,89); 
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Instructor frame = new Instructor();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
+	 Color colorBtnEditar = new Color(89,89,89);
+	 InstructorControlador controlador;
 	/**
 	 * Create the frame.
 	 */
-	public Instructor() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(1200,720);
-		setTitle("Larry's Gym");
-		setLocationRelativeTo(null);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		setResizable(false);
+	public Instructor(InstructorControlador controlador) {
+		this.controlador=controlador;
 		
-		instructor();
 	}
 
-	public void instructor() { // TABLA INSTRUCTOR
-		panel();
+	public JPanel instructor() { // TABLA INSTRUCTOR
+		JPanel panel = getMenu();
+		
 		JLabel lblTitutlo = new JLabel("Instructores registrados");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
 		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -94,8 +73,7 @@ public class Instructor extends JFrame {
 		btnEditar.setForeground(new Color(255, 255, 255));
 		btnEditar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		quitarComponentes();
-	    		editarInstructor();
+	    		controlador.editarInstructor();
 	    	}
 	    });
 		btnEditar.setFocusable(false);
@@ -120,8 +98,7 @@ public class Instructor extends JFrame {
 	     btnEditar.setForeground(new Color(255, 255, 255)); 
 	     btnEditar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		quitarComponentes();
-	    		detallesInstructor();
+	    		controlador.detallesInstructor();
 	    	}
 	     });
 	     btnEditar.setFocusable(false);
@@ -135,19 +112,18 @@ public class Instructor extends JFrame {
 	     btnGuardar_1.setFocusable(false);
 	     btnGuardar_1.addActionListener(new ActionListener() {
 		    	public void actionPerformed(ActionEvent e) {
-		    		quitarComponentes();
-		    		nuevoInstructor();
+		    		controlador.nuevoInstructor();
 		    	}
 		    });
 	     btnGuardar_1.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 	     btnGuardar_1.setBackground(new Color(0, 45, 78));
 	     btnGuardar_1.setBounds(593, 190, 120, 40);
 	     panel.add(btnGuardar_1);
-	    
+	    return panel;
 	}
 	
-	public void detallesInstructor() {
-		panel(); 
+	public JPanel detallesInstructor() {
+		JPanel panel = getMenu();
 		JLabel lblTitutlo = new JLabel("Detalles de instructor");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
 		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -162,8 +138,7 @@ public class Instructor extends JFrame {
 	    		int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar este instructor?", "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
 	             if (op == JOptionPane.OK_OPTION) {
 	                 JOptionPane.showMessageDialog(null, "Instructor eliminado con éxito", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
-	                 quitarComponentes();
-	                 instructor();
+	                 controlador.instructor();
 	             }
 	    	}
 	    });
@@ -177,8 +152,7 @@ public class Instructor extends JFrame {
 	    btnVolver.setForeground(new Color(255, 255, 255));
 	    btnVolver.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		quitarComponentes();
-	    		instructor();
+	    		controlador.instructor();
 	    	}
 	    });
 	    btnVolver.setFocusable(false);
@@ -214,8 +188,7 @@ public class Instructor extends JFrame {
 	    btnHistorial = new JButton("Historial de clases");
 	    btnHistorial.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		quitarComponentes();
-	    		historialClases();
+	    		controlador.historialClases();
 	    	}
 	    	
 	    });
@@ -252,10 +225,11 @@ public class Instructor extends JFrame {
 	    lblFechaDeContratacin.setBounds(299, 174, 327, 20);
 	    configurarLabels(lblFechaDeContratacin);
 	    panelCredencial.add(lblFechaDeContratacin);
+	    return panel;
 	}
 
-	public void historialClases() {
-		panel();
+	public JPanel historialClases() {
+		JPanel panel = getMenu();
 		JLabel lblTitutlo = new JLabel("Historial de clases");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
 		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -304,8 +278,7 @@ public class Instructor extends JFrame {
         btnVolver = new JButton("Volver");
 	    btnVolver.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		quitarComponentes();
-	    		detallesInstructor();
+	    		controlador.detallesInstructor();
 	    	}
 	    });
 	    btnVolver.setFocusable(false);
@@ -323,10 +296,12 @@ public class Instructor extends JFrame {
 		lblPeterParker = new JLabel("Usuario");
 	    configurarLabels(lblPeterParker);lblPeterParker.setBounds(693, 105, 142, 20);
 	    panelCrear.add(lblPeterParker);
+	    return panel;
 	}
 	
-	public void nuevoInstructor() {
-		panel();
+	public JPanel nuevoInstructor() {
+		JPanel panel = getMenu();
+		
 		JLabel lblTitutlo = new JLabel("Nuevo instructor");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
 		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -336,8 +311,7 @@ public class Instructor extends JFrame {
 		btnVolver = new JButton("Volver");
 	    btnVolver.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		quitarComponentes();
-	    		instructor(); // Regresa a instructores registrados
+	    		controlador.instructor(); // Regresa a instructores registrados
 	    	}
 	    });
 	    btnVolver.setBackground(Color.black); btnVolver.setForeground(Color.white); btnVolver.setFocusable(false);
@@ -410,7 +384,7 @@ public class Instructor extends JFrame {
 				subirFoto();
 				 if (selectedFile != null) {
 	                    lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
-	                    revalidate(); repaint();
+	                    panel.revalidate(); panel.repaint();
 	              }
 			}
 	    });
@@ -437,8 +411,7 @@ public class Instructor extends JFrame {
 	    btnPagar = new JButton("Añadir");
 	    btnPagar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		  quitarComponentes();
-	    		  instructor(); //vuelve al panel de instructores registrados
+	    		  controlador.instructor(); //vuelve al panel de instructores registrados
 	    		 JOptionPane.showMessageDialog(null, "¡Nuevo instructor agregado con exito!", " ", JOptionPane.INFORMATION_MESSAGE);
 	    	}
 	    });
@@ -447,11 +420,12 @@ public class Instructor extends JFrame {
 		btnPagar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 		btnPagar.setBackground(new Color(0, 45, 78)); 
 		btnPagar.setBounds(382, 389, 150, 40);
-	    panelCrear.add(btnPagar);  
+	    panelCrear.add(btnPagar); 
+	    return panel;
 	}
 	
-	public void editarInstructor() {
-		panel();
+	public JPanel editarInstructor() {
+		JPanel panel = getMenu();
 		JLabel lblTitutlo = new JLabel("Editar instructor");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
 		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -524,7 +498,7 @@ public class Instructor extends JFrame {
 				subirFoto();
 				 if (selectedFile != null) {
 	                    lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
-	                    revalidate(); repaint();
+	                    panel.revalidate(); panel.repaint();
 	              }
 			}
 	    });
@@ -553,8 +527,7 @@ public class Instructor extends JFrame {
 	    btnGuardar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		JOptionPane.showMessageDialog(null, "¡Cambios de instructor realizados con éxito!", "Edición exitosa", JOptionPane.INFORMATION_MESSAGE);
-                quitarComponentes();
-	    		instructor();
+	    		controlador.instructor();
 	    	}
 	    });
 	    btnGuardar.setFocusable(false);
@@ -567,8 +540,7 @@ public class Instructor extends JFrame {
 	    btnCancelar.setForeground(new Color(255, 255, 255));
 	    btnCancelar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		quitarComponentes();
-	    		instructor();
+	    		controlador.instructor();
 	    	}
 	    });
 	    btnCancelar.setFocusable(false);
@@ -576,7 +548,7 @@ public class Instructor extends JFrame {
 	    btnCancelar.setBackground(new Color(0, 0, 0)); 
 	    btnCancelar.setBounds(466, 380, 120, 40);
 	    panelCrear.add(btnCancelar);
-		
+		return panel;
 	}
 	
 	public void subirFoto() {
@@ -588,7 +560,7 @@ public class Instructor extends JFrame {
         if (returnValue == JFileChooser.APPROVE_OPTION) {
              selectedFile = fileChooser.getSelectedFile();
         } else {
-            JOptionPane.showMessageDialog(this, "Agrega una imagen valida");
+            JOptionPane.showMessageDialog(null, "Agrega una imagen valida");
         }
       
 	}
@@ -599,20 +571,6 @@ public class Instructor extends JFrame {
 		lbl.setFont(new Font("Arial Black", Font.PLAIN, 14));
 	}
 	
-	public void panel() {
-		panel = new JPanel();
-		panel.setBounds(0, 0, 1200, 720);
-		panel.setBackground(Color.white);
-		contentPane.add(panel);
-		panel.setLayout(null);
-		menuB();
-	}
-	
-	public void quitarComponentes() {
-		contentPane.removeAll();
-        contentPane.revalidate();
-        contentPane.repaint();
-	}
 	
 	public void configurarLabels(JLabel lbl) { // configurar Labels al centro
 		lbl.setForeground(new Color(0, 0, 0));
@@ -633,114 +591,7 @@ public class Instructor extends JFrame {
 	    btn.setFont(new Font("Arial Black", Font.PLAIN, 13));
 	}
 	
-	public void menuB() { // Menu bar 
-		panelSup = new JPanel();
-		panelSup.setBounds(0, 0, 1200, 70);
-		panel.add(panelSup);
-		panelSup.setLayout(new BorderLayout(0, 0));
-		panelSup.add(panelNegro, BorderLayout.CENTER);
-		panelNegro.setOpaque(true);
-		panelNegro.setBackground(new Color(0, 0, 0));
-		panelNegro.setLayout(null);
-		
-		lblTitulo = new JLabel("Larry's");
-		lblTitulo.setVerticalAlignment(SwingConstants.TOP);
-		lblTitulo.setFont(new Font("Forte", Font.PLAIN, 35));
-		lblTitulo.setForeground(new Color(255, 255, 255));
-		lblTitulo.setBounds(20, 3, 131, 40);
-		panelNegro.add(lblTitulo);
-		
-		lblGym = new JLabel("Gym");
-		lblGym.setVerticalAlignment(SwingConstants.TOP);
-		lblGym.setBackground(new Color(255, 255, 255));
-		lblGym.setForeground(new Color(0, 124, 163));
-		lblGym.setFont(new Font("Forte", Font.PLAIN, 35));
-		lblGym.setBounds(155, 3, 97, 40);
-		panelNegro.add(lblGym);
-		
-		JPanel panelBar = new JPanel();
-		panelSup.add(panelBar, BorderLayout.SOUTH);
-		panelBar.setLayout(new GridLayout(1, 0, 0, 0));
-		JButton btnInicio = new JButton("Inicio");
-		btnInicio.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				dispose();
-				MenuPrincipal menuP = new MenuPrincipal();
-				menuP.setVisible(true);
-			}
-		 });
-	     configurarBotones(btnInicio);
-	     JButton btnClientes = new JButton("Clientes");
-	     btnClientes.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub
-					dispose();
-					Clientes cl = new Clientes();
-					cl.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnClientes);
-	     JButton btnTarifas = new JButton("Tarifas");
-	     btnTarifas.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dispose();
-					Tarifas tf = new Tarifas();
-					tf.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnTarifas);
-	     JButton btnInstructor = new JButton("Instructores");
-	     btnInstructor.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					quitarComponentes();
-					instructor();
-				}
-			 });
-	     configurarBotones(btnInstructor);
-	     JButton btnClases = new JButton("Clases");
-	     btnClases.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dispose();
-					Clases clase = new Clases();
-					clase.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnClases);
-	     JButton btnChecador = new JButton("Checador");
-	     btnChecador.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dispose();
-				     Checador check = new Checador();
-					check.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnChecador);
-	     JButton btnSalir = new JButton("Salir");
-	     btnSalir.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub
-					dispose();
-					 Inicio i1 = new Inicio();
-					i1.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnSalir);
-	        panelBar.add(btnInicio);
-	        panelBar.add(btnClientes);
-	        panelBar.add(btnTarifas);
-	        panelBar.add(btnInstructor);
-	        panelBar.add(btnClases);
-	        panelBar.add(btnChecador);
-	        panelBar.add(btnSalir);
-		}
+	
 
 	public void configurarBotones(JButton btn) {
     	btn.setForeground(Color.black);
@@ -748,6 +599,10 @@ public class Instructor extends JFrame {
     	btn.setFocusable(false);
     	btn.setBackground(new Color(217, 217, 217)); 
     }
+	public JPanel getMenu() {
+		MenuControlador menuControlador = new MenuControlador();
+		return menuControlador.getPanelMenu();
+	}
 
 
 }

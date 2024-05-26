@@ -1,5 +1,8 @@
 package Vista;
 
+import Controlador.ClasesControlador;
+import Controlador.MenuControlador;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -28,7 +31,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
-public class Clases extends JFrame {
+public class Clases {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, panel, panelCrear, panelSup;
@@ -43,45 +46,22 @@ public class Clases extends JFrame {
 	 Color colorBtnGuardar = new Color(0,47,78); 
 	 Color colorBtnEliminar = new Color(0,0,0); 
 	 Color colorBtnEditar = new Color(89,89,89); 
-	 
-	 
-	 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Clases frame = new Clases();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+
+	 private ClasesControlador controlador;
 
 	/**
 	 * Create the frame.
 	 */
-	public Clases() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(1200,720);
-		setTitle("Larry's Gym");
-		setLocationRelativeTo(null);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		setResizable(false);
+	public Clases(ClasesControlador controlador) {
 		
-		clases();
+		this.controlador = controlador;
+		
 	}
 
 	
-	public void clases() {
-		panel();
+	public JPanel clases() {
+		JPanel panel = getMenu();
+
 		JPanel panel_1 = new JPanel();
 	    panel_1.setBounds(36, 170, 1126, 477);
 	    panel.add(panel_1);
@@ -93,7 +73,7 @@ public class Clases extends JFrame {
         btnChecador.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				quitarComponentes(); nuevaClase();
+				controlador.nuevaClase();
 			}
         });
         btnChecador.setBackground(new Color(0,33,81));
@@ -129,8 +109,8 @@ public class Clases extends JFrame {
 	        btnDetalles.setBackground(Color.black);
 	        btnDetalles.addActionListener(new ActionListener() {
 		    	public void actionPerformed(ActionEvent e) {
-		    		quitarComponentes();
-		    		detallesClase();
+					//controlador.
+					controlador.detallesCliente();
 		    	}
 		    });
 	        btnDetalles.setForeground(Color.white);
@@ -142,8 +122,7 @@ public class Clases extends JFrame {
 	        btnEditar.setFocusable(false);
 	        btnEditar.addActionListener(new ActionListener() {
 		    	public void actionPerformed(ActionEvent e) {
-		    		quitarComponentes();
-		    		inscribirseClase();
+					controlador.inscribirseClase();
 		    	}
 		    });
 	        btnEditar.setBorder(null);
@@ -164,10 +143,13 @@ public class Clases extends JFrame {
 	    lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
 	    lblTitutlo.setBounds(427, 114, 346, 33);
 	    panel.add(lblTitutlo);
+
+		return panel;
 	}
 	
-	public void nuevaClase() {
-		panel();
+	public JPanel nuevaClase() {
+		JPanel panel = getMenu();
+
 		JLabel lblTitutlo = new JLabel("Nueva clase ");
 	    lblTitutlo.setForeground(new Color(0, 0, 0));
 	    lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -181,13 +163,12 @@ public class Clases extends JFrame {
 	    lblUsuariosInscritos.setBounds(0, 250, 1200, 20);
 	    panel.add(lblUsuariosInscritos);
 	    
-	    elementosDetallesNuevaClase(); //ComboBox, nombre, horario
+	    elementosDetallesNuevaClase(panel); //ComboBox, nombre, horario
 	    
 	    btnPagar = new JButton("Crear nueva clase");
 	    btnPagar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		  quitarComponentes();
-	    		  clases(); //vuelve al panel de clases 
+	    		  controlador.clases();
 	    		 JOptionPane.showMessageDialog(null, "¡Clase nueva agregada con éxito!", " ", JOptionPane.INFORMATION_MESSAGE);
 	    	}
 	    });
@@ -204,9 +185,9 @@ public class Clases extends JFrame {
 	    		int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar esta clase?", "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
 	             if (op == JOptionPane.OK_OPTION) {
 	                 JOptionPane.showMessageDialog(null, "¡Clase eliminada con éxito!", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
-	             	quitarComponentes(); nuevaClase();
+	             	//quitarComponentes(); nuevaClase();
+					 controlador.nuevaClase();
 	             }
-	    		 
 	    	}
 	    });
 		btnRegistros.setForeground(Color.white);
@@ -215,11 +196,13 @@ public class Clases extends JFrame {
 		btnRegistros.setBackground(colorBtnEliminar); 
 		btnRegistros.setBounds(937, 114, 120, 40);
 		panel.add(btnRegistros);
-	    panelInscribirseDetallesClase();
+	    panelInscribirseDetallesClase(panel);
+
+		return panel;
 	}
 	
-	public void inscribirseClase() {
-		panel();
+	public JPanel inscribirseClase() {
+		JPanel panel = getMenu();
 		JLabel lblTitutlo = new JLabel("Clase de ");
 	    lblTitutlo.setForeground(new Color(0, 0, 0));
 	    lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -259,6 +242,7 @@ public class Clases extends JFrame {
 	    		
 	    	}
 	    });
+
 	    btnBuscar.setFocusable(false);
 	    btnBuscar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 	    btnBuscar.setIcon(new ImageIcon(Clases.class.getResource("/img/buscar.png")));
@@ -312,8 +296,9 @@ public class Clases extends JFrame {
 	    btnPagar = new JButton("Inscribir");
 	    btnPagar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		  quitarComponentes();
-	    		  clases(); //vuelve al panel de clases 
+	    		  //quitarComponentes();
+	    		  //clases(); //vuelve al panel de clases
+				controlador.clases();
 	    		 JOptionPane.showMessageDialog(null, "¡Cliente inscrito correctamente!", " ", JOptionPane.INFORMATION_MESSAGE);
 	    	}
 	    });
@@ -327,9 +312,7 @@ public class Clases extends JFrame {
 		btnRegistros = new JButton("Consultar registros");
 		btnRegistros.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		  quitarComponentes();
-	    		  registrosClase();
-	    		 
+				controlador.registrosClase();
 	    	}
 	    });
 		btnRegistros.setForeground(Color.white);
@@ -338,17 +321,19 @@ public class Clases extends JFrame {
 		btnRegistros.setBackground(new Color(0,47,78)); 
 		btnRegistros.setBounds(907, 114, 150, 40);
 		panel.add(btnRegistros);
-	    panelInscribirseDetallesClase();
+	    panelInscribirseDetallesClase(panel);
+
+		return panel;
 	}
 	
-	public void registrosClase() {
-		panel();
+	public JPanel registrosClase() {
+		JPanel panel = getMenu();
+
 		btnVolver=new JButton("Volver");
 	    btnVolver.setForeground(new Color(255, 255, 255));
 	    btnVolver.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		quitarComponentes();
-	    		inscribirseClase();
+				controlador.inscribirseClase();
 	    	}
 	    });
 	    btnVolver.setFocusable(false);
@@ -435,7 +420,8 @@ public class Clases extends JFrame {
 	    		 int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar la suscripción de este cliente? \nID: " +"" + "\tNombre: "+"", "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
 	             if (op == JOptionPane.OK_OPTION) {
 	                 JOptionPane.showMessageDialog(null, "Cliente eliminado con éxito", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
-	                 quitarComponentes(); registrosClase();
+	                 //quitarComponentes(); registrosClase();
+					 controlador.registrosClase();
 	             } 
 	             
 	    	}
@@ -444,15 +430,16 @@ public class Clases extends JFrame {
 		btnEliminar_2.setBackground(colorBtnEliminar);
 		btnEliminar_2.setBounds(763, 20, 111, 30);
 		panelCrear.add(btnEliminar_2);
+
+		return panel;
 	}
 	
-	public void panelInscribirseDetallesClase() {
+	public void panelInscribirseDetallesClase(JPanel panel) {
 	    btnVolver=new JButton("Volver");
 	    btnVolver.setForeground(new Color(255, 255, 255));
 	    btnVolver.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		quitarComponentes();
-	    		clases();
+	    		controlador.clases();
 	    	}
 	    });
 	    btnVolver.setFocusable(false);
@@ -465,11 +452,10 @@ public class Clases extends JFrame {
 	    panel.add(panelCrear);
 	    panelCrear.setBackground(new Color(217, 217, 217));
 	    panelCrear.setLayout(null);
-	    panelCrear.setBounds(109, 218, 948, 432);    
+	    panelCrear.setBounds(109, 218, 948, 432);
 	}
 	
-	public void detallesClase() { //EDITAR CLASE
-		panel();
+	public JPanel detallesClase(JPanel panel) { //EDITAR CLASE
 		JLabel lblTitutlo = new JLabel("Clase de ");
 	    lblTitutlo.setForeground(new Color(0, 0, 0));
 	    lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -483,13 +469,12 @@ public class Clases extends JFrame {
 	    lblUsuariosInscritos.setBounds(0, 250, 1200, 20);
 	    panel.add(lblUsuariosInscritos);
 	    
-	   elementosDetallesNuevaClase(); // ComboBox, nombre, horario
+	   elementosDetallesNuevaClase(panel); // ComboBox, nombre, horario
 	    
 	    btnPagar = new JButton("Guardar cambios");
 	    btnPagar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		  quitarComponentes();
-	    		  clases(); //vuelve al panel de clases 
+				controlador.clases();
 	    		 JOptionPane.showMessageDialog(null, "¡Cambios guardados con éxito!", " ", JOptionPane.INFORMATION_MESSAGE);
 	    	}
 	    });
@@ -506,7 +491,7 @@ public class Clases extends JFrame {
 	    		int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar esta clase?", "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
 	             if (op == JOptionPane.OK_OPTION) {
 	                 JOptionPane.showMessageDialog(null, "¡Clase eliminada con éxito!", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
-	             	quitarComponentes(); clases();
+					 controlador.clases();
 	             }
 	    		 
 	    	}
@@ -517,11 +502,12 @@ public class Clases extends JFrame {
 		btnRegistros.setBackground(colorBtnEliminar); 
 		btnRegistros.setBounds(610, 580, 150, 40);
 		panel.add(btnRegistros);
-	    panelInscribirseDetallesClase();
-	    
+	    panelInscribirseDetallesClase(panel);
+
+		return panel;
 	}
 	
-	public void elementosDetallesNuevaClase() { // Labels Horarios y dias
+	public void elementosDetallesNuevaClase(JPanel panel) { // Labels Horarios y dias
 		 lblNewLabel_2 = new JLabel("Nombre de la clase:");
 		    lblNewLabel_2.setBounds(109, 315, 365, 30);
 		    configurarLabelsDer(lblNewLabel_2);
@@ -602,20 +588,10 @@ public class Clases extends JFrame {
 		lbl.setHorizontalAlignment(SwingConstants.LEFT);
 		lbl.setFont(new Font("Arial Black", Font.PLAIN, 14));
 	}
-	
-	public void panel() {
-		panel = new JPanel();
-		panel.setBounds(0, 0, 1200, 720);
-		panel.setBackground(Color.white);
-		contentPane.add(panel);
-		panel.setLayout(null);
-		menuB();
-	}
-	
-	public void quitarComponentes() {
-		contentPane.removeAll();
-        contentPane.revalidate();
-        contentPane.repaint();
+
+	public JPanel getMenu() {
+		MenuControlador menuControlador = new MenuControlador();
+		return menuControlador.getPanelMenu();
 	}
 	
 	public void configurarLabels(JLabel lbl) { // configurar Labels al centro
@@ -630,117 +606,6 @@ public class Clases extends JFrame {
 		lbl.setFont(new Font("Arial Black", Font.PLAIN, 14));
 	}
 	
-	public void menuB() { // Menu bar 
-		panelSup = new JPanel();
-		panelSup.setBounds(0, 0, 1200, 70);
-		panel.add(panelSup);
-		panelSup.setLayout(new BorderLayout(0, 0));
-		panelSup.add(panelNegro, BorderLayout.CENTER);
-		panelNegro.setOpaque(true);
-		panelNegro.setBackground(new Color(0, 0, 0));
-		panelNegro.setLayout(null);
-		
-		lblTitulo = new JLabel("Larry's");
-		lblTitulo.setVerticalAlignment(SwingConstants.TOP);
-		lblTitulo.setFont(new Font("Forte", Font.PLAIN, 35));
-		lblTitulo.setForeground(new Color(255, 255, 255));
-		lblTitulo.setBounds(20, 3, 131, 40);
-		panelNegro.add(lblTitulo);
-		
-		lblGym = new JLabel("Gym");
-		lblGym.setVerticalAlignment(SwingConstants.TOP);
-		lblGym.setBackground(new Color(255, 255, 255));
-		lblGym.setForeground(new Color(0, 124, 163));
-		lblGym.setFont(new Font("Forte", Font.PLAIN, 35));
-		lblGym.setBounds(155, 3, 97, 40);
-		panelNegro.add(lblGym);
-		
-		JPanel panelBar = new JPanel();
-		panelSup.add(panelBar, BorderLayout.SOUTH);
-		panelBar.setLayout(new GridLayout(1, 0, 0, 0));
-		
-		JButton btnInicio = new JButton("Inicio");
-		btnInicio.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				dispose();
-				MenuPrincipal menuP = new MenuPrincipal();
-				menuP.setVisible(true);
-			}
-		 });
-	     configurarBotones(btnInicio);
-	     JButton btnClientes = new JButton("Clientes");
-	     btnClientes.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub
-					dispose();
-					Clientes cl = new Clientes();
-					cl.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnClientes);
-	     JButton btnTarifas = new JButton("Tarifas");
-	     btnTarifas.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dispose();
-					Tarifas tf = new Tarifas();
-					tf.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnTarifas);
-	     JButton btnInstructor = new JButton("Instructores");
-	     btnInstructor.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dispose();
-					 Instructor ins = new Instructor();
-					ins.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnInstructor);
-	     JButton btnClases = new JButton("Clases");
-	     btnClases.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					quitarComponentes();
-					clases();
-				}
-			 });
-	     configurarBotones(btnClases);
-	     JButton btnChecador = new JButton("Checador");
-	     btnChecador.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dispose();
-				     Checador check = new Checador();
-				     
-					check.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnChecador);
-	     JButton btnSalir = new JButton("Salir");
-	     btnSalir.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub
-					dispose();
-					 Inicio i1 = new Inicio();
-					i1.setVisible(true);
-				}
-			 });
-	     configurarBotones(btnSalir);
-	        
-	        panelBar.add(btnInicio);
-	        panelBar.add(btnClientes);
-	        panelBar.add(btnTarifas);
-	        panelBar.add(btnInstructor);
-	        panelBar.add(btnClases);
-	        panelBar.add(btnChecador);
-	        panelBar.add(btnSalir);
-		}
 
 	public void configurarBotones(JButton btn) {
     	btn.setForeground(Color.black);
