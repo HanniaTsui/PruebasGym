@@ -40,9 +40,6 @@ public class Checador extends JFrame  {
 	
 	private ChecadorControlador controlador;
 
-	/**
-	 * Create the frame.
-	 */
 	public Checador(ChecadorControlador controlador) {
 		this.controlador = controlador;
 	}

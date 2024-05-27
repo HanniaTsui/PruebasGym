@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -36,7 +38,7 @@ public class Tarifas {
 	 Color colorBtnGuardar = new Color(0,47,78); 
 	 Color colorBtnEliminar = new Color(0,0,0); 
 	 Color colorBtnEditar = new Color(89,89,89); 
-	 private JTextField textField_1, textField_2, textField_3, textField_4, textField_5, textField_6, textField_7, textField_8;
+	 private JTextField textNombreTarifa, textPrecioMensual, textDesc3, textDesc6, textDesc1, textPrecio3, textPrecio6, textPrecio1;
 	 JButton btnVolver;
 
 	 private TarifasControlador controlador;
@@ -276,36 +278,36 @@ public class Tarifas {
 	    panel.add(btnVolver);
 	    
 	    JLabel lblNombrePlan = new JLabel("Nombre del plan:");
-		lblNombrePlan.setBounds(109, 185, 189, 30);
+		lblNombrePlan.setBounds(109, 185, 200, 30);
 		configurarLabelsDer(lblNombrePlan);
 		panel.add(lblNombrePlan);
 		
 		JLabel lblPrecioMensual = new JLabel("Precio mensual:");
-		lblPrecioMensual.setBounds(109, 235, 189, 30); configurarLabelsDer(lblPrecioMensual);
+		lblPrecioMensual.setBounds(109, 235, 200, 30); configurarLabelsDer(lblPrecioMensual);
 		panel.add(lblPrecioMensual);
 		
-		JLabel lblDescuentoMeses = new JLabel("Descuento 3 meses:");
-		lblDescuentoMeses.setBounds(109, 285, 189, 30); configurarLabelsDer(lblDescuentoMeses);
+		JLabel lblDescuentoMeses = new JLabel("Descuento 3 meses (%):");
+		lblDescuentoMeses.setBounds(109, 285, 200, 30); configurarLabelsDer(lblDescuentoMeses);
 		panel.add(lblDescuentoMeses);
 		
-		JLabel lblDescuentoMeses_1 = new JLabel("Descuento 6 meses:");
-		lblDescuentoMeses_1.setBounds(109, 335, 189, 30); configurarLabelsDer(lblDescuentoMeses_1);
+		JLabel lblDescuentoMeses_1 = new JLabel("Descuento 6 meses (%):");
+		lblDescuentoMeses_1.setBounds(109, 335, 200, 30); configurarLabelsDer(lblDescuentoMeses_1);
 		panel.add(lblDescuentoMeses_1);
 		
-		JLabel lblDescuentoAo = new JLabel("Descuento 1 año:");
-		lblDescuentoAo.setBounds(109, 385, 189, 30); configurarLabelsDer(lblDescuentoAo);
+		JLabel lblDescuentoAo = new JLabel("Descuento 1 año (%):");
+		lblDescuentoAo.setBounds(109, 385, 200, 30); configurarLabelsDer(lblDescuentoAo);
 		panel.add(lblDescuentoAo);
 		
 		JLabel lblTotal = new JLabel("Total:");
-		lblTotal.setBounds(410, 284, 50, 30); configurarLabelsIzq(lblTotal);
+		lblTotal.setBounds(423, 284, 50, 30); configurarLabelsIzq(lblTotal);
 		panel.add(lblTotal);
 		
 		JLabel lblTotal_1 = new JLabel("Total:");
-		lblTotal_1.setBounds(410, 334, 50, 30); configurarLabelsIzq(lblTotal_1);
+		lblTotal_1.setBounds(423, 334, 50, 30); configurarLabelsIzq(lblTotal_1);
 		panel.add(lblTotal_1);
 		
 		JLabel lblTotal_1_1 = new JLabel("Total:");
-		lblTotal_1_1.setBounds(410, 384, 50, 30); configurarLabelsIzq(lblTotal_1_1);
+		lblTotal_1_1.setBounds(423, 384, 50, 30); configurarLabelsIzq(lblTotal_1_1);
 		panel.add(lblTotal_1_1);
 		
 		JCheckBox box1 = new JCheckBox("Acceso ilimitado a las instalaciones del gimnasio.");
@@ -329,45 +331,52 @@ public class Tarifas {
 		box3.setBounds(109, 525, 513, 20);
 		panel.add(box3);
 		
-		textField_1 = new JTextField();
-		textField_1.setBounds(320, 185, 230, 30);
-		panel.add(textField_1);
-		textField_1.setColumns(10);
+		textNombreTarifa = new JTextField();
+		textNombreTarifa.setBounds(331, 185, 230, 30);
+		panel.add(textNombreTarifa);
+		textNombreTarifa.setColumns(10);
 		
-		textField_2 = new JTextField();
-		textField_2.setColumns(10);
-		textField_2.setBounds(320, 235, 230, 30);
-		panel.add(textField_2);
+		textPrecioMensual = new JTextField();
+		textPrecioMensual.setColumns(10);
+		textPrecioMensual.setBounds(331, 235, 230, 30);
+		validacionNumerica(textPrecioMensual);
+		panel.add(textPrecioMensual);
 		
-		textField_3 = new JTextField();
-		textField_3.setBounds(320, 285, 70, 30);
-		panel.add(textField_3);
-		textField_3.setColumns(10);
+		textDesc3 = new JTextField();
+		textDesc3.setBounds(331, 285, 70, 30);
+		validacionNumerica(textDesc3);
+		panel.add(textDesc3);
+		textDesc3.setColumns(10);
 		
-		textField_4 = new JTextField();
-		textField_4.setColumns(10);
-		textField_4.setBounds(320, 335, 70, 30);
-		panel.add(textField_4);
+		textDesc6 = new JTextField();
+		textDesc6.setColumns(10);
+		textDesc6.setBounds(331, 335, 70, 30);
+		validacionNumerica(textDesc6);
+		panel.add(textDesc6);
 		
-		textField_5 = new JTextField();
-		textField_5.setColumns(10);
-		textField_5.setBounds(320, 385, 70, 30);
-		panel.add(textField_5);
+		textDesc1 = new JTextField();
+		textDesc1.setColumns(10);
+		validacionNumerica(textDesc1);
+		textDesc1.setBounds(331, 385, 70, 30);
+		panel.add(textDesc1);
 		
-		textField_6 = new JTextField();
-		textField_6.setColumns(10);
-		textField_6.setBounds(480, 285, 70, 30);
-		panel.add(textField_6);
+		textPrecio3 = new JTextField();
+		textPrecio3.setColumns(10);
+		textPrecio3.setBounds(490, 285, 70, 30);
+		validacionNumerica(textPrecio3);
+		panel.add(textPrecio3);
 		
-		textField_7 = new JTextField();
-		textField_7.setColumns(10);
-		textField_7.setBounds(480, 335, 70, 30);
-		panel.add(textField_7);
+		textPrecio6 = new JTextField();
+		textPrecio6.setColumns(10);
+		textPrecio6.setBounds(490, 335, 70, 30);
+		validacionNumerica(textPrecio6);
+		panel.add(textPrecio6);
 		
-		textField_8 = new JTextField();
-		textField_8.setColumns(10);
-		textField_8.setBounds(480, 385, 70, 30);
-		panel.add(textField_8);
+		textPrecio1 = new JTextField();
+		textPrecio1.setColumns(10);
+		validacionNumerica(textPrecio1);
+		textPrecio1.setBounds(490, 385, 70, 30);
+		panel.add(textPrecio1);
 	
 	}
 	public JPanel nuevaTarifa() {
@@ -418,11 +427,11 @@ public class Tarifas {
 		lblMesesInfo.setBounds(550, 185, 189, 30);
 		panel.add(lblMesesInfo);
 		
-		JTextArea textArea = new JTextArea();
-		textArea.setBorder(new LineBorder(new Color(0, 0, 0)));
-		textArea.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		textArea.setBounds(761, 185, 230, 80);
-		panel.add(textArea);
+		JTextArea infor3Meses = new JTextArea();
+		infor3Meses.setBorder(new LineBorder(new Color(0, 0, 0)));
+		infor3Meses.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		infor3Meses.setBounds(761, 185, 330, 80);
+		panel.add(infor3Meses);
 		
 		JLabel lblMesesInfo_3 = new JLabel("6 meses info:");
 		lblMesesInfo_3.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -431,11 +440,11 @@ public class Tarifas {
 		lblMesesInfo_3.setBounds(550, 285, 189, 30);
 		panel.add(lblMesesInfo_3);
 		
-		JTextArea textArea_1 = new JTextArea();
-		textArea_1.setBorder(new LineBorder(new Color(0, 0, 0)));
-		textArea_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		textArea_1.setBounds(761, 285, 230, 80);
-		panel.add(textArea_1);
+		JTextArea infor6Meses = new JTextArea();
+		infor6Meses.setBorder(new LineBorder(new Color(0, 0, 0)));
+		infor6Meses.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		infor6Meses.setBounds(761, 285, 330, 80);
+		panel.add(infor6Meses);
 		
 		JLabel lblAoInfo = new JLabel("1 año info:");
 		lblAoInfo.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -444,11 +453,11 @@ public class Tarifas {
 		lblAoInfo.setBounds(550, 385, 189, 30);
 		panel.add(lblAoInfo);
 		
-		JTextArea textArea_2 = new JTextArea();
-		textArea_2.setBorder(new LineBorder(new Color(0, 0, 0)));
-		textArea_2.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		textArea_2.setBounds(761, 385, 230, 80);
-		panel.add(textArea_2);
+		JTextArea info1anio = new JTextArea();
+		info1anio.setBorder(new LineBorder(new Color(0, 0, 0)));
+		info1anio.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		info1anio.setBounds(761, 385, 330, 80);
+		panel.add(info1anio);
 		return panel;
 	}
 	
@@ -482,6 +491,25 @@ public class Tarifas {
     	btn.setFocusable(false);
     	btn.setBackground(new Color(217, 217, 217)); 
     }
+	
+	public void validacionNumerica(JTextField text) {
+		text.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char l = e.getKeyChar();
+                if (!Character.isDigit(l)) {
+                    e.consume();
+                }
+            }
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+            }
+		});
+	}
 
 
 }
