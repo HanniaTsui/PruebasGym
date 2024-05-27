@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -30,6 +32,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 import controlador.InstructorControlador;
 import controlador.MenuControlador;
@@ -340,6 +345,7 @@ public class Instructor{
 	    
 	    textNombre = new JTextField();
 	    textNombre.setBounds(70, 73, 200, 30);
+	    validacionTexto(textNombre);
 	    panelCrear.add(textNombre);
 	    textNombre.setColumns(10);
 	    
@@ -350,6 +356,7 @@ public class Instructor{
 	    
 	    textApellidos = new JTextField();
 	    textApellidos.setColumns(10);
+	    validacionTexto(textApellidos);
 	    textApellidos.setBounds(360, 73, 200, 30);
 	    panelCrear.add(textApellidos);
 	    
@@ -360,6 +367,7 @@ public class Instructor{
 	    
 	    textTel = new JTextField();
 	    textTel.setColumns(10);
+	    validacionTel(textTel);
 	    textTel.setBounds(360, 149, 200, 30);
 	    panelCrear.add(textTel);
 	    
@@ -455,6 +463,7 @@ public class Instructor{
 	    
 	    textNombre = new JTextField();
 	    textNombre.setBounds(70, 73, 200, 30);
+	    validacionTexto(textNombre);
 	    panelCrear.add(textNombre);
 	    textNombre.setColumns(10);
 	    
@@ -465,6 +474,7 @@ public class Instructor{
 	    
 	    textApellidos = new JTextField();
 	    textApellidos.setColumns(10);
+	    validacionTexto(textApellidos);
 	    textApellidos.setBounds(360, 73, 200, 30);
 	    panelCrear.add(textApellidos);
 	    
@@ -475,6 +485,7 @@ public class Instructor{
 	    
 	    textTel = new JTextField();
 	    textTel.setColumns(10);
+	    validacionTel(textTel);
 	    textTel.setBounds(360, 149, 200, 30);
 	    panelCrear.add(textTel);
 	        
@@ -604,5 +615,45 @@ public class Instructor{
 		return menuControlador.getPanelMenu();
 	}
 
+	public void validacionTexto(JTextField text) {
+		text.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char l = e.getKeyChar();
+                if (!Character.isLetter(l)) {
+                    e.consume();
+                }
+            }
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+            }
+		});
+	}
+	
+	public void validacionTel(JTextField txt) {
+		txt.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char l = e.getKeyChar();
+                if (!Character.isDigit(l)) {
+                    e.consume();
+                }
+            }
+            @Override public void keyPressed(KeyEvent e) {  }
+            @Override public void keyReleased(KeyEvent e) {}
+		});
+		txt.setDocument(new PlainDocument() {
+		    @Override
+		    public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+		        if (getLength() + str.length() <= 10) {
+		            super.insertString(offs, str, a);
+		        }
+		    }
+		});
+	}
 
 }

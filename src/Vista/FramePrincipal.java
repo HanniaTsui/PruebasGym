@@ -10,6 +10,7 @@ public class FramePrincipal extends JFrame{
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Larry's Gym");
         this.setLocationRelativeTo(null);
+        this.setResizable(false);
         this.getContentPane().setLayout(null);
 	}
 	 public void agregarPanel(JPanel panel) {

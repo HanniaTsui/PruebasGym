@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -32,6 +34,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 import controlador.ClientesControlador;
 import controlador.MenuControlador;
@@ -251,6 +256,7 @@ public class Clientes {
 	    textNombre = new JTextField();
 	    textNombre.setBounds(70, 73, 200, 30);
 	    panelCrear.add(textNombre);
+	    validacionTexto(textNombre);
 	    textNombre.setColumns(10);
 	    
 	    lblApellidos = new JLabel("Apellidos:");
@@ -260,6 +266,7 @@ public class Clientes {
 	    
 	    textApellidos = new JTextField();
 	    textApellidos.setColumns(10);
+	    validacionTexto(textApellidos);
 	    textApellidos.setBounds(70, 154, 200, 30);
 	    panelCrear.add(textApellidos);
 	    
@@ -276,6 +283,7 @@ public class Clientes {
 	    
 	    textTel = new JTextField();
 	    textTel.setColumns(10);
+	    validacionTel(textTel);
 	    textTel.setBounds(360, 149, 200, 30);
 	    panelCrear.add(textTel);
 	    
@@ -431,6 +439,7 @@ public class Clientes {
 	    panelCrear.add(lblNombres);
 	    
 	    textNombre = new JTextField();
+	    validacionTexto(textNombre);
 	    textNombre.setBounds(70, 73, 200, 30);
 	    panelCrear.add(textNombre);
 	    textNombre.setColumns(10);
@@ -442,6 +451,7 @@ public class Clientes {
 	    
 	    textApellidos = new JTextField();
 	    textApellidos.setColumns(10);
+	    validacionTexto(textApellidos);
 	    textApellidos.setBounds(70, 154, 200, 30);
 	    panelCrear.add(textApellidos);
 	    
@@ -458,6 +468,7 @@ public class Clientes {
 	    
 	    textTel = new JTextField();
 	    textTel.setColumns(10);
+	    validacionTel(textTel);
 	    textTel.setBounds(360, 149, 200, 30);
 	    panelCrear.add(textTel);
 	    
@@ -551,22 +562,7 @@ public class Clientes {
 	    textID.setForeground(Color.GRAY);
 	    textID.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 	    textID.setBounds(359, 102, 251, 50);
-	    textID.addFocusListener(new FocusListener() {
-	        @Override
-	        public void focusGained(FocusEvent e) {
-	            if (textID.getText().equals("Ingrese ID")) { 
-	                textID.setText(""); 
-	                textID.setForeground(Color.BLACK); 
-	            }
-	        }
-	        @Override
-	        public void focusLost(FocusEvent e) {
-	            if (textID.getText().isEmpty()) { 
-	                textID.setText("Ingrese ID"); 
-	                textID.setForeground(Color.GRAY);
-	            }
-	        }
-	    });
+	    validacionNumerica(textID);
 	    p2.add(textID);
 	    
 	    textField = new JTextField();
@@ -621,22 +617,7 @@ public class Clientes {
 	    textID.setForeground(Color.GRAY);
 	    textID.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 	    textID.setBounds(533, 172, 251, 50);
-	    textID.addFocusListener(new FocusListener() {
-	        @Override
-	        public void focusGained(FocusEvent e) {
-	            if (textID.getText().equals("Ingrese ID")) { 
-	                textID.setText(""); 
-	                textID.setForeground(Color.BLACK); 
-	            }
-	        }
-	        @Override
-	        public void focusLost(FocusEvent e) {
-	            if (textID.getText().isEmpty()) { 
-	                textID.setText("Ingrese ID"); 
-	                textID.setForeground(Color.GRAY);
-	            }
-	        }
-	    });
+	    validacionNumerica(textID);
 	    panel.add(textID);
 	   
 	    textField = new JTextField(); // TEXTFIELD VACIO
@@ -1019,22 +1000,7 @@ public class Clientes {
 	    textID.setForeground(Color.GRAY);
 	    textID.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 	    textID.setBounds(533, 172, 251, 50);
-	    textID.addFocusListener(new FocusListener() {
-	        @Override
-	        public void focusGained(FocusEvent e) {
-	            if (textID.getText().equals("Ingrese ID")) { 
-	                textID.setText(""); 
-	                textID.setForeground(Color.BLACK); 
-	            }
-	        }
-	        @Override
-	        public void focusLost(FocusEvent e) {
-	            if (textID.getText().isEmpty()) { 
-	                textID.setText("Ingrese ID"); 
-	                textID.setForeground(Color.GRAY);
-	            }
-	        }
-	    });
+	    validacionNumerica(textID);
 	    panel.add(textID);
 	    
 	    textField = new JTextField();
@@ -1126,5 +1092,80 @@ public class Clientes {
     	btn.setBackground(new Color(217, 217, 217)); 
     }
 
+	public void validacionTexto(JTextField text) {
+		text.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char l = e.getKeyChar();
+                if (!Character.isLetter(l)) {
+                    e.consume();
+                }
+            }
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+            }
+		});
+	}
+	
+	public void validacionTel(JTextField txt) {
+		txt.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char l = e.getKeyChar();
+                if (!Character.isDigit(l)) {
+                    e.consume();
+                }
+            }
+            @Override public void keyPressed(KeyEvent e) {  }
+            @Override public void keyReleased(KeyEvent e) {}
+		});
+		txt.setDocument(new PlainDocument() {
+		    @Override
+		    public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+		        if (getLength() + str.length() <= 10) {
+		            super.insertString(offs, str, a);
+		        }
+		    }
+		});
+	}
+	
+	public void validacionNumerica(JTextField text) {
+		text.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char l = e.getKeyChar();
+                if (!Character.isDigit(l)) {
+                    e.consume();
+                }
+            }
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+            }
+		});
+		text.addFocusListener(new FocusListener() {
+	        @Override
+	        public void focusGained(FocusEvent e) {
+	            if (text.getText().equals("Ingrese ID")) { 
+	                text.setText(""); 
+	                text.setForeground(Color.BLACK); 
+	            }
+	        }
+	        @Override
+	        public void focusLost(FocusEvent e) {
+	            if (text.getText().isEmpty()) { 
+	                text.setText("Ingrese ID"); 
+	                text.setForeground(Color.GRAY);
+	            }
+	        }
+	    });
+	}
 
 }
