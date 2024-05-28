@@ -56,7 +56,7 @@ public class ClienteModelo {
 			e.printStackTrace();
 		}
 		insertar.field("metodoPago",cliente.getMetodoPago());
-		System.out.println("ssiis");
+		
 		
 		try {
 			insertar.execute();
@@ -71,14 +71,16 @@ public class ClienteModelo {
 	}
 	
 	public static void cargarCliente() {
+		client.clear();
 		Select nombreTabla=BaseDatos.optenerIstancia().getMySQL().table("cliente").select();
         List<Map<String, Object>> resultTableUser;
 		try {
 			resultTableUser = nombreTabla.fetchAllAsList();
 			for (Map<String, Object> map : resultTableUser) {
+				
 	            
 	        	int ID=(int)map.get("ID");
-	        	String nombre=((String)map.get("usuario")); 
+	        	String nombre=((String)map.get("nombre")); 
 	        	String apellido=((String)map.get("apellido")); 
 	        	String correo=((String)map.get("correo")); 
 	        	int telefono=(int)map.get("telefono");
@@ -101,6 +103,7 @@ public class ClienteModelo {
 	            client.add(new Cliente( ID,  nombre, apellido,  correo,  telefono,  fechaInicial,
 	        			 fechaFinal,  tipoMembresia,  planMembresia,  fechaNacimiento,  imagen,
 	        			 metodoPago));
+	            
 		}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
