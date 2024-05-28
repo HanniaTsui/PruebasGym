@@ -393,8 +393,7 @@ public class Clientes {
 	    btnCancelar.setForeground(new Color(255, 255, 255));
 	    btnCancelar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		quitarComponentes();
-				crearCliente();
+				controlador.crearClientes();
 	    	}
 	    });
 	    btnCancelar.setFocusable(false);
@@ -427,12 +426,6 @@ public class Clientes {
 	}
 	
 	private boolean validarCamposCrear() { //validacion de los campos en metodo crearCliente
-		/*
-	    String nombre = textNombre.getText().trim();
-	    String email = textEmail.getText().trim();
-	    String password = new String(textPass.getPassword());
-	    String confirmarPassword = new String(textPass2.getPassword());
-	    */
 	    
 	    int ID =0 ;
 		String nombre=textNombre.getText().trim(); 
@@ -616,8 +609,7 @@ public class Clientes {
 	    btnCancelar.setForeground(new Color(255, 255, 255));
 	    btnCancelar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		quitarComponentes();
-				editarClientes();
+				controlador.editarCliente();
 	    	}
 	    });
 	    btnCancelar.setFocusable(false);
