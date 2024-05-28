@@ -37,6 +37,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -76,7 +77,7 @@ public class Clientes {
 	Color colorBtnGuardar = new Color(0, 47, 78);
 	Color colorBtnEliminar = new Color(0, 0, 0);
 	Color colorBtnEditar = new Color(89, 89, 89);
-
+	List<Cliente> clientes;
 	private ClientesControlador controlador;
 
 	/**
@@ -84,62 +85,85 @@ public class Clientes {
 	 */
 	public Clientes(ClientesControlador controlador) {
 		this.controlador = controlador;
+		
 	}
 
 	public JPanel clientes() {
-		JPanel panel = getMenu();
-		panel.add(menuVerticalClientes());
-		JLabel lblTitutlo = new JLabel("Clientes registrados");
-		lblTitutlo.setForeground(new Color(0, 0, 0));
-		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
-		lblTitutlo.setBounds(542, 114, 276, 33);
-		panel.add(lblTitutlo);
+		 JPanel panel = getMenu();
+	        panel.add(menuVerticalClientes());
 
-		String titles[] = { "ID", "Nombre", "Apellido", "Correo", "Teléfono", "Fecha de ingreso", "Tipo de membresía",
-				"Estado" };
-		if (modelo == null) {
-            modelo = new DefaultTableModel(null, titles) {
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return false; // La tabla no se edita
-                }
-            };
-        }
-		modelo.setRowCount(0);
+	        JLabel lblTitulo = new JLabel("Clientes registrados");
+	        lblTitulo.setForeground(new Color(0, 0, 0));
+	        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+	        lblTitulo.setFont(new Font("Arial Black", Font.PLAIN, 25));
+	        lblTitulo.setBounds(542, 114, 276, 33);
+	        panel.add(lblTitulo);
 
-        if (!datosCargados) {
-            ClienteModelo.cargarCliente();
-            List<Cliente> clientes = ClienteModelo.getClient();
-            for (Cliente cliente : clientes) {
-                Object[] row = new Object[8];
-                row[0] = cliente.getID();
-                row[1] = cliente.getNombre();
-                row[2] = cliente.getApellido();
-                row[3] = cliente.getCorreo();
-                row[4] = cliente.getTelefono();
-                row[5] = cliente.getFechaInicial();
-                row[6] = cliente.getTipoMembresia();
-                row[7] = cliente.getPlanMembresia(); 
-                modelo.addRow(row);
-            }
-            datosCargados = true; // Marcar los datos como cargados
-        }
-		
-		JTable datosTabla = new JTable(modelo);
-		JScrollPane tablaScroll = new JScrollPane(datosTabla);
-		tablaScroll.setBounds(230, 220, 900, 350);
-		panel.add(tablaScroll);
+	        String titles[] = { "ID", "Nombre", "Apellido", "Correo", "Teléfono", "Fecha de ingreso", "Tipo de membresía", "Estado" };
+	        if (modelo == null) {
+	            modelo = new DefaultTableModel(null, titles) {
+	                @Override
+	                public boolean isCellEditable(int row, int column) {
+	                    return false; // La tabla no se edita
+	                }
+	            };
+	        }
+	        modelo.setRowCount(0);
 
-		JComboBox btnFiltro = new JComboBox();
-		btnFiltro.setModel(new DefaultComboBoxModel(new String[] { "Filtrar", "Todos", "Activos", "No activos" }));
-		btnFiltro.setForeground(new Color(0, 0, 0));
-		btnFiltro.setBounds(943, 120, 187, 30);
-		panel.add(btnFiltro);
+	        JTable datosTabla = new JTable(modelo);
+	        JScrollPane tablaScroll = new JScrollPane(datosTabla);
+	        tablaScroll.setBounds(230, 220, 900, 350);
+	        panel.add(tablaScroll);
 
-		return panel;
+	        if (!datosCargados) {
+	            cargarDatosEnSegundoPlano();
+	        } else {
+	            actualizarTabla();
+	        }
+
+	        JComboBox<String> btnFiltro = new JComboBox<>();
+	        btnFiltro.setModel(new DefaultComboBoxModel<>(new String[]{"Filtrar", "Todos", "Activos", "No activos"}));
+	        btnFiltro.setForeground(new Color(0, 0, 0));
+	        btnFiltro.setBounds(943, 120, 187, 30);
+	        panel.add(btnFiltro);
+
+	        return panel;
 	}
+	 private void cargarDatosEnSegundoPlano() {
+	        SwingWorker<List<Cliente>, Void> worker = new SwingWorker<>() {
+	            @Override
+	            protected List<Cliente> doInBackground() {
+	                ClienteModelo.cargarCliente();
+	                return ClienteModelo.getClient();
+	            }
 
+	            @Override
+	            protected void done() {
+	                try {
+	                    clientes = get();
+	                    datosCargados = true;
+	                    actualizarTabla();
+	                } catch (Exception e) {
+	                    e.printStackTrace();
+	                }
+	            }
+	        };
+	        worker.execute();
+	    }
+	 private void actualizarTabla() {
+	        for (Cliente cliente : clientes) {
+	            Object[] row = new Object[8];
+	            row[0] = cliente.getID();
+	            row[1] = cliente.getNombre();
+	            row[2] = cliente.getApellido();
+	            row[3] = cliente.getCorreo();
+	            row[4] = cliente.getTelefono();
+	            row[5] = cliente.getFechaInicial();
+	            row[6] = cliente.getTipoMembresia();
+	            row[7] = cliente.getPlanMembresia();
+	            modelo.addRow(row);
+	        }
+	    }
 	public void botonesDetallesClientes(JButton btn) {
 		btn.setFocusable(false);
 		btn.setForeground(new Color(255, 255, 255));
