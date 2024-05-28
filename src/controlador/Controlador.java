@@ -26,6 +26,7 @@ public class Controlador implements ActionListener {
 		
 		
 	}
+	//ya se esta ocupando en inicio controlador
 	public boolean validacion(String usuario,String contraseña) {
 	    // Realizar la validación con la base de datos
 	    for (Usuario usuario2 : BaseDatos.getUser()) {
@@ -36,6 +37,7 @@ public class Controlador implements ActionListener {
 	    return false;
 	 
 	}
+	//ya se esta ocupando en inicio controlador
 	public void registrar(String usuario,String contraseña,String correo) {
 	
 		 BaseDatos.optenerIstancia().subirDatos(new Usuario(usuario,contraseña,correo));

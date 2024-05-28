@@ -38,7 +38,7 @@ public class InicioControlador {
         return false;
     }
 
-    public void registrar(String usuario,String contraseña,String correo) {
+    public static void registrar(String usuario,String contraseña,String correo) {
         BaseDatos.optenerIstancia().subirDatos(new Usuario(usuario,contraseña,correo));
     }
 

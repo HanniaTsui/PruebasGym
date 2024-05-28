@@ -12,7 +12,13 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -38,7 +44,10 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
+
+
 import controlador.ClientesControlador;
+import controlador.InicioControlador;
 import controlador.MenuControlador;
 
 public class Clientes {
@@ -53,8 +62,11 @@ public class Clientes {
 	 private JComboBox<String> comboMes;
 	 private JLabel lblNombres, lblApellidos, lblTotalPago, lblMembresia_1, lblMtodoDePago, lblFoto;
 	 private JTextField textNombre, textApellidos, textEmail, textNacimiento, textTel;
-	 private JComboBox comboTipo, comboPago;
+	 private JComboBox comboTipo, comboPago,comboMembresia;
 	 String ventanaActual;
+	 String fechaNacimiento1,fechaInicial1,fechaFinal1;
+	 BufferedImage imagen1;
+	 String path;
 	 private File selectedFile;
 	 Color colorBtnVolver = new Color(174,174,174);
 	 Color colorBtnGuardar = new Color(0,47,78); 
@@ -280,6 +292,12 @@ public class Clientes {
 	    spinnerFechaNacimiento.setEditor(dateEditorFechaNac);
 	    spinnerFechaNacimiento.setBounds(360, 73, 200, 30);
 	    panelCrear.add(spinnerFechaNacimiento);
+	    // sacar el modelo para convertirlo a string 
+	    SpinnerDateModel modeloFechaNacimiento = (SpinnerDateModel) spinnerFechaNacimiento.getModel();
+	    Date fechaSeleccionada = modeloFechaNacimiento.getDate();
+	    SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+	    fechaNacimiento1 = formatoFecha.format(fechaSeleccionada);
+
 	    
 	    textTel = new JTextField();
 	    textTel.setColumns(10);
@@ -287,7 +305,7 @@ public class Clientes {
 	    textTel.setBounds(360, 149, 200, 30);
 	    panelCrear.add(textTel);
 	    
-	    JComboBox comboMembresia = new JComboBox();
+	    comboMembresia = new JComboBox();
 	    comboMembresia.setModel(new DefaultComboBoxModel(new String[] {"General", "Estudiante","Familiar", "Dúo"}));
 	    comboMembresia.setBounds(360, 255, 200, 30);
 	    panelCrear.add(comboMembresia);
@@ -317,12 +335,23 @@ public class Clientes {
 	    spinnerFechaIn.setEditor(dateEditorFechaIn);
 	    spinnerFechaIn.setBounds(70, 350, 200, 30);
 	    panelCrear.add(spinnerFechaIn);
+	    //convertir spinner a texto con su formato 
+	    SpinnerDateModel modeloFechaIn = (SpinnerDateModel) spinnerFechaIn.getModel();
+	    Date fechaSeleccionadaIn = modeloFechaIn.getDate();
+	    SimpleDateFormat formatoFechaIn = new SimpleDateFormat("dd/MM/yyyy");
+	    fechaInicial1 = formatoFechaIn.format(fechaSeleccionadaIn);
 
 	    JSpinner spinnerFechaFin = new JSpinner(new SpinnerDateModel());
 	    JSpinner.DateEditor dateEditorFechaFin = new JSpinner.DateEditor(spinnerFechaFin, "dd/MM/yyyy");
 	    spinnerFechaFin.setEditor(dateEditorFechaFin);
 	    spinnerFechaFin.setBounds(70, 435, 200, 30);
 	    panelCrear.add(spinnerFechaFin);
+	    //convertir spinner a string 
+	    SpinnerDateModel modeloFechaFin = (SpinnerDateModel) spinnerFechaFin.getModel();
+	    Date fechaSeleccionadaFin = modeloFechaFin.getDate();
+	    SimpleDateFormat formatoFechaFin = new SimpleDateFormat("dd/MM/yyyy");
+	    fechaFinal1 = formatoFechaFin.format(fechaSeleccionadaFin);
+
 	    
 	    comboTipo = new JComboBox();
 	    comboTipo.setModel(new DefaultComboBoxModel(new String[] {"  ", "1 mes", "3 meses","6 meses", "1 año"}));
@@ -334,6 +363,11 @@ public class Clientes {
 	    comboPago.setBounds(360, 435, 200, 30);
 	    panelCrear.add(comboPago);
 	    
+	    JLabel lblFoto = new JLabel("");
+	    lblFoto.setIcon(new ImageIcon(Clientes.class.getResource("/img/usuarioGym 1.png")));
+	    lblFoto.setBounds(642, 33, 217, 221);
+	    panelCrear.add(lblFoto);
+	    
 	    JButton btnFoto = new JButton("Subir foto");
 	    btnFoto.setForeground(new Color(255, 255, 255));
 	    btnFoto.setFocusable(false);
@@ -344,6 +378,7 @@ public class Clientes {
 				 if (selectedFile != null) {
 	                    lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
 	                    panel.revalidate(); panel.repaint();
+	                    path =selectedFile.getAbsolutePath();
 	              }	
 			}
 	    });
@@ -352,10 +387,7 @@ public class Clientes {
 	    btnFoto.setBounds(652, 270, 207, 40);
 	    panelCrear.add(btnFoto);
 	    
-	    JLabel lblFoto = new JLabel("");
-	    lblFoto.setIcon(new ImageIcon(Clientes.class.getResource("/img/usuarioGym 1.png")));
-	    lblFoto.setBounds(642, 33, 217, 221);
-	    panelCrear.add(lblFoto);
+	    
 	    
 	    btnCancelar = new JButton("Cancelar");
 	    btnCancelar.setForeground(new Color(255, 255, 255));
@@ -375,7 +407,9 @@ public class Clientes {
 		btnPagar.setForeground(new Color(255, 255, 255));
 		btnPagar.addActionListener(new ActionListener() {
     	public void actionPerformed(ActionEvent e) {
-    		ticket();
+    		validarCamposCrear();
+    		//ticket();
+    		System.out.println("aaaa");
     		}
 	    });
 		btnPagar.setFocusable(false);
@@ -388,8 +422,44 @@ public class Clientes {
 	    configurarLabelsIzq(lblTotalPago);
 	    lblTotalPago.setBounds(652, 338, 130, 20);
 	    panelCrear.add(lblTotalPago);
-
+	    
 		return panel;
+	}
+	
+	private boolean validarCamposCrear() { //validacion de los campos en metodo crearCliente
+		/*
+	    String nombre = textNombre.getText().trim();
+	    String email = textEmail.getText().trim();
+	    String password = new String(textPass.getPassword());
+	    String confirmarPassword = new String(textPass2.getPassword());
+	    */
+	    
+	    int ID =0 ;
+		String nombre=textNombre.getText().trim(); 
+		String apellido=textApellidos.getText().trim(); 
+		String correo=textEmail.getText().trim(); 
+		int telefono=Integer.parseInt(textTel.getText().trim());
+		String fechaInicial=fechaInicial1;
+		String fechaFinal=fechaFinal1; 
+		String tipoMembresia=(String) comboMembresia.getSelectedItem();
+		String planMembresia=(String) comboTipo.getSelectedItem();; 
+		String fechaNacimiento=fechaNacimiento1;
+		BufferedImage imagen;
+        try {
+            imagen = ImageIO.read(new File(path));
+        } catch(IOException exception) {
+            JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        };
+		String metodoPago=(String) comboPago.getSelectedItem();
+		
+		ClientesControlador.registrarCliente(ID, nombre, apellido, correo, telefono, fechaInicial, fechaFinal, tipoMembresia, planMembresia, fechaNacimiento, imagen, metodoPago);
+
+	   
+	    
+
+	  //  InicioControlador.registrar(nombre, password,email);
+	    return true;
 	}
 	
 	public JPanel editarClientes() {

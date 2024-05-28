@@ -168,7 +168,8 @@ public class Inicio {
 		btnAceptar.setFont(new Font("Arial Black", Font.BOLD, 24));
 		btnAceptar.setBounds(87, 600, 355, 45);
 		btnAceptar.addActionListener(e -> {
-            String nombre = textNombre.getText().trim();
+            /*
+			String nombre = textNombre.getText().trim();
             String email = textEmail.getText().trim();
             String password = new String(textPass.getPassword());
             String confirmarPassword = new String(textPass2.getPassword());
@@ -208,8 +209,10 @@ public class Inicio {
                 return;
             }
 
-            controlador.registrar(nombre, password,email);
+            InicioControlador.registrar(nombre, password,email);
             JOptionPane.showMessageDialog(panel, "Registro exitoso");
+            */
+			validarCampos();
         });
 
 		panel.add(btnAceptar);
@@ -362,7 +365,7 @@ public class Inicio {
 	        return false;
 	    }
 
-	    controlador.registrar(nombre, password,email);
+	    InicioControlador.registrar(nombre, password,email);
 	    return true;
 	}
 	

@@ -15,8 +15,13 @@ import com.code.advancedsql.query.Select;
 public class BaseDatos {
     private static BaseDatos Istance=new BaseDatos();
     private MySQL mySQL;
+    
 
-    static List<Usuario> user = new ArrayList<Usuario>();
+    public MySQL getMySQL() {
+		return mySQL;
+	}
+
+	static List<Usuario> user = new ArrayList<Usuario>();
     
 
     public static List<Usuario> getUser() {
