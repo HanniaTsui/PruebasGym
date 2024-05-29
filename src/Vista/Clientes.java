@@ -1011,6 +1011,41 @@ public class Clientes {
 		lblNewLabel.setIcon(new ImageIcon(Clientes.class.getResource("/img/usuarioGym 1.png")));
 		lblNewLabel.setBounds(650, 20, 217, 218);
 		panelInfo.add(lblNewLabel);
+		
+		 //LABELS PARA LOS DATOS
+		JLabel lblN= new JLabel(); //PARA NOMBRE
+		configurarLabelsIzq(lblN);
+		lblN.setBounds(80, 60, 200, 20);
+		panelInfo.add(lblN);
+		JLabel lblAp= new JLabel(); // PARA APELLIDO
+		configurarLabelsIzq(lblAp);
+		lblAp.setBounds(400, 60, 200, 20);
+		panelInfo.add(lblAp);
+		JLabel lblEm= new JLabel(); //PARA EMAIL
+		configurarLabelsIzq(lblEm);
+		lblEm.setBounds(80, 140, 200, 20);
+		panelInfo.add(lblEm);
+		JLabel lblTelef= new JLabel(); // PARA TELEFONO
+		configurarLabelsIzq(lblTelef);
+		lblTelef.setBounds(400, 140, 200, 20);
+		panelInfo.add(lblTelef);
+		JLabel lblPlan= new JLabel(); //PARA PLAN
+		configurarLabelsIzq(lblPlan);
+		lblPlan.setBounds(80, 220, 200, 20);
+		panelInfo.add(lblPlan);
+		JLabel lblTip= new JLabel(); // PARA TIPO
+		configurarLabelsIzq(lblTip);
+		lblTip.setBounds(400, 220, 200, 20);
+		panelInfo.add(lblTip);
+		JLabel lblFechaIn= new JLabel(); //PARA FECHA INICIAL
+		configurarLabelsIzq(lblFechaIn);
+		lblFechaIn.setBounds(80, 300, 200, 20);
+		panelInfo.add(lblFechaIn);
+		JLabel lblFechaFin= new JLabel(); // PARA FECHA FINAL
+		configurarLabelsIzq(lblFechaFin);
+		lblFechaFin.setBounds(400, 300, 200, 20);
+		panelInfo.add(lblFechaFin);
+		///////
 
 	}
 
