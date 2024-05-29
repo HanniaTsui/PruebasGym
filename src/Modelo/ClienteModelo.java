@@ -19,6 +19,7 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.swing.JOptionPane;
 
 import com.code.advancedsql.MySQL;
+import com.code.advancedsql.query.Delete;
 import com.code.advancedsql.query.Insert;
 import com.code.advancedsql.query.Select;
 
@@ -35,6 +36,26 @@ public class ClienteModelo {
 	}
 	public static ClienteModelo obtenerInstancia() {
 		return instance;
+	}
+	
+	public void eliminarCliente(Cliente cliente) {
+		try {
+			// Eliminar el cliente de la base de datos
+			Delete query = BaseDatos.optenerIstancia().getMySQL().table("cliente").delete().where("ID = ?", Integer.toString(cliente.getID()));
+			int execute = query.execute();
+
+			// Imprimir la consulta y el resultado
+			System.out.println(query);
+			System.out.println(execute);
+
+			// Si la eliminación en la base de datos fue exitosa, eliminar el cliente de la lista en memoria
+			if (execute > 0) {
+				System.out.println("se elimino");
+				client.remove(cliente);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void subirDatosCliente(Cliente cliente) {

@@ -37,6 +37,7 @@ public class ClientesControlador {
 
     public void eliminarCliente() {
     	FramePrincipal.obtenerInstancia().agregarPanel(vista.eliminarCliente());
+    	
     }
     public static void registrarCliente(int iD, String nombre, String apellido, String correo, int telefono, String fechaInicial,
 			String fechaFinal, String tipoMembresia, String planMembresia, String fechaNacimiento, BufferedImage imagen,
@@ -45,6 +46,7 @@ public class ClientesControlador {
     			,fechaNacimiento,imagen,metodoPago));
     	
     }
+    
 
 
 }

@@ -61,7 +61,7 @@ public class Clientes {
 	JLabel lblTitulo, lblGym, lblPersona, lblCodigo, lblFecha, lblTlefono, lblCorreoElectrnico, lblFechaDeRegistro,
 			lblMembresia, lblPeterParker, lblNewLabel;
 	private JButton btnDetalles, btnCrear;
-	private JTextField textField;
+	private JTextField textField,textID;
 	private JComboBox<String> comboMes;
 	private JLabel lblNombres, lblApellidos, lblTotalPago, lblMembresia_1, lblMtodoDePago, lblFoto;
 	private JTextField textNombre, textApellidos, textEmail, textNacimiento, textTel;
@@ -78,6 +78,7 @@ public class Clientes {
 	Color colorBtnEliminar = new Color(0, 0, 0);
 	Color colorBtnEditar = new Color(89, 89, 89);
 	List<Cliente> clientes;
+	Cliente cliente=null;
 	private ClientesControlador controlador;
 
 	/**
@@ -248,6 +249,9 @@ public class Clientes {
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controlador.eliminarCliente();
+				
+			        	   
+			       
 			}
 		});
 		confBtnMenuVertical(btnEliminar);
@@ -256,6 +260,14 @@ public class Clientes {
 
 		return panelMenuVertical;
 	}
+	 private Cliente buscarClientePorID(int id) {
+	        for (Cliente cliente : ClienteModelo.getClient()) {
+	            if (cliente.getID() == id) {
+	                return cliente;
+	            }
+	        }
+	        return null;
+	    }
 
 	public JPanel panelCrearEditar() {
 		JPanel p2 = new JPanel();
@@ -1161,7 +1173,7 @@ public class Clientes {
 		lblTitutlo.setBounds(542, 114, 276, 33);
 		panel.add(lblTitutlo);
 
-		JTextField textID = new JTextField("Ingrese ID");
+		textID = new JTextField("Ingrese ID");
 		textID.setBackground(new Color(217, 217, 217));
 		textID.setColumns(10);
 		textID.setForeground(Color.GRAY);
@@ -1179,7 +1191,15 @@ public class Clientes {
 		btnBuscar = new JButton("");
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				panelCredencial.setVisible(true);
+				
+				cliente=null;
+				 cliente=buscarClientePorID(Integer.parseInt(textID.getText()));
+		          
+		          if (cliente!=null) {
+		        	 
+		        	  panelCredencial.setVisible(true);
+		          }
+				
 			}
 		});
 		btnBuscar.setFocusable(false);
@@ -1207,6 +1227,9 @@ public class Clientes {
 				if (op == JOptionPane.OK_OPTION) {
 					JOptionPane.showMessageDialog(null, "Cliente eliminado con éxito", "Eliminación exitosa",
 							JOptionPane.INFORMATION_MESSAGE);
+					if(cliente!=null) {
+						 ClienteModelo.obtenerInstancia().eliminarCliente(cliente);
+					}
 					panelCredencial.setVisible(false);
 				}
 
