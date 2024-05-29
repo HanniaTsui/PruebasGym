@@ -22,6 +22,7 @@ import com.code.advancedsql.MySQL;
 import com.code.advancedsql.query.Delete;
 import com.code.advancedsql.query.Insert;
 import com.code.advancedsql.query.Select;
+import com.code.advancedsql.query.Update;
 
 public class ClienteModelo {
 	public static ClienteModelo instance = new ClienteModelo();
@@ -56,6 +57,39 @@ public class ClienteModelo {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void editarCliente(Cliente cliente) {
+		Update insertar =BaseDatos.optenerIstancia().getMySQL().table("cliente").update();
+		insertar.field("ID",cliente.getID());
+		insertar.field("nombre",cliente.getNombre());
+		insertar.field("apellido",cliente.getApellido());
+		insertar.field("correo",cliente.getCorreo());
+		insertar.field("telefono",cliente.getTelefono());
+		insertar.field("fechaInicial",cliente.getFechaInicial());
+		insertar.field("fechaFinal",cliente.getFechaFinal());
+		insertar.field("tipoMembresia",cliente.getTipoMembresia());
+		insertar.field("planMembresia",cliente.getPlanMembresia());
+		insertar.field("fechaNacimiento",cliente.getFechaNacimiento());
+
+		try {
+			insertar.field("imagen",convertImageToBinary(cliente.getImagen()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		insertar.field("metodoPago",cliente.getMetodoPago());
+
+		try {
+			insertar.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "No se actualizar el cliente", "ERROR", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		JOptionPane.showMessageDialog(null, "se actualizar el cliente correctamente");
 	}
 
 	public void subirDatosCliente(Cliente cliente) {

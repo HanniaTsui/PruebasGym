@@ -81,6 +81,8 @@ public class Clientes {
 	Cliente cliente=null;
 	private ClientesControlador controlador;
 
+	JPanel panelEditar = null;
+
 	/**
 	 * Create the frame.
 	 */
@@ -152,6 +154,8 @@ public class Clientes {
 	        worker.execute();
 	    }
 	 private void actualizarTabla() {
+		modelo.fireTableRowsDeleted(0, 0);
+
 	        for (Cliente cliente : clientes) {
 	            Object[] row = new Object[8];
 	            row[0] = cliente.getID();
@@ -260,6 +264,7 @@ public class Clientes {
 
 		return panelMenuVertical;
 	}
+
 	 private Cliente buscarClientePorID(int id) {
 	        for (Cliente cliente : ClienteModelo.getClient()) {
 	            if (cliente.getID() == id) {
@@ -267,7 +272,7 @@ public class Clientes {
 	            }
 	        }
 	        return null;
-	    }
+	}
 
 	public JPanel panelCrearEditar() {
 		JPanel p2 = new JPanel();
@@ -456,6 +461,7 @@ public class Clientes {
 				controlador.crearClientes();
 			}
 		});
+
 		btnCancelar.setFocusable(false);
 		btnCancelar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
@@ -487,9 +493,7 @@ public class Clientes {
 		return panel;
 	}
 
-	private boolean validarCamposCrear() { // validacion de los campos en metodo crearCliente
-		
-
+	private boolean validarCamposCrear() {
 		int ID = 0;
 		String nombre = textNombre.getText().trim();
 		String apellido = textApellidos.getText().trim();
@@ -536,8 +540,61 @@ public class Clientes {
 		lblTitutlo.setBounds(372, 44, 276, 33);
 		p2.add(lblTitutlo);
 
-		panelCrear = new JPanel();
-		p2.add(panelCrear);
+		JTextField textID = new JTextField("Ingrese ID");
+		textID.setBackground(new Color(217, 217, 217));
+		textID.setColumns(10);
+		textID.setForeground(Color.GRAY);
+		textID.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
+				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+		textID.setBounds(359, 102, 251, 50);
+		validacionNumerica(textID);
+		p2.add(textID);
+
+		textField = new JTextField();
+		textField.setBounds(170, 80, 0, 0);
+		p2.add(textField);
+
+		btnBuscar = new JButton("");
+		btnBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cliente=null;
+				cliente=buscarClientePorID(Integer.parseInt(textID.getText()));
+
+				if (cliente!=null) {
+					panelEditar = editarCliente(cliente);
+					p2.add(panelEditar);
+					panelEditar.setVisible(true);
+				}
+			}
+		});
+		btnBuscar.setFocusable(false);
+		btnBuscar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
+				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+		btnBuscar.setIcon(new ImageIcon(Clientes.class.getResource("/img/buscar.png")));
+		btnBuscar.setBackground(new Color(217, 217, 217));
+		btnBuscar.setBounds(609, 102, 50, 50);
+		p2.add(btnBuscar);
+
+		btnGuardar = new JButton("Guardar");
+		btnGuardar.setForeground(new Color(255, 255, 255));
+		btnGuardar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "¡Cambios de cliente realizados con éxito!", "Edición exitosa",
+						JOptionPane.INFORMATION_MESSAGE);
+
+				if (panelEditar != null) {
+					panelEditar.setVisible(false);
+					panelEditar = null;
+				}
+
+			}
+		});
+
+		return panel;
+	}
+
+	public JPanel editarCliente(Cliente cliente) {
+		JPanel panelCrear = new JPanel();
 		panelCrear.setBackground(new Color(217, 217, 217));
 		panelCrear.setLayout(null);
 		panelCrear.setVisible(false);
@@ -568,7 +625,7 @@ public class Clientes {
 		lblNombres.setBounds(70, 33, 200, 20);
 		panelCrear.add(lblNombres);
 
-		textNombre = new JTextField();
+		textNombre = new JTextField(cliente.getNombre());
 		validacionTexto(textNombre);
 		textNombre.setBounds(70, 73, 200, 30);
 		panelCrear.add(textNombre);
@@ -579,13 +636,13 @@ public class Clientes {
 		lblApellidos.setBounds(70, 119, 200, 20);
 		panelCrear.add(lblApellidos);
 
-		textApellidos = new JTextField();
+		textApellidos = new JTextField(cliente.getApellido());
 		textApellidos.setColumns(10);
 		validacionTexto(textApellidos);
 		textApellidos.setBounds(70, 154, 200, 30);
 		panelCrear.add(textApellidos);
 
-		textEmail = new JTextField();
+		textEmail = new JTextField(cliente.getCorreo());
 		textEmail.setColumns(10);
 		textEmail.setBounds(70, 255, 200, 30);
 		panelCrear.add(textEmail);
@@ -600,11 +657,12 @@ public class Clientes {
 		textTel.setColumns(10);
 		validacionTel(textTel);
 		textTel.setBounds(360, 149, 200, 30);
+		textTel.setText(String.valueOf(cliente.getTelefono()));
 		panelCrear.add(textTel);
 
 		JComboBox comboMembresia = new JComboBox();
-		comboMembresia
-				.setModel(new DefaultComboBoxModel(new String[] { "  ", "General", "Estudiante", "Familiar", "Dúo" }));
+		comboMembresia.setModel(new DefaultComboBoxModel(new String[] { "  ", "General", "Estudiante", "Familiar", "Dúo" }));
+		comboMembresia.setSelectedItem(cliente.getTipoMembresia());
 		comboMembresia.setBounds(360, 255, 200, 30);
 		panelCrear.add(comboMembresia);
 
@@ -629,12 +687,14 @@ public class Clientes {
 		panelCrear.add(lblMtodoDePago);
 
 		JSpinner spinnerFechaIn = new JSpinner(new SpinnerDateModel());
+		//spinnerFechaIn.setValue(cliente.getFechaFinal());
 		JSpinner.DateEditor dateEditorFechaIn = new JSpinner.DateEditor(spinnerFechaIn, "dd/MM/yyyy");
 		spinnerFechaIn.setEditor(dateEditorFechaIn);
 		spinnerFechaIn.setBounds(70, 350, 200, 30);
 		panelCrear.add(spinnerFechaIn);
 
 		JSpinner spinnerFechaFin = new JSpinner(new SpinnerDateModel());
+		//spinnerFechaFin.setValue(cliente.getFechaFinal());
 		JSpinner.DateEditor dateEditorFechaFin = new JSpinner.DateEditor(spinnerFechaFin, "dd/MM/yyyy");
 		spinnerFechaFin.setEditor(dateEditorFechaFin);
 		spinnerFechaFin.setBounds(70, 435, 200, 30);
@@ -642,17 +702,20 @@ public class Clientes {
 
 		comboTipo = new JComboBox();
 		comboTipo.setModel(new DefaultComboBoxModel(new String[] { "  ", "1 mes", "3 meses", "6 meses", "1 año" }));
+		comboTipo.setSelectedItem(cliente.getPlanMembresia());
 		comboTipo.setBounds(360, 350, 200, 30);
 		panelCrear.add(comboTipo);
 
 		comboPago = new JComboBox();
 		comboPago.setModel(new DefaultComboBoxModel(new String[] { "  ", "Efectivo", "Visa", "Cheque" }));
+		comboPago.setSelectedItem(cliente.getMetodoPago());
 		comboPago.setBounds(360, 435, 200, 30);
 		panelCrear.add(comboPago);
 
 		JButton btnFoto = new JButton("Subir foto");
 		btnFoto.setForeground(new Color(255, 255, 255));
 		btnFoto.setFocusable(false);
+		path = "Predeterminado";
 		btnFoto.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -661,6 +724,7 @@ public class Clientes {
 					lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
 					panel.revalidate();
 					panel.repaint();
+					path = selectedFile.getAbsolutePath();
 				}
 			}
 		});
@@ -671,7 +735,7 @@ public class Clientes {
 		panelCrear.add(btnFoto);
 
 		JLabel lblFoto = new JLabel("");
-		lblFoto.setIcon(new ImageIcon(Clientes.class.getResource("/img/usuarioGym 1.png")));
+		lblFoto.setIcon(new ImageIcon(cliente.getImagen()));
 		lblFoto.setBounds(642, 33, 217, 221);
 		panelCrear.add(lblFoto);
 
@@ -689,51 +753,34 @@ public class Clientes {
 		btnCancelar.setBounds(302, 490, 120, 40);
 		panelCrear.add(btnCancelar);
 
-		JTextField textID = new JTextField("Ingrese ID");
-		textID.setBackground(new Color(217, 217, 217));
-		textID.setColumns(10);
-		textID.setForeground(Color.GRAY);
-		textID.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
-				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		textID.setBounds(359, 102, 251, 50);
-		validacionNumerica(textID);
-		p2.add(textID);
-
-		textField = new JTextField();
-		textField.setBounds(170, 80, 0, 0);
-		p2.add(textField);
-
-		btnBuscar = new JButton("");
-		btnBuscar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				panelCrear.setVisible(true);
-			}
-		});
-		btnBuscar.setFocusable(false);
-		btnBuscar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
-				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		btnBuscar.setIcon(new ImageIcon(Clientes.class.getResource("/img/buscar.png")));
-		btnBuscar.setBackground(new Color(217, 217, 217));
-		btnBuscar.setBounds(609, 102, 50, 50);
-		p2.add(btnBuscar);
-
-		btnGuardar = new JButton("Guardar");
-		btnGuardar.setForeground(new Color(255, 255, 255));
-		btnGuardar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "¡Cambios de cliente realizados con éxito!", "Edición exitosa",
-						JOptionPane.INFORMATION_MESSAGE);
-				panelCrear.setVisible(false);
-			}
-		});
 		btnGuardar.setFocusable(false);
 		btnGuardar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 		btnGuardar.setBackground(new Color(0, 45, 78));
+		btnGuardar.addActionListener(e -> {
+			cliente.setNombre(textNombre.getText());
+			cliente.setApellido(textApellidos.getText());
+			cliente.setCorreo(textEmail.getText());
+			cliente.setMetodoPago( (String) comboPago.getSelectedItem());
+			cliente.setPlanMembresia((String) comboTipo.getSelectedItem());
+			cliente.setTipoMembresia((String) comboMembresia.getSelectedItem());
+
+			if (!path.equals("Predeterminado")) {
+				BufferedImage imagen;
+				try {
+					imagen = ImageIO.read(new File(path));
+					cliente.setImagen(imagen);
+				} catch (IOException exception) {
+					JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+
+			ClienteModelo.obtenerInstancia().editarCliente(cliente);
+		});
 		btnGuardar.setBounds(462, 490, 120, 40);
 		panelCrear.add(btnGuardar);
 
-		return panel;
+		return panelCrear;
 	}
 
 	public JPanel detallesClientes() {
@@ -1187,18 +1234,18 @@ public class Clientes {
 		textField.setBounds(170, 80, 0, 0);
 		panel.add(textField);
 
-		panelCredencial = new JPanel();
 		btnBuscar = new JButton("");
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 				cliente=null;
-				 cliente=buscarClientePorID(Integer.parseInt(textID.getText()));
+				cliente=buscarClientePorID(Integer.parseInt(textID.getText()));
 		          
-		          if (cliente!=null) {
-		        	 
-		        	  panelCredencial.setVisible(true);
-		          }
+			  	if (cliente!=null) {
+					JPanel panelCredencial = eliminarCliente(cliente);
+					panel.add(panelCredencial);
+				  	panelCredencial.setVisible(true);
+			 	 }
 				
 			}
 		});
@@ -1210,11 +1257,16 @@ public class Clientes {
 		btnBuscar.setBounds(783, 172, 50, 50);
 		panel.add(btnBuscar);
 
+		return panel;
+	}
+
+	public JPanel eliminarCliente(Cliente cliente) {
+		JPanel panelCredencial = new JPanel();
+
 		panelCredencial.setVisible(false);
 		panelCredencial.setBackground(new Color(217, 217, 217));
 		panelCredencial.setBounds(222, 306, 915, 310);
 		panelCredencial.setLayout(null);
-		panel.add(panelCredencial);
 
 		btnElim = new JButton("Eliminar");
 		btnElim.setFocusable(false);
@@ -1227,8 +1279,8 @@ public class Clientes {
 				if (op == JOptionPane.OK_OPTION) {
 					JOptionPane.showMessageDialog(null, "Cliente eliminado con éxito", "Eliminación exitosa",
 							JOptionPane.INFORMATION_MESSAGE);
-					if(cliente!=null) {
-						 ClienteModelo.obtenerInstancia().eliminarCliente(cliente);
+					if (cliente!=null) {
+						ClienteModelo.obtenerInstancia().eliminarCliente(cliente);
 					}
 					panelCredencial.setVisible(false);
 				}
@@ -1240,7 +1292,7 @@ public class Clientes {
 		panelCredencial.add(btnElim);
 
 		lblPersona = new JLabel();
-		lblPersona.setIcon(new ImageIcon(Clientes.class.getResource("/img/usuarioGym 1.png")));
+		lblPersona.setIcon(new ImageIcon(cliente.getImagen()));
 		lblPersona.setBounds(36, 23, 217, 218);
 		panelCredencial.add(lblPersona);
 
@@ -1274,12 +1326,11 @@ public class Clientes {
 		lblMembresia.setBounds(299, 193, 327, 20);
 		panelCredencial.add(lblMembresia);
 
-		lblPeterParker = new JLabel("Usuario");
+		lblPeterParker = new JLabel(cliente.getNombre() + " " + cliente.getApellido());
 		configurarLabels(lblPeterParker);
 		lblPeterParker.setBounds(36, 260, 217, 20);
 		panelCredencial.add(lblPeterParker);
-
-		return panel;
+		return panelCredencial;
 	}
 
 	public void configurarBotones(JButton btn) {

@@ -97,6 +97,54 @@ public class Cliente {
 	public String getMetodoPago() {
 		return metodoPago;
 	}
-	
+
+
+	public void setID(int ID) {
+		this.ID = ID;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public void setApellido(String apellido) {
+		this.apellido = apellido;
+	}
+
+	public void setCorreo(String correo) {
+		this.correo = correo;
+	}
+
+	public void setTelefono(int telefono) {
+		this.telefono = telefono;
+	}
+
+	public void setFechaInicial(String fechaInicial) {
+		this.fechaInicial = fechaInicial;
+	}
+
+	public void setFechaFinal(String fechaFinal) {
+		this.fechaFinal = fechaFinal;
+	}
+
+	public void setTipoMembresia(String tipoMembresia) {
+		this.tipoMembresia = tipoMembresia;
+	}
+
+	public void setPlanMembresia(String planMembresia) {
+		this.planMembresia = planMembresia;
+	}
+
+	public void setFechaNacimiento(String fechaNacimiento) {
+		this.fechaNacimiento = fechaNacimiento;
+	}
+
+	public void setImagen(BufferedImage imagen) {
+		this.imagen = imagen;
+	}
+
+	public void setMetodoPago(String metodoPago) {
+		this.metodoPago = metodoPago;
+	}
 
 }
