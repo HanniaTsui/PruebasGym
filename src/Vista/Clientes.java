@@ -65,7 +65,7 @@ public class Clientes {
 	JLabel lblTitulo, lblGym, lblPersona, lblCodigo, lblFecha, lblTlefono, lblCorreoElectrnico, lblFechaDeRegistro,
 			lblMembresia, lblPeterParker, lblNewLabel;
 	private JButton btnDetalles, btnCrear;
-	private JTextField textField,textID;
+	private JTextField textField, textID;
 	private JComboBox<String> comboMes;
 	private JLabel lblNombres, lblApellidos, lblTotalPago, lblMembresia_1, lblMtodoDePago, lblFoto;
 	private JTextField textNombre, textApellidos, textEmail, textNacimiento, textTel;
@@ -82,7 +82,7 @@ public class Clientes {
 	Color colorBtnEliminar = new Color(0, 0, 0);
 	Color colorBtnEditar = new Color(89, 89, 89);
 	List<Cliente> clientes;
-	Cliente cliente=null;
+	Cliente cliente = null;
 	private ClientesControlador controlador;
 
 	JPanel panelEditar = null;
@@ -92,88 +92,162 @@ public class Clientes {
 	 */
 	public Clientes(ClientesControlador controlador) {
 		this.controlador = controlador;
-		
+
 	}
 
 	public JPanel clientes() {
-		 JPanel panel = getMenu();
-	        panel.add(menuVerticalClientes());
+		JPanel panel = getMenu();
+		panel.add(menuVerticalClientes());
 
-	        JLabel lblTitulo = new JLabel("Clientes registrados");
-	        lblTitulo.setForeground(new Color(0, 0, 0));
-	        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-	        lblTitulo.setFont(new Font("Arial Black", Font.PLAIN, 25));
-	        lblTitulo.setBounds(542, 114, 276, 33);
-	        panel.add(lblTitulo);
+		JLabel lblTitulo = new JLabel("Clientes registrados");
+		lblTitulo.setForeground(new Color(0, 0, 0));
+		lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTitulo.setFont(new Font("Arial Black", Font.PLAIN, 25));
+		lblTitulo.setBounds(542, 114, 276, 33);
+		panel.add(lblTitulo);
 
-	        String titles[] = { "ID", "Nombre", "Apellido", "Correo", "Teléfono", "Fecha de ingreso", "Tipo de membresía", "Estado" };
-	        if (modelo == null) {
-	            modelo = new DefaultTableModel(null, titles) {
-	                @Override
-	                public boolean isCellEditable(int row, int column) {
-	                    return false; // La tabla no se edita
-	                }
-	            };
-	        }
-	        modelo.setRowCount(0);
+		String titles[] = { "ID", "Nombre", "Apellido", "Correo", "Teléfono", "Fecha de ingreso", "Tipo de membresía",
+				"Estado" };
+		if (modelo == null) {
+			modelo = new DefaultTableModel(null, titles) {
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return false; // La tabla no se edita
+				}
+			};
+		}
+		modelo.setRowCount(0);
 
-	        JTable datosTabla = new JTable(modelo);
-	        JScrollPane tablaScroll = new JScrollPane(datosTabla);
-	        tablaScroll.setBounds(230, 220, 900, 350);
-	        panel.add(tablaScroll);
+		JTable datosTabla = new JTable(modelo);
+		JScrollPane tablaScroll = new JScrollPane(datosTabla);
+		tablaScroll.setBounds(230, 220, 900, 350);
+		panel.add(tablaScroll);
 
-	        if (!datosCargados) {
-	            cargarDatosEnSegundoPlano();
-	        } else {
-	            actualizarTabla();
-	        }
+		if (!datosCargados) {
+			cargarDatosEnSegundoPlano();
+		} else {
+			actualizarTabla();
+		}
 
-	        JComboBox<String> btnFiltro = new JComboBox<>();
-	        btnFiltro.setModel(new DefaultComboBoxModel<>(new String[]{"Filtrar", "Todos", "Activos", "No activos"}));
-	        btnFiltro.setForeground(new Color(0, 0, 0));
-	        btnFiltro.setBounds(943, 120, 187, 30);
-	        panel.add(btnFiltro);
+		JComboBox<String> btnFiltro = new JComboBox<>();
+		btnFiltro.setModel(new DefaultComboBoxModel<>(new String[] { "Filtrar", "Todos", "Activos", "No activos" }));
+		btnFiltro.setForeground(new Color(0, 0, 0));
+		btnFiltro.setBounds(943, 120, 187, 30);
+		btnFiltro.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String filtro = (String) btnFiltro.getSelectedItem();
+				// Filtrar los datos según la selección del combo box
+				switch (filtro) {
+				case "Todos":
+					// Mostrar todos los datos
+					actualizarTabla();
+					break;
+				case "Activos":
+					// Filtrar solo los clientes activos
+					filtrarClientesActivos();
+					break;
+				case "No activos":
+					// Filtrar solo los clientes no activos
+					filtrarClientesNoActivos();
+					break;
+				default:
+					// No se seleccionó ningún filtro, no hacer nada
+					break;
+				}
+			}
+		});
+		panel.add(btnFiltro);
 
-	        return panel;
+		return panel;
 	}
-	 private void cargarDatosEnSegundoPlano() {
-	        SwingWorker<List<Cliente>, Void> worker = new SwingWorker<>() {
-	            @Override
-	            protected List<Cliente> doInBackground() {
-	                ClienteModelo.cargarCliente();
-	                return ClienteModelo.getClient();
-	            }
 
-	            @Override
-	            protected void done() {
-	                try {
-	                    clientes = get();
-	                    datosCargados = true;
-	                    actualizarTabla();
-	                } catch (Exception e) {
-	                    e.printStackTrace();
-	                }
-	            }
-	        };
-	        worker.execute();
+	private void filtrarClientesActivos() {
+		// Limpiar el modelo de la tabla
+		modelo.setRowCount(0);
+
+		// Obtener la lista de clientes
+		List<Cliente> clientes = ClienteModelo.obtenerInstancia().getClient();
+
+		// Filtrar los clientes activos y agregarlos al modelo de la tabla
+		for (Cliente cliente : clientes) {
+			if (ClienteModelo.obtenerInstancia().estado(cliente.getFechaFinal())) {
+				agregarClienteATabla(cliente);
+			}
+		}
 	}
-	
-	 private void actualizarTabla() {
-		modelo.fireTableRowsDeleted(0, 0);
 
-	        for (Cliente cliente : clientes) {
-	            Object[] row = new Object[8];
-	            row[0] = cliente.getID();
-	            row[1] = cliente.getNombre();
-	            row[2] = cliente.getApellido();
-	            row[3] = cliente.getCorreo();
-	            row[4] = cliente.getTelefono();
-	            row[5] = cliente.getFechaInicial();
-	            row[6] = cliente.getTipoMembresia();
-	            row[7] = cliente.getPlanMembresia();
-	            modelo.addRow(row);
-	        }
+	private void filtrarClientesNoActivos() {
+		// Limpiar el modelo de la tabla
+		modelo.setRowCount(0);
+
+		// Obtener la lista de clientes
+		List<Cliente> clientes = ClienteModelo.obtenerInstancia().getClient();
+
+		// Filtrar los clientes no activos y agregarlos al modelo de la tabla
+		for (Cliente cliente : clientes) {
+			if (!ClienteModelo.obtenerInstancia().estado(cliente.getFechaFinal())) {
+				agregarClienteATabla(cliente);
+			}
+		}
+	}
+
+	// Filtrar los clientes activos y agregarlos al modelo de la tabla
+	/*
+	 * for (Cliente cliente : clientes) { if
+	 * (ClienteModelo.obtenerInstancia().estado(cliente.getFechaFinal())) {
+	 * agregarClienteATabla(cliente); } }
+	 */
+
+	private void cargarDatosEnSegundoPlano() {
+		SwingWorker<List<Cliente>, Void> worker = new SwingWorker<>() {
+			@Override
+			protected List<Cliente> doInBackground() {
+				ClienteModelo.cargarCliente();
+				return ClienteModelo.getClient();
+			}
+
+			@Override
+			protected void done() {
+				try {
+					clientes = get();
+					datosCargados = true;
+					actualizarTabla();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		worker.execute();
+	}
+
+	private void actualizarTabla() {
+	    // Limpiar el modelo de la tabla
+	    modelo.setRowCount(0);
+
+	    // Obtener la lista de clientes
+	    List<Cliente> clientes = ClienteModelo.obtenerInstancia().getClient();
+
+	    // Agregar todos los clientes al modelo de la tabla
+	    for (Cliente cliente : clientes) {
+	        agregarClienteATabla(cliente);
 	    }
+	}
+
+	// Método auxiliar para agregar un cliente al modelo de la tabla
+	private void agregarClienteATabla(Cliente cliente) {
+	    modelo.addRow(new Object[]{
+	            cliente.getID(),
+	            cliente.getNombre(),
+	            cliente.getApellido(),
+	            cliente.getCorreo(),
+	            cliente.getTelefono(),
+	            cliente.getFechaInicial(),
+	            cliente.getTipoMembresia(),
+	            ClienteModelo.obtenerInstancia().estado(cliente.getFechaFinal()) ? "Activo" : "No activo"
+	    });
+	}
+
 	public void botonesDetallesClientes(JButton btn) {
 		btn.setFocusable(false);
 		btn.setForeground(new Color(255, 255, 255));
@@ -259,9 +333,7 @@ public class Clientes {
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controlador.eliminarCliente();
-				
-			        	   
-			       
+
 			}
 		});
 		confBtnMenuVertical(btnEliminar);
@@ -501,38 +573,41 @@ public class Clientes {
 		String planMembresia = (String) comboTipo.getSelectedItem();
 		;
 		String fechaNacimiento = fechaNacimiento1;
-		
-		if (nombre.isEmpty() || apellido.isEmpty() || correo.isEmpty() || telefono.isEmpty() ||
-	            fechaInicial.isEmpty() || fechaFinal.isEmpty() || tipoMembresia.isEmpty() ||
-	            planMembresia.isEmpty() || fechaNacimiento.isEmpty()) {
-	        JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
-	        return false; // Detener el proceso porque algún campo está vacío
-	    }
-		
+
+		if (nombre.isEmpty() || apellido.isEmpty() || correo.isEmpty() || telefono.isEmpty() || fechaInicial.isEmpty()
+				|| fechaFinal.isEmpty() || tipoMembresia.isEmpty() || planMembresia.isEmpty()
+				|| fechaNacimiento.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return false; // Detener el proceso porque algún campo está vacío
+		}
+
 		BufferedImage imagen = null; // Inicializamos la imagen como nula
 		if (path == null || path.equals("usuarioGym 1")) {
-	        JOptionPane.showMessageDialog(null, "Debe seleccionar una imagen.", "Error", JOptionPane.ERROR_MESSAGE);
-	        return false; // Detener el proceso porque no se ha seleccionado una imagen
-	    }
+			JOptionPane.showMessageDialog(null, "Debe seleccionar una imagen.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false; // Detener el proceso porque no se ha seleccionado una imagen
+		}
 
-	    try {
-	        // Intentar leer la imagen seleccionada
-	        imagen = ImageIO.read(new File(path));
-	    } catch (IOException exception) {
-	        JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
-	        return false;
-	    }
+		try {
+			// Intentar leer la imagen seleccionada
+			imagen = ImageIO.read(new File(path));
+		} catch (IOException exception) {
+			JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
 		String metodoPago = (String) comboPago.getSelectedItem();
+		String estado = ClienteModelo.obtenerInstancia().estado(cliente.getFechaFinal()) ? "activo" : "inactivo";
+		;
 
 		ClientesControlador.registrarCliente(ID, nombre, apellido, correo, telefono, fechaInicial, fechaFinal,
-				tipoMembresia, planMembresia, fechaNacimiento, imagen, metodoPago);
+				tipoMembresia, planMembresia, fechaNacimiento, imagen, metodoPago, estado);
 
 		controlador.crearClientes();
 		// InicioControlador.registrar(nombre, password,email);
 		return true;
 	}
 
-	public JPanel editarClientes() { //Panel para buscar cliente y editar
+	public JPanel editarClientes() { // Panel para buscar cliente y editar
 		JPanel panel = getMenu();
 		panel.add(menuVerticalClientes());
 
@@ -566,21 +641,22 @@ public class Clientes {
 
 		btnBuscar = new JButton("");
 		desactivarBoton(btnBuscar);
-        btnBuscar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                cliente=null;
-                cliente=controlador.buscarClientePorID(Integer.parseInt(textID.getText()));
+		btnBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cliente = null;
+				cliente = controlador.buscarClientePorID(Integer.parseInt(textID.getText()));
 
-                if (cliente!=null) {
-                    panelEditar = editarCliente(cliente);
-                    p2.add(panelEditar);
-                    panelEditar.setVisible(true);
-                } else {
-                    // Si no se encuentra el cliente, mostrar mensaje
-                    JOptionPane.showMessageDialog(null, "No se encontró ningún cliente con la ID proporcionada", "Cliente no encontrado", JOptionPane.INFORMATION_MESSAGE);
-                }
-            }
-        });
+				if (cliente != null) {
+					panelEditar = editarCliente(cliente);
+					p2.add(panelEditar);
+					panelEditar.setVisible(true);
+				} else {
+					// Si no se encuentra el cliente, mostrar mensaje
+					JOptionPane.showMessageDialog(null, "No se encontró ningún cliente con la ID proporcionada",
+							"Cliente no encontrado", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+		});
 		btnBuscar.setFocusable(false);
 		btnBuscar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
@@ -662,23 +738,23 @@ public class Clientes {
 		panelCrear.add(textEmail);
 
 		String fechaNacimientoString = cliente.getFechaNacimiento();
-        // Crear el formato de fecha y parsear la cadena a un objeto Date
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date fechaNacimiento = null;
-        try {
-            fechaNacimiento = dateFormat.parse(fechaNacimientoString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        // Crear el modelo de fecha del spinner con la fecha de nacimiento obtenida
-        SpinnerDateModel model = new SpinnerDateModel(fechaNacimiento, null, null, java.util.Calendar.DAY_OF_MONTH);
-        // Crear el spinner con el modelo
-        JSpinner spinnerFechaNacimiento = new JSpinner(model);
-        JSpinner.DateEditor dateEditorFechaNac = new JSpinner.DateEditor(spinnerFechaNacimiento, "dd/MM/yyyy");
-        spinnerFechaNacimiento.setEditor(dateEditorFechaNac);
-        spinnerFechaNacimiento.setPreferredSize(new Dimension(200, 30));
-        spinnerFechaNacimiento.setBounds(360, 73, 200, 30);
-        panelCrear.add(spinnerFechaNacimiento);
+		// Crear el formato de fecha y parsear la cadena a un objeto Date
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		Date fechaNacimiento = null;
+		try {
+			fechaNacimiento = dateFormat.parse(fechaNacimientoString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		// Crear el modelo de fecha del spinner con la fecha de nacimiento obtenida
+		SpinnerDateModel model = new SpinnerDateModel(fechaNacimiento, null, null, java.util.Calendar.DAY_OF_MONTH);
+		// Crear el spinner con el modelo
+		JSpinner spinnerFechaNacimiento = new JSpinner(model);
+		JSpinner.DateEditor dateEditorFechaNac = new JSpinner.DateEditor(spinnerFechaNacimiento, "dd/MM/yyyy");
+		spinnerFechaNacimiento.setEditor(dateEditorFechaNac);
+		spinnerFechaNacimiento.setPreferredSize(new Dimension(200, 30));
+		spinnerFechaNacimiento.setBounds(360, 73, 200, 30);
+		panelCrear.add(spinnerFechaNacimiento);
 
 		textTel = new JTextField();
 		textTel.setColumns(10);
@@ -688,7 +764,8 @@ public class Clientes {
 		panelCrear.add(textTel);
 
 		JComboBox comboMembresia = new JComboBox();
-		comboMembresia.setModel(new DefaultComboBoxModel(new String[] { "  ", "General", "Estudiante", "Familiar", "Dúo" }));
+		comboMembresia
+				.setModel(new DefaultComboBoxModel(new String[] { "  ", "General", "Estudiante", "Familiar", "Dúo" }));
 		comboMembresia.setSelectedItem(cliente.getTipoMembresia());
 		comboMembresia.setBounds(360, 255, 200, 30);
 		panelCrear.add(comboMembresia);
@@ -714,43 +791,42 @@ public class Clientes {
 		panelCrear.add(lblMtodoDePago);
 
 		String fechaInicioString = cliente.getFechaInicial();
-        // Crear el formato de fecha y parsear la cadena a un objeto Date
-        SimpleDateFormat dateFormatC = new SimpleDateFormat("dd/MM/yyyy");
-        Date fechaInicio = null;
-        try {
-            fechaInicio = dateFormatC.parse(fechaInicioString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        // Crear el modelo de fecha del spinner con la fecha de nacimiento obtenida
-        SpinnerDateModel modeloC = new SpinnerDateModel(fechaInicio, null, null, java.util.Calendar.DAY_OF_MONTH);
-        // Crear el spinner con el modelo
-        JSpinner spinnerFechaIn = new JSpinner(modeloC);
-        JSpinner.DateEditor dateEditorFechaIn = new JSpinner.DateEditor(spinnerFechaIn, "dd/MM/yyyy");
-        spinnerFechaIn.setEditor(dateEditorFechaIn);
-        spinnerFechaIn.setPreferredSize(new Dimension(200, 30));
-        spinnerFechaIn.setBounds(70, 350, 200, 30);
-        panelCrear.add(spinnerFechaIn);
-        
+		// Crear el formato de fecha y parsear la cadena a un objeto Date
+		SimpleDateFormat dateFormatC = new SimpleDateFormat("dd/MM/yyyy");
+		Date fechaInicio = null;
+		try {
+			fechaInicio = dateFormatC.parse(fechaInicioString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		// Crear el modelo de fecha del spinner con la fecha de nacimiento obtenida
+		SpinnerDateModel modeloC = new SpinnerDateModel(fechaInicio, null, null, java.util.Calendar.DAY_OF_MONTH);
+		// Crear el spinner con el modelo
+		JSpinner spinnerFechaIn = new JSpinner(modeloC);
+		JSpinner.DateEditor dateEditorFechaIn = new JSpinner.DateEditor(spinnerFechaIn, "dd/MM/yyyy");
+		spinnerFechaIn.setEditor(dateEditorFechaIn);
+		spinnerFechaIn.setPreferredSize(new Dimension(200, 30));
+		spinnerFechaIn.setBounds(70, 350, 200, 30);
+		panelCrear.add(spinnerFechaIn);
 
 		String fechaFinString = cliente.getFechaFinal();
-        // Crear el formato de fecha y parsear la cadena a un objeto Date
-        SimpleDateFormat dateFormatB = new SimpleDateFormat("dd/MM/yyyy");
-        Date fechaFinal = null;
-        try {
-            fechaFinal = dateFormatB.parse(fechaFinString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        // Crear el modelo de fecha del spinner con la fecha de nacimiento obtenida
-        SpinnerDateModel modelo = new SpinnerDateModel(fechaFinal, null, null, java.util.Calendar.DAY_OF_MONTH);
-        // Crear el spinner con el modelo
-        JSpinner spinnerFechaFin = new JSpinner(modelo);
-        JSpinner.DateEditor dateEditorFechaFin = new JSpinner.DateEditor(spinnerFechaFin, "dd/MM/yyyy");
-        spinnerFechaFin.setEditor(dateEditorFechaFin);
-        spinnerFechaFin.setPreferredSize(new Dimension(200, 30));
-        spinnerFechaFin.setBounds(70, 435, 200, 30);
-        panelCrear.add(spinnerFechaFin);
+		// Crear el formato de fecha y parsear la cadena a un objeto Date
+		SimpleDateFormat dateFormatB = new SimpleDateFormat("dd/MM/yyyy");
+		Date fechaFinal = null;
+		try {
+			fechaFinal = dateFormatB.parse(fechaFinString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		// Crear el modelo de fecha del spinner con la fecha de nacimiento obtenida
+		SpinnerDateModel modelo = new SpinnerDateModel(fechaFinal, null, null, java.util.Calendar.DAY_OF_MONTH);
+		// Crear el spinner con el modelo
+		JSpinner spinnerFechaFin = new JSpinner(modelo);
+		JSpinner.DateEditor dateEditorFechaFin = new JSpinner.DateEditor(spinnerFechaFin, "dd/MM/yyyy");
+		spinnerFechaFin.setEditor(dateEditorFechaFin);
+		spinnerFechaFin.setPreferredSize(new Dimension(200, 30));
+		spinnerFechaFin.setBounds(70, 435, 200, 30);
+		panelCrear.add(spinnerFechaFin);
 
 		comboTipo = new JComboBox();
 		comboTipo.setModel(new DefaultComboBoxModel(new String[] { "  ", "1 mes", "3 meses", "6 meses", "1 año" }));
@@ -772,7 +848,7 @@ public class Clientes {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				subirFoto();
-				if (selectedFile != null && lblFoto!=null) {
+				if (selectedFile != null && lblFoto != null) {
 					lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
 					path = selectedFile.getAbsolutePath();
 				}
@@ -784,9 +860,9 @@ public class Clientes {
 		btnFoto.setBounds(652, 270, 207, 40);
 		panelCrear.add(btnFoto);
 
-		lblFoto = new JLabel("");
+		lblFoto = new JLabel("",0);
 		lblFoto.setIcon(new ImageIcon(cliente.getImagen()));
-		lblFoto.setBounds(642, 33, 217, 221);
+		lblFoto.setBounds(652, 33, 207, 221);
 		panelCrear.add(lblFoto);
 
 		btnCancelar = new JButton("Cancelar");
@@ -812,19 +888,19 @@ public class Clientes {
 			cliente.setApellido(textApellidos.getText());
 			cliente.setCorreo(textEmail.getText());
 			cliente.setTelefono(textTel.getText());
-			cliente.setMetodoPago( (String) comboPago.getSelectedItem());
+			cliente.setMetodoPago((String) comboPago.getSelectedItem());
 			cliente.setPlanMembresia((String) comboTipo.getSelectedItem());
 			cliente.setTipoMembresia((String) comboMembresia.getSelectedItem());
 
-			 // Obtener y asignar las nuevas fechas seleccionadas
+			// Obtener y asignar las nuevas fechas seleccionadas
 			Date fechaNac = (Date) spinnerFechaNacimiento.getValue();
-		    cliente.setFechaNacimiento(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
+			cliente.setFechaNacimiento(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
 
-		    Date fechaIni = (Date) spinnerFechaIn.getValue();
-		    cliente.setFechaInicial(new SimpleDateFormat("dd/MM/yyyy").format(fechaIni));
+			Date fechaIni = (Date) spinnerFechaIn.getValue();
+			cliente.setFechaInicial(new SimpleDateFormat("dd/MM/yyyy").format(fechaIni));
 
-		    Date fechaFin = (Date) spinnerFechaFin.getValue();
-		    cliente.setFechaFinal(new SimpleDateFormat("dd/MM/yyyy").format(fechaFin));
+			Date fechaFin = (Date) spinnerFechaFin.getValue();
+			cliente.setFechaFinal(new SimpleDateFormat("dd/MM/yyyy").format(fechaFin));
 
 			if (!path.equals("Predeterminado")) {
 				BufferedImage imagen;
@@ -901,13 +977,16 @@ public class Clientes {
 					botones[index].setBackground(new Color(217, 217, 217));
 					switch (index) {
 					case 0:
-						if (cliente != null) detallesInformacion(cliente);
+						if (cliente != null)
+							detallesInformacion(cliente);
 						break;
 					case 1:
-						if (cliente != null) detallesHistorialPago(cliente);
+						if (cliente != null)
+							detallesHistorialPago(cliente);
 						break;
 					case 2:
-						if (cliente != null) detallesHistorialAsistencia(cliente);
+						if (cliente != null)
+							detallesHistorialAsistencia(cliente);
 						break;
 					case 3:
 						if (cliente != null) {
@@ -917,7 +996,8 @@ public class Clientes {
 
 						break;
 					case 4:
-						if (cliente != null) credencialCliente(cliente);
+						if (cliente != null)
+							credencialCliente(cliente);
 						break;
 					default:
 						break;
@@ -933,33 +1013,36 @@ public class Clientes {
 		desactivarBoton(btnBuscar);
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				cliente = null;
 				// Habilitar los botones cuando se presiona el botón Buscar
-				
-					cliente = controlador.buscarClientePorID(Integer.parseInt(textID.getText()));
-					
-					if (cliente != null) {
-						if (!panelInfo.isVisible()) panelInfo.setVisible(false);
-						
-						for (JButton boton : botones) {
-							boton.setEnabled(true);
-							panel.revalidate();
-							panel.repaint();
-							
-						}
-						panelInfo.removeAll();
-						detallesInformacion(cliente);
-				        // Si no se encuentra el cliente, mostrar mensaje
-				        } else {
-						if (panelInfo.isVisible()) panelInfo.setVisible(false);
-						for (JButton boton : botones) {
-							boton.setEnabled(false);
-						}
-						JOptionPane.showMessageDialog(null, "No se encontró ningún cliente con la ID proporcionada", "Cliente no encontrado", JOptionPane.INFORMATION_MESSAGE);
-						
+
+				cliente = controlador.buscarClientePorID(Integer.parseInt(textID.getText()));
+
+				if (cliente != null) {
+					if (!panelInfo.isVisible())
+						panelInfo.setVisible(false);
+
+					for (JButton boton : botones) {
+						boton.setEnabled(true);
+						panel.revalidate();
+						panel.repaint();
+
 					}
-				
+					panelInfo.removeAll();
+					detallesInformacion(cliente);
+					// Si no se encuentra el cliente, mostrar mensaje
+				} else {
+					if (panelInfo.isVisible())
+						panelInfo.setVisible(false);
+					for (JButton boton : botones) {
+						boton.setEnabled(false);
+					}
+					JOptionPane.showMessageDialog(null, "No se encontró ningún cliente con la ID proporcionada",
+							"Cliente no encontrado", JOptionPane.INFORMATION_MESSAGE);
+
+				}
+
 			}
 		});
 		btnBuscar.setFocusable(false);
@@ -973,7 +1056,8 @@ public class Clientes {
 		btnReporte = new JButton("Renovar suscripción");
 		btnReporte.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (cliente != null) renovar(cliente);
+				if (cliente != null)
+					renovar(cliente);
 
 			}
 		});
@@ -985,18 +1069,20 @@ public class Clientes {
 
 		return panel;
 	}
+
 	public void desactivarBoton(JButton btn) {
-	        btn.setEnabled(false);
-	        textID.addKeyListener(new KeyAdapter() {
-	            @Override
-	            public void keyReleased(KeyEvent e) {
-	                if (textID.getText().isEmpty()) {
-	                    btn.setEnabled(false);
-	                } else 
-	                    btn.setEnabled(true);
-	            }
-	        });
-	    }
+		btn.setEnabled(false);
+		textID.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (textID.getText().isEmpty()) {
+					btn.setEnabled(false);
+				} else
+					btn.setEnabled(true);
+			}
+		});
+	}
+
 	public void panelDetalles(Cliente cliente) {
 		JLabel id = new JLabel("ID del cliente: " + cliente.getID());
 		configurarLabelsIzq(id);
@@ -1023,7 +1109,7 @@ public class Clientes {
 		btnElim.setBounds(690, 135, 190, 50);
 		panelInfo.add(btnElim);
 
-		lblPersona = new JLabel();
+		lblPersona = new JLabel("",0);
 		lblPersona.setIcon(new ImageIcon(cliente.getImagen()));
 		lblPersona.setBounds(36, 33, 217, 218);
 		panelInfo.add(lblPersona);
@@ -1058,7 +1144,7 @@ public class Clientes {
 		lblMembresia.setBounds(299, 193, 327, 20);
 		panelInfo.add(lblMembresia);
 
-		lblPeterParker = new JLabel(cliente.getNombre());
+		lblPeterParker = new JLabel(cliente.getNombre(),0);
 		configurarLabels(lblPeterParker);
 		lblPeterParker.setBounds(36, 270, 217, 20);
 		panelInfo.add(lblPeterParker);
@@ -1107,42 +1193,43 @@ public class Clientes {
 		panelInfo.add(lblFechaFinal);
 
 		lblNewLabel = new JLabel();
-		//lblNewLabel.setIcon(new ImageIcon(Clientes.class.getResource("/img/usuarioGym 1.png")));
+		// lblNewLabel.setIcon(new ImageIcon(Clientes.class.getResource("/img/usuarioGym
+		// 1.png")));
 		lblNewLabel.setIcon(new ImageIcon(cliente.getImagen()));
 		lblNewLabel.setBounds(650, 20, 217, 218);
 		panelInfo.add(lblNewLabel);
-		
-		 //LABELS PARA LOS DATOS
-		JLabel lblN= new JLabel(cliente.getNombre()); //PARA NOMBRE
+
+		// LABELS PARA LOS DATOS
+		JLabel lblN = new JLabel(cliente.getNombre()); // PARA NOMBRE
 
 		configurarLabelsIzq(lblN);
 		lblN.setBounds(80, 60, 200, 20);
 		panelInfo.add(lblN);
-		JLabel lblAp= new JLabel(cliente.getApellido()); // PARA APELLIDO
+		JLabel lblAp = new JLabel(cliente.getApellido()); // PARA APELLIDO
 		configurarLabelsIzq(lblAp);
 		lblAp.setBounds(400, 60, 200, 20);
 		panelInfo.add(lblAp);
-		JLabel lblEm= new JLabel(cliente.getCorreo()); //PARA EMAIL
+		JLabel lblEm = new JLabel(cliente.getCorreo()); // PARA EMAIL
 		configurarLabelsIzq(lblEm);
 		lblEm.setBounds(80, 140, 200, 20);
 		panelInfo.add(lblEm);
-		JLabel lblTelef= new JLabel(cliente.getTelefono()); // PARA TELEFONO
+		JLabel lblTelef = new JLabel(cliente.getTelefono()); // PARA TELEFONO
 		configurarLabelsIzq(lblTelef);
 		lblTelef.setBounds(400, 140, 200, 20);
 		panelInfo.add(lblTelef);
-		JLabel lblPlan= new JLabel(cliente.getPlanMembresia()); //PARA PLAN
+		JLabel lblPlan = new JLabel(cliente.getPlanMembresia()); // PARA PLAN
 		configurarLabelsIzq(lblPlan);
 		lblPlan.setBounds(80, 220, 200, 20);
 		panelInfo.add(lblPlan);
-		JLabel lblTip= new JLabel(cliente.getTipoMembresia()); // PARA TIPO
+		JLabel lblTip = new JLabel(cliente.getTipoMembresia()); // PARA TIPO
 		configurarLabelsIzq(lblTip);
 		lblTip.setBounds(400, 220, 200, 20);
 		panelInfo.add(lblTip);
-		JLabel lblFechaIn= new JLabel(cliente.getFechaInicial()); //PARA FECHA INICIAL
+		JLabel lblFechaIn = new JLabel(cliente.getFechaInicial()); // PARA FECHA INICIAL
 		configurarLabelsIzq(lblFechaIn);
 		lblFechaIn.setBounds(80, 300, 200, 20);
 		panelInfo.add(lblFechaIn);
-		JLabel lblFechaFin= new JLabel(cliente.getFechaFinal()); // PARA FECHA FINAL
+		JLabel lblFechaFin = new JLabel(cliente.getFechaFinal()); // PARA FECHA FINAL
 		configurarLabelsIzq(lblFechaFin);
 		lblFechaFin.setBounds(400, 300, 200, 20);
 		panelInfo.add(lblFechaFin);
@@ -1170,22 +1257,26 @@ public class Clientes {
 
 			private int getPrice(String planMembresia, String tipoMembresia) {
 				return switch (planMembresia) {
-					case "General" -> (tipoMembresia.equals("1 mes") ? 399 : (tipoMembresia.equals("3 meses") ? 1077 : (tipoMembresia.equals("6 meses") ? 2394 : 4788)));
-					case "Familiar" -> (tipoMembresia.equals("1 mes") ? 799 : (tipoMembresia.equals("3 meses") ? 2097 : (tipoMembresia.equals("6 meses") ? 4194 : 8388)));
-					case "Estudiante" -> (tipoMembresia.equals("1 mes") ? 599 : (tipoMembresia.equals("3 meses") ? 1797 : (tipoMembresia.equals("6 meses") ? 3594 : 7188)));
-					case "Duo" -> (tipoMembresia.equals("1 mes") ? 299 : (tipoMembresia.equals("3 meses") ? 897 : (tipoMembresia.equals("6 meses") ? 1794 : 3588)));
-					default -> 50;
+				case "General" -> (tipoMembresia.equals("1 mes") ? 399
+						: (tipoMembresia.equals("3 meses") ? 1077 : (tipoMembresia.equals("6 meses") ? 2394 : 4788)));
+				case "Familiar" -> (tipoMembresia.equals("1 mes") ? 799
+						: (tipoMembresia.equals("3 meses") ? 2097 : (tipoMembresia.equals("6 meses") ? 4194 : 8388)));
+				case "Estudiante" -> (tipoMembresia.equals("1 mes") ? 599
+						: (tipoMembresia.equals("3 meses") ? 1797 : (tipoMembresia.equals("6 meses") ? 3594 : 7188)));
+				case "Duo" -> (tipoMembresia.equals("1 mes") ? 299
+						: (tipoMembresia.equals("3 meses") ? 897 : (tipoMembresia.equals("6 meses") ? 1794 : 3588)));
+				default -> 50;
 				};
 			}
 
 			@Override
 			public Object getValueAt(int fila, int col) {
 				return switch (col) {
-					case 0 -> cliente.getTipoMembresia();
-					case 1 -> cliente.getFechaInicial();
-					case 2 -> cliente.getFechaFinal();
-					case 3 -> getPrice(cliente.getTipoMembresia(), cliente.getPlanMembresia());
-					default -> null;
+				case 0 -> cliente.getTipoMembresia();
+				case 1 -> cliente.getFechaInicial();
+				case 2 -> cliente.getFechaFinal();
+				case 3 -> getPrice(cliente.getTipoMembresia(), cliente.getPlanMembresia());
+				default -> null;
 				};
 			}
 
@@ -1285,7 +1376,7 @@ public class Clientes {
 
 				controlador.actualizarCliente(cliente);
 				renovar.dispose();
-				//ticket();
+				// ticket();
 			}
 		});
 		JButton btnCancelar = new JButton("Cancelar");
@@ -1339,7 +1430,9 @@ public class Clientes {
 		ticket.getContentPane().add(panelEditar);
 
 		JLabel lblNewLabel = new JLabel(
-				"<html>Larry's Gym<br>5.0 / Fitness Club<br> Cliente: <br>Vendedor: <br>Tipo de membresía:"+cliente.getTipoMembresia()+" <br>Valor de la membresía: 400 <br><br><br>Fecha inicial: <br>Fecha de vencimiento: <br><br><br>Monto total     MXN   <br>Pago realizado en <br>Cambio</html>");
+				"<html>Larry's Gym<br>5.0 / Fitness Club<br> Cliente: <br>Vendedor: <br>Tipo de membresía:"
+						+ cliente.getTipoMembresia()
+						+ " <br>Valor de la membresía: 400 <br><br><br>Fecha inicial: <br>Fecha de vencimiento: <br><br><br>Monto total     MXN   <br>Pago realizado en <br>Cambio</html>");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblNewLabel.setBounds(50, -30, 300, 450);
 		panelEditar.add(lblNewLabel);
@@ -1413,19 +1506,20 @@ public class Clientes {
 		desactivarBoton(btnBuscar);
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				cliente=null;
-				cliente=controlador.buscarClientePorID(Integer.parseInt(textID.getText()));
-		          
-			  	if (cliente!=null) {
+
+				cliente = null;
+				cliente = controlador.buscarClientePorID(Integer.parseInt(textID.getText()));
+
+				if (cliente != null) {
 					JPanel panelCredencial = eliminarCliente(cliente);
 					panel.add(panelCredencial);
-				  	panelCredencial.setVisible(true);
-			 	 }else {
-			            // Si no se encuentra el cliente, mostrar mensaje
-			            JOptionPane.showMessageDialog(null, "No se encontró ningún cliente con la ID proporcionada", "Cliente no encontrado", JOptionPane.INFORMATION_MESSAGE);
-			        }
-				
+					panelCredencial.setVisible(true);
+				} else {
+					// Si no se encuentra el cliente, mostrar mensaje
+					JOptionPane.showMessageDialog(null, "No se encontró ningún cliente con la ID proporcionada",
+							"Cliente no encontrado", JOptionPane.INFORMATION_MESSAGE);
+				}
+
 			}
 		});
 		btnBuscar.setFocusable(false);
@@ -1458,7 +1552,7 @@ public class Clientes {
 				if (op == JOptionPane.OK_OPTION) {
 					JOptionPane.showMessageDialog(null, "Cliente eliminado con éxito", "Eliminación exitosa",
 							JOptionPane.INFORMATION_MESSAGE);
-					if (cliente!=null) {
+					if (cliente != null) {
 						ClienteModelo.obtenerInstancia().eliminarCliente(cliente);
 					}
 					panelCredencial.setVisible(false);
@@ -1480,27 +1574,27 @@ public class Clientes {
 		lblCodigo.setBounds(299, 229, 327, 59);
 		panelCredencial.add(lblCodigo);
 
-		lblFecha = new JLabel("Fecha de nacimiento: "+cliente.getFechaNacimiento());
+		lblFecha = new JLabel("Fecha de nacimiento: " + cliente.getFechaNacimiento());
 		configurarLabels(lblFecha);
 		lblFecha.setBounds(299, 33, 327, 20);
 		panelCredencial.add(lblFecha);
 
-		lblTlefono = new JLabel("Teléfono: "+ cliente.getTelefono());
+		lblTlefono = new JLabel("Teléfono: " + cliente.getTelefono());
 		configurarLabels(lblTlefono);
 		lblTlefono.setBounds(299, 73, 327, 20);
 		panelCredencial.add(lblTlefono);
 
-		lblCorreoElectrnico = new JLabel("Correo electrónico: "+cliente.getCorreo());
+		lblCorreoElectrnico = new JLabel("Correo electrónico: " + cliente.getCorreo());
 		configurarLabels(lblCorreoElectrnico);
 		lblCorreoElectrnico.setBounds(299, 113, 327, 20);
 		panelCredencial.add(lblCorreoElectrnico);
 
-		lblFechaDeRegistro = new JLabel("Fecha de registro: "+cliente.getFechaInicial());
+		lblFechaDeRegistro = new JLabel("Fecha de registro: " + cliente.getFechaInicial());
 		configurarLabels(lblFechaDeRegistro);
 		lblFechaDeRegistro.setBounds(299, 153, 327, 20);
 		panelCredencial.add(lblFechaDeRegistro);
 
-		lblMembresia = new JLabel("Membresía: "+cliente.getTipoMembresia());
+		lblMembresia = new JLabel("Membresía: " + cliente.getTipoMembresia());
 		configurarLabels(lblMembresia);
 		lblMembresia.setBounds(299, 193, 327, 20);
 		panelCredencial.add(lblMembresia);

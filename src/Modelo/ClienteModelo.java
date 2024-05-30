@@ -5,7 +5,10 @@ import java.io.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +53,26 @@ public class ClienteModelo {
 	}
 	public static ClienteModelo obtenerInstancia() {
 		return instance;
+	}
+	public boolean estado(String fechaFinal) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        sdf.setLenient(false); 
+
+        try {
+            Date inputDate = sdf.parse(fechaFinal);
+            Date currentDate = new Date();
+
+
+            if (inputDate.before(currentDate)) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+		
 	}
 	
 	public void eliminarCliente(Cliente cliente) {
@@ -257,10 +280,10 @@ public class ClienteModelo {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "No se actualizar el cliente", "ERROR", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null, "No se actualizó el cliente", "ERROR", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		JOptionPane.showMessageDialog(null, "se actualizar el cliente correctamente");
+		JOptionPane.showMessageDialog(null, "Se actualizó el cliente correctamente");
 	}
 
 	public boolean subirDatosCliente(Cliente cliente) {
@@ -317,6 +340,7 @@ public class ClienteModelo {
 	        	String planMembresia=((String)map.get("planMembresia")); 
 	        	String fechaNacimiento=((String)map.get("fechaNacimiento"));
 	        	BufferedImage imagen;
+	        
 				try {
 					imagen = convertByteArrayToImage((byte[])map.get("imagen"));
 				} catch (IOException e) {
@@ -324,12 +348,13 @@ public class ClienteModelo {
 					throw new RuntimeException(e);
 				}
 	        	String metodoPago=((String)map.get("metodoPago"));
+	        	String estado= ((String)map.get("estado"));
 	            
 	            
 
 	            client.add(new Cliente( ID,  nombre, apellido,  correo,  telefono,  fechaInicial,
 	        			 fechaFinal,  tipoMembresia,  planMembresia,  fechaNacimiento,  imagen,
-	        			 metodoPago));
+	        			 metodoPago,estado));
 	            
 		}
 		} catch (SQLException e) {

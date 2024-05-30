@@ -15,11 +15,12 @@ public class Cliente {
 	String fechaNacimiento;
 	BufferedImage imagen;
 	String metodoPago;
+	String estado;
 	
 	
 	public Cliente(int iD, String nombre, String apellido, String correo, String telefono, String fechaInicial,
 			String fechaFinal, String tipoMembresia, String planMembresia, String fechaNacimiento, BufferedImage imagen,
-			String metodoPago) {
+			String metodoPago,String estado) {
 		
 		ID = iD;
 		this.nombre = nombre;
@@ -33,6 +34,17 @@ public class Cliente {
 		this.fechaNacimiento = fechaNacimiento;
 		this.imagen = imagen;
 		this.metodoPago = metodoPago;
+		this.estado=estado;
+	}
+
+
+	public String getEstado() {
+		return estado;
+	}
+
+
+	public void setEstado(String estado) {
+		this.estado = estado;
 	}
 
 
