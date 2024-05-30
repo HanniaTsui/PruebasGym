@@ -30,7 +30,6 @@ public class Inicio {
 	
 	public Inicio(InicioControlador controlador) {
 		this.controlador = controlador;
-		iniciar();
 	}
 	
 	public JPanel iniciar() {
@@ -86,10 +85,12 @@ public class Inicio {
 		textNombre = new JTextField();
 		textNombre.setBounds(87, 296, 355, 45);
 		textNombre.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		textNombre.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		panel.add(textNombre);
 		textNombre.setColumns(10);
 
 		textPass = new JPasswordField();
+		textPass.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		textPass.setBackground(new Color(255, 255, 255));
 		textPass.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		textPass.setBounds(87, 436, 355, 45);
@@ -218,18 +219,21 @@ public class Inicio {
 		panel.add(btnAceptar);
 		
 		textNombre = new JTextField();
+		textNombre.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		textNombre.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		textNombre.setBounds(87, 240, 355, 40);
 		panel.add(textNombre);
 		textNombre.setColumns(10);
 		
 		textPass = new JPasswordField();
+		textPass.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		textPass.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		textPass.setBackground(new Color(255, 255, 255));
 		textPass.setBounds(87, 435, 355, 40);
 		panel.add(textPass);
 		
 		textEmail = new JTextField();
+		textEmail.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		textEmail.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		textEmail.setColumns(10);
 		textEmail.setBounds(87, 335, 355, 40);
@@ -250,6 +254,7 @@ public class Inicio {
 		panel.add(lblPass2);
 		
 		textPass2 = new JPasswordField();
+		textPass2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		textPass2.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		textPass2.setBackground(Color.WHITE);
 		textPass2.setBounds(87, 535, 355, 40);

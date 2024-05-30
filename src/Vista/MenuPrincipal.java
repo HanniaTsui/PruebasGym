@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -59,6 +60,7 @@ public class MenuPrincipal {
 		    botones[i].setFocusable(false);
 		    botones[i].setBackground(Color.BLACK);
 		    botones[i].setBounds(bounds_X[i], bounds_Y[i], 266, 40);
+		    botones[i].setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		    
 		    botones[i].addActionListener(new ActionListener() {
 		        public void actionPerformed(ActionEvent e) {
