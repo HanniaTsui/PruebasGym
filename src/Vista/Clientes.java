@@ -10,11 +10,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -516,7 +518,7 @@ public class Clientes {
 		return true;
 	}
 
-	public JPanel editarClientes() {
+	public JPanel editarClientes() { //Panel para buscar cliente y editar
 		JPanel panel = getMenu();
 		panel.add(menuVerticalClientes());
 
@@ -534,10 +536,10 @@ public class Clientes {
 		lblTitutlo.setBounds(372, 44, 276, 33);
 		p2.add(lblTitutlo);
 
-		JTextField textID = new JTextField("Ingrese ID");
+		textID = new JTextField();
 		textID.setBackground(new Color(217, 217, 217));
 		textID.setColumns(10);
-		textID.setForeground(Color.GRAY);
+		textID.setForeground(Color.black);
 		textID.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 		textID.setBounds(359, 102, 251, 50);
@@ -549,18 +551,18 @@ public class Clientes {
 		p2.add(textField);
 
 		btnBuscar = new JButton("");
-		btnBuscar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				cliente=null;
-				cliente=controlador.buscarClientePorID(Integer.parseInt(textID.getText()));
+        btnBuscar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                cliente=null;
+                cliente=controlador.buscarClientePorID(Integer.parseInt(textID.getText()));
 
-				if (cliente!=null) {
-					panelEditar = editarCliente(cliente);
-					p2.add(panelEditar);
-					panelEditar.setVisible(true);
-				}
-			}
-		});
+                if (cliente!=null) {
+                    panelEditar = editarCliente(cliente);
+                    p2.add(panelEditar);
+                    panelEditar.setVisible(true);
+                }
+            }
+        });
 		btnBuscar.setFocusable(false);
 		btnBuscar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
@@ -641,11 +643,24 @@ public class Clientes {
 		textEmail.setBounds(70, 255, 200, 30);
 		panelCrear.add(textEmail);
 
-		JSpinner spinnerFechaNacimiento = new JSpinner(new SpinnerDateModel());
-		JSpinner.DateEditor dateEditorFechaNac = new JSpinner.DateEditor(spinnerFechaNacimiento, "dd/MM/yyyy");
-		spinnerFechaNacimiento.setEditor(dateEditorFechaNac);
-		spinnerFechaNacimiento.setBounds(360, 73, 200, 30);
-		panelCrear.add(spinnerFechaNacimiento);
+		String fechaNacimientoString = cliente.getFechaNacimiento();
+        // Crear el formato de fecha y parsear la cadena a un objeto Date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date fechaNacimiento = null;
+        try {
+            fechaNacimiento = dateFormat.parse(fechaNacimientoString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        // Crear el modelo de fecha del spinner con la fecha de nacimiento obtenida
+        SpinnerDateModel model = new SpinnerDateModel(fechaNacimiento, null, null, java.util.Calendar.DAY_OF_MONTH);
+        // Crear el spinner con el modelo
+        JSpinner spinnerFechaNacimiento = new JSpinner(model);
+        JSpinner.DateEditor dateEditorFechaNac = new JSpinner.DateEditor(spinnerFechaNacimiento, "dd/MM/yyyy");
+        spinnerFechaNacimiento.setEditor(dateEditorFechaNac);
+        spinnerFechaNacimiento.setPreferredSize(new Dimension(200, 30));
+        spinnerFechaNacimiento.setBounds(360, 73, 200, 30);
+        panelCrear.add(spinnerFechaNacimiento);
 
 		textTel = new JTextField();
 		textTel.setColumns(10);
@@ -680,19 +695,43 @@ public class Clientes {
 		lblMtodoDePago.setBounds(360, 400, 200, 20);
 		panelCrear.add(lblMtodoDePago);
 
-		JSpinner spinnerFechaIn = new JSpinner(new SpinnerDateModel());
-		//spinnerFechaIn.setValue(cliente.getFechaFinal());
-		JSpinner.DateEditor dateEditorFechaIn = new JSpinner.DateEditor(spinnerFechaIn, "dd/MM/yyyy");
-		spinnerFechaIn.setEditor(dateEditorFechaIn);
-		spinnerFechaIn.setBounds(70, 350, 200, 30);
-		panelCrear.add(spinnerFechaIn);
+		String fechaInicioString = cliente.getFechaInicial();
+        // Crear el formato de fecha y parsear la cadena a un objeto Date
+        SimpleDateFormat dateFormatC = new SimpleDateFormat("dd/MM/yyyy");
+        Date fechaInicio = null;
+        try {
+            fechaInicio = dateFormatC.parse(fechaInicioString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        // Crear el modelo de fecha del spinner con la fecha de nacimiento obtenida
+        SpinnerDateModel modeloC = new SpinnerDateModel(fechaInicio, null, null, java.util.Calendar.DAY_OF_MONTH);
+        // Crear el spinner con el modelo
+        JSpinner spinnerFechaIn = new JSpinner(modeloC);
+        JSpinner.DateEditor dateEditorFechaIn = new JSpinner.DateEditor(spinnerFechaIn, "dd/MM/yyyy");
+        spinnerFechaIn.setEditor(dateEditorFechaIn);
+        spinnerFechaIn.setPreferredSize(new Dimension(200, 30));
+        spinnerFechaIn.setBounds(70, 350, 200, 30);
+        panelCrear.add(spinnerFechaIn);
 
-		JSpinner spinnerFechaFin = new JSpinner(new SpinnerDateModel());
-		//spinnerFechaFin.setValue(cliente.getFechaFinal());
-		JSpinner.DateEditor dateEditorFechaFin = new JSpinner.DateEditor(spinnerFechaFin, "dd/MM/yyyy");
-		spinnerFechaFin.setEditor(dateEditorFechaFin);
-		spinnerFechaFin.setBounds(70, 435, 200, 30);
-		panelCrear.add(spinnerFechaFin);
+		String fechaFinString = cliente.getFechaFinal();
+        // Crear el formato de fecha y parsear la cadena a un objeto Date
+        SimpleDateFormat dateFormatB = new SimpleDateFormat("dd/MM/yyyy");
+        Date fechaFinal = null;
+        try {
+            fechaFinal = dateFormatB.parse(fechaFinString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        // Crear el modelo de fecha del spinner con la fecha de nacimiento obtenida
+        SpinnerDateModel modelo = new SpinnerDateModel(fechaFinal, null, null, java.util.Calendar.DAY_OF_MONTH);
+        // Crear el spinner con el modelo
+        JSpinner spinnerFechaFin = new JSpinner(modelo);
+        JSpinner.DateEditor dateEditorFechaFin = new JSpinner.DateEditor(spinnerFechaFin, "dd/MM/yyyy");
+        spinnerFechaFin.setEditor(dateEditorFechaFin);
+        spinnerFechaFin.setPreferredSize(new Dimension(200, 30));
+        spinnerFechaFin.setBounds(70, 435, 200, 30);
+        panelCrear.add(spinnerFechaFin);
 
 		comboTipo = new JComboBox();
 		comboTipo.setModel(new DefaultComboBoxModel(new String[] { "  ", "1 mes", "3 meses", "6 meses", "1 año" }));
@@ -714,7 +753,7 @@ public class Clientes {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				subirFoto();
-				if (selectedFile != null) {
+				if (selectedFile != null && lblFoto!=null) {
 					lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
 					panel.revalidate();
 					panel.repaint();
@@ -799,10 +838,10 @@ public class Clientes {
 		lblTitutlo.setBounds(542, 114, 276, 33);
 		panel.add(lblTitutlo);
 
-		JTextField textID = new JTextField("Ingrese ID");
+		textID = new JTextField();
 		textID.setBackground(new Color(217, 217, 217));
 		textID.setColumns(10);
-		textID.setForeground(Color.GRAY);
+		textID.setForeground(Color.black);
 		textID.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 		textID.setBounds(533, 172, 251, 50);
@@ -874,6 +913,7 @@ public class Clientes {
 		}
 
 		btnBuscar = new JButton("");
+		desactivarBoton(btnBuscar);
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cliente = null;
@@ -915,7 +955,18 @@ public class Clientes {
 
 		return panel;
 	}
-
+	public void desactivarBoton(JButton btn) {
+	        btn.setEnabled(false);
+	        textID.addKeyListener(new KeyAdapter() {
+	            @Override
+	            public void keyReleased(KeyEvent e) {
+	                if (textID.getText().isEmpty()) {
+	                    btn.setEnabled(false);
+	                } else 
+	                    btn.setEnabled(true);
+	            }
+	        });
+	    }
 	public void panelDetalles(Cliente cliente) {
 		JLabel id = new JLabel("ID del cliente: " + cliente.getID());
 		configurarLabelsIzq(id);
@@ -1314,10 +1365,10 @@ public class Clientes {
 		lblTitutlo.setBounds(542, 114, 276, 33);
 		panel.add(lblTitutlo);
 
-		textID = new JTextField("Ingrese ID");
+		textID = new JTextField();
 		textID.setBackground(new Color(217, 217, 217));
 		textID.setColumns(10);
-		textID.setForeground(Color.GRAY);
+		textID.setForeground(Color.black);
 		textID.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 		textID.setBounds(533, 172, 251, 50);
@@ -1329,6 +1380,7 @@ public class Clientes {
 		panel.add(textField);
 
 		btnBuscar = new JButton("");
+		desactivarBoton(btnBuscar);
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
