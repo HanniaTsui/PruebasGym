@@ -774,8 +774,6 @@ public class Clientes {
 				subirFoto();
 				if (selectedFile != null && lblFoto!=null) {
 					lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
-					panel.revalidate();
-					panel.repaint();
 					path = selectedFile.getAbsolutePath();
 				}
 			}
@@ -786,7 +784,7 @@ public class Clientes {
 		btnFoto.setBounds(652, 270, 207, 40);
 		panelCrear.add(btnFoto);
 
-		JLabel lblFoto = new JLabel("");
+		lblFoto = new JLabel("");
 		lblFoto.setIcon(new ImageIcon(cliente.getImagen()));
 		lblFoto.setBounds(642, 33, 217, 221);
 		panelCrear.add(lblFoto);
@@ -935,22 +933,33 @@ public class Clientes {
 		desactivarBoton(btnBuscar);
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 				cliente = null;
 				// Habilitar los botones cuando se presiona el botón Buscar
-				for (JButton boton : botones) {
+				
 					cliente = controlador.buscarClientePorID(Integer.parseInt(textID.getText()));
-
+					
 					if (cliente != null) {
-						if (!panelInfo.isVisible()) panelInfo.setVisible(true);
-						boton.setEnabled(true);
+						if (!panelInfo.isVisible()) panelInfo.setVisible(false);
+						
+						for (JButton boton : botones) {
+							boton.setEnabled(true);
+							panel.revalidate();
+							panel.repaint();
+							
+						}
+						panelInfo.removeAll();
+						detallesInformacion(cliente);
 				        // Si no se encuentra el cliente, mostrar mensaje
 				        } else {
 						if (panelInfo.isVisible()) panelInfo.setVisible(false);
-						boton.setEnabled(false);
+						for (JButton boton : botones) {
+							boton.setEnabled(false);
+						}
 						JOptionPane.showMessageDialog(null, "No se encontró ningún cliente con la ID proporcionada", "Cliente no encontrado", JOptionPane.INFORMATION_MESSAGE);
 						
 					}
-				}
+				
 			}
 		});
 		btnBuscar.setFocusable(false);
@@ -1276,7 +1285,7 @@ public class Clientes {
 
 				controlador.actualizarCliente(cliente);
 				renovar.dispose();
-				ticket();
+				//ticket();
 			}
 		});
 		JButton btnCancelar = new JButton("Cancelar");
@@ -1330,7 +1339,7 @@ public class Clientes {
 		ticket.getContentPane().add(panelEditar);
 
 		JLabel lblNewLabel = new JLabel(
-				"<html>Larry's Gym<br>5.0 / Fitness Club<br> Cliente: <br>Vendedor: <br>Tipo de membresía: <br>Valor de la membresía: <br><br><br>Fecha inicial: <br>Fecha de vencimiento: <br><br><br>Monto total     MXN   <br>Pago realizado en <br>Cambio</html>");
+				"<html>Larry's Gym<br>5.0 / Fitness Club<br> Cliente: <br>Vendedor: <br>Tipo de membresía:"+cliente.getTipoMembresia()+" <br>Valor de la membresía: 400 <br><br><br>Fecha inicial: <br>Fecha de vencimiento: <br><br><br>Monto total     MXN   <br>Pago realizado en <br>Cambio</html>");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblNewLabel.setBounds(50, -30, 300, 450);
 		panelEditar.add(lblNewLabel);
@@ -1471,27 +1480,27 @@ public class Clientes {
 		lblCodigo.setBounds(299, 229, 327, 59);
 		panelCredencial.add(lblCodigo);
 
-		lblFecha = new JLabel("Fecha de nacimiento: ");
+		lblFecha = new JLabel("Fecha de nacimiento: "+cliente.getFechaNacimiento());
 		configurarLabels(lblFecha);
 		lblFecha.setBounds(299, 33, 327, 20);
 		panelCredencial.add(lblFecha);
 
-		lblTlefono = new JLabel("Teléfono: ");
+		lblTlefono = new JLabel("Teléfono: "+ cliente.getTelefono());
 		configurarLabels(lblTlefono);
 		lblTlefono.setBounds(299, 73, 327, 20);
 		panelCredencial.add(lblTlefono);
 
-		lblCorreoElectrnico = new JLabel("Correo electrónico: ");
+		lblCorreoElectrnico = new JLabel("Correo electrónico: "+cliente.getCorreo());
 		configurarLabels(lblCorreoElectrnico);
 		lblCorreoElectrnico.setBounds(299, 113, 327, 20);
 		panelCredencial.add(lblCorreoElectrnico);
 
-		lblFechaDeRegistro = new JLabel("Fecha de registro: ");
+		lblFechaDeRegistro = new JLabel("Fecha de registro: "+cliente.getFechaInicial());
 		configurarLabels(lblFechaDeRegistro);
 		lblFechaDeRegistro.setBounds(299, 153, 327, 20);
 		panelCredencial.add(lblFechaDeRegistro);
 
-		lblMembresia = new JLabel("Membresía: ");
+		lblMembresia = new JLabel("Membresía: "+cliente.getTipoMembresia());
 		configurarLabels(lblMembresia);
 		lblMembresia.setBounds(299, 193, 327, 20);
 		panelCredencial.add(lblMembresia);
