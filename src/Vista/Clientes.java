@@ -197,6 +197,7 @@ public class Clientes {
 	public void confBtnMenuVertical(JButton btn) { // BOTONES PARA MENU VERTICAL EN CLIENTES
 		btn.setBackground(Color.BLACK);
 		btn.setFont(new Font("Arial Black", Font.PLAIN, 20));
+		btn.setForeground(new Color(55, 171, 255));
 		btn.setFocusable(false);
 		btn.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		btn.setBorder(null);
@@ -210,11 +211,9 @@ public class Clientes {
 		panelMenuVertical.setLayout(null);
 
 		JButton btnReg = new JButton("Registros");
-		btnReg.setForeground(new Color(55, 171, 255));
 		btnReg.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controlador.clientes();
-				btnReg.setForeground(Color.white);
 			}
 		});
 		confBtnMenuVertical(btnReg);
