@@ -501,19 +501,33 @@ public class Clientes {
 		String planMembresia = (String) comboTipo.getSelectedItem();
 		;
 		String fechaNacimiento = fechaNacimiento1;
-		BufferedImage imagen;
-		try {
-			imagen = ImageIO.read(new File(path));
-		} catch (IOException exception) {
-			JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		;
+		
+		if (nombre.isEmpty() || apellido.isEmpty() || correo.isEmpty() || telefono.isEmpty() ||
+	            fechaInicial.isEmpty() || fechaFinal.isEmpty() || tipoMembresia.isEmpty() ||
+	            planMembresia.isEmpty() || fechaNacimiento.isEmpty()) {
+	        JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
+	        return false; // Detener el proceso porque algún campo está vacío
+	    }
+		
+		BufferedImage imagen = null; // Inicializamos la imagen como nula
+		if (path == null || path.equals("usuarioGym 1")) {
+	        JOptionPane.showMessageDialog(null, "Debe seleccionar una imagen.", "Error", JOptionPane.ERROR_MESSAGE);
+	        return false; // Detener el proceso porque no se ha seleccionado una imagen
+	    }
+
+	    try {
+	        // Intentar leer la imagen seleccionada
+	        imagen = ImageIO.read(new File(path));
+	    } catch (IOException exception) {
+	        JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
+	        return false;
+	    }
 		String metodoPago = (String) comboPago.getSelectedItem();
 
 		ClientesControlador.registrarCliente(ID, nombre, apellido, correo, telefono, fechaInicial, fechaFinal,
 				tipoMembresia, planMembresia, fechaNacimiento, imagen, metodoPago);
 
+		controlador.crearClientes();
 		// InicioControlador.registrar(nombre, password,email);
 		return true;
 	}
@@ -551,6 +565,7 @@ public class Clientes {
 		p2.add(textField);
 
 		btnBuscar = new JButton("");
+		desactivarBoton(btnBuscar);
         btnBuscar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cliente=null;
@@ -560,6 +575,9 @@ public class Clientes {
                     panelEditar = editarCliente(cliente);
                     p2.add(panelEditar);
                     panelEditar.setVisible(true);
+                } else {
+                    // Si no se encuentra el cliente, mostrar mensaje
+                    JOptionPane.showMessageDialog(null, "No se encontró ningún cliente con la ID proporcionada", "Cliente no encontrado", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
@@ -713,6 +731,7 @@ public class Clientes {
         spinnerFechaIn.setPreferredSize(new Dimension(200, 30));
         spinnerFechaIn.setBounds(70, 350, 200, 30);
         panelCrear.add(spinnerFechaIn);
+        
 
 		String fechaFinString = cliente.getFechaFinal();
         // Crear el formato de fecha y parsear la cadena a un objeto Date
@@ -794,20 +813,20 @@ public class Clientes {
 			cliente.setNombre(textNombre.getText());
 			cliente.setApellido(textApellidos.getText());
 			cliente.setCorreo(textEmail.getText());
+			cliente.setTelefono(textTel.getText());
 			cliente.setMetodoPago( (String) comboPago.getSelectedItem());
 			cliente.setPlanMembresia((String) comboTipo.getSelectedItem());
 			cliente.setTipoMembresia((String) comboMembresia.getSelectedItem());
 
-			Date fechaStr1 = (Date) spinnerFechaNacimiento.getValue();
-			String fechaStr = new SimpleDateFormat("dd/MM/yyyy").format(fechaStr1);
-			Date fecha2 = (Date) spinnerFechaIn.getValue();
-			String fechaIn = new SimpleDateFormat("dd/MM/yyyy").format(fecha2);
-			Date fecha3 = (Date) spinnerFechaFin.getValue();
-			String fechaFin = new SimpleDateFormat("dd/MM/yyyy").format(fecha3);
+			 // Obtener y asignar las nuevas fechas seleccionadas
+			Date fechaNac = (Date) spinnerFechaNacimiento.getValue();
+		    cliente.setFechaNacimiento(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
 
-			cliente.setFechaNacimiento(fechaStr);
-			cliente.setFechaInicial(fechaIn);
-			cliente.setFechaFinal(fechaFin);
+		    Date fechaIni = (Date) spinnerFechaIn.getValue();
+		    cliente.setFechaInicial(new SimpleDateFormat("dd/MM/yyyy").format(fechaIni));
+
+		    Date fechaFin = (Date) spinnerFechaFin.getValue();
+		    cliente.setFechaFinal(new SimpleDateFormat("dd/MM/yyyy").format(fechaFin));
 
 			if (!path.equals("Predeterminado")) {
 				BufferedImage imagen;
@@ -819,7 +838,7 @@ public class Clientes {
 				}
 			}
 
-			controlador.actualizarCliente(cliente);
+			ClienteModelo.obtenerInstancia().editarCliente(cliente);
 		});
 		btnGuardar.setBounds(462, 490, 120, 40);
 		panelCrear.add(btnGuardar);
@@ -917,7 +936,6 @@ public class Clientes {
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cliente = null;
-
 				// Habilitar los botones cuando se presiona el botón Buscar
 				for (JButton boton : botones) {
 					cliente = controlador.buscarClientePorID(Integer.parseInt(textID.getText()));
@@ -925,9 +943,12 @@ public class Clientes {
 					if (cliente != null) {
 						if (!panelInfo.isVisible()) panelInfo.setVisible(true);
 						boton.setEnabled(true);
-					} else {
+				        // Si no se encuentra el cliente, mostrar mensaje
+				        } else {
 						if (panelInfo.isVisible()) panelInfo.setVisible(false);
 						boton.setEnabled(false);
+						JOptionPane.showMessageDialog(null, "No se encontró ningún cliente con la ID proporcionada", "Cliente no encontrado", JOptionPane.INFORMATION_MESSAGE);
+						
 					}
 				}
 			}
@@ -1391,7 +1412,10 @@ public class Clientes {
 					JPanel panelCredencial = eliminarCliente(cliente);
 					panel.add(panelCredencial);
 				  	panelCredencial.setVisible(true);
-			 	 }
+			 	 }else {
+			            // Si no se encuentra el cliente, mostrar mensaje
+			            JOptionPane.showMessageDialog(null, "No se encontró ningún cliente con la ID proporcionada", "Cliente no encontrado", JOptionPane.INFORMATION_MESSAGE);
+			        }
 				
 			}
 		});

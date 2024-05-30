@@ -56,11 +56,13 @@ public class ClientesControlador {
     }
 
     public static void registrarCliente(int iD, String nombre, String apellido, String correo, String telefono, String fechaInicial,
-			String fechaFinal, String tipoMembresia, String planMembresia, String fechaNacimiento, BufferedImage imagen,
-			String metodoPago) {
-    	ClienteModelo.obtenerInstancia().subirDatosCliente(new Cliente(iD,nombre,apellido,correo,telefono,fechaInicial,fechaFinal,tipoMembresia,planMembresia
-    			,fechaNacimiento,imagen,metodoPago));
-    	
+            String fechaFinal, String tipoMembresia, String planMembresia, String fechaNacimiento, BufferedImage imagen,
+            String metodoPago) {
+            boolean subirCliente=ClienteModelo.obtenerInstancia().subirDatosCliente(new Cliente(iD,nombre,apellido,correo,telefono,fechaInicial,fechaFinal,tipoMembresia,planMembresia
+                    ,fechaNacimiento,imagen,metodoPago));
+            if(subirCliente) {
+                ClienteModelo.cargarCliente();
+            }
     }
     
 

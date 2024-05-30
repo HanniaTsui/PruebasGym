@@ -263,7 +263,7 @@ public class ClienteModelo {
 		JOptionPane.showMessageDialog(null, "se actualizar el cliente correctamente");
 	}
 
-	public void subirDatosCliente(Cliente cliente) {
+	public boolean subirDatosCliente(Cliente cliente) {
 		Insert insertar=BaseDatos.optenerIstancia().getMySQL().table("cliente").insert();
 		insertar.field("ID",cliente.getID());
 		insertar.field("nombre",cliente.getNombre());
@@ -290,10 +290,11 @@ public class ClienteModelo {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			 JOptionPane.showMessageDialog(null, "No se pudo añadir el cliente", "ERROR", JOptionPane.WARNING_MESSAGE);
-			 return;
+			 return false;
 		}
-		client.add(cliente);
+		//client.add(cliente);
 		 JOptionPane.showMessageDialog(null, "se añadio cliente correctamente");
+		 return true;
 	}
 	
 	public static void cargarCliente() {
