@@ -7,7 +7,7 @@ public class Cliente {
 	String nombre; 
 	String apellido; 
 	String correo; 
-	int telefono;
+	String telefono;
 	String fechaInicial;
 	String fechaFinal; 
 	String tipoMembresia; 
@@ -17,7 +17,7 @@ public class Cliente {
 	String metodoPago;
 	
 	
-	public Cliente(int iD, String nombre, String apellido, String correo, int telefono, String fechaInicial,
+	public Cliente(int iD, String nombre, String apellido, String correo, String telefono, String fechaInicial,
 			String fechaFinal, String tipoMembresia, String planMembresia, String fechaNacimiento, BufferedImage imagen,
 			String metodoPago) {
 		
@@ -59,7 +59,7 @@ public class Cliente {
 	}
 
 
-	public int getTelefono() {
+	public String getTelefono() {
 		return telefono;
 	}
 
@@ -115,7 +115,7 @@ public class Cliente {
 		this.correo = correo;
 	}
 
-	public void setTelefono(int telefono) {
+	public void setTelefono(String telefono) {
 		this.telefono = telefono;
 	}
 

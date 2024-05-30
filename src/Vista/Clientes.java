@@ -16,8 +16,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -152,7 +154,8 @@ public class Clientes {
 	            }
 	        };
 	        worker.execute();
-	    }
+	}
+	
 	 private void actualizarTabla() {
 		modelo.fireTableRowsDeleted(0, 0);
 
@@ -264,15 +267,6 @@ public class Clientes {
 		panelMenuVertical.add(btnEliminar);
 
 		return panelMenuVertical;
-	}
-
-	 private Cliente buscarClientePorID(int id) {
-	        for (Cliente cliente : ClienteModelo.getClient()) {
-	            if (cliente.getID() == id) {
-	                return cliente;
-	            }
-	        }
-	        return null;
 	}
 
 	public JPanel panelCrearEditar() {
@@ -476,7 +470,6 @@ public class Clientes {
 			public void actionPerformed(ActionEvent e) {
 				validarCamposCrear();
 				// ticket();
-				System.out.println("aaaa");
 			}
 		});
 		btnPagar.setFocusable(false);
@@ -499,7 +492,7 @@ public class Clientes {
 		String nombre = textNombre.getText().trim();
 		String apellido = textApellidos.getText().trim();
 		String correo = textEmail.getText().trim();
-		int telefono = Integer.parseInt(textTel.getText().trim());
+		String telefono = textTel.getText().trim();
 		String fechaInicial = fechaInicial1;
 		String fechaFinal = fechaFinal1;
 		String tipoMembresia = (String) comboMembresia.getSelectedItem();
@@ -559,7 +552,7 @@ public class Clientes {
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cliente=null;
-				cliente=buscarClientePorID(Integer.parseInt(textID.getText()));
+				cliente=controlador.buscarClientePorID(Integer.parseInt(textID.getText()));
 
 				if (cliente!=null) {
 					panelEditar = editarCliente(cliente);
@@ -766,6 +759,17 @@ public class Clientes {
 			cliente.setPlanMembresia((String) comboTipo.getSelectedItem());
 			cliente.setTipoMembresia((String) comboMembresia.getSelectedItem());
 
+			Date fechaStr1 = (Date) spinnerFechaNacimiento.getValue();
+			String fechaStr = new SimpleDateFormat("dd/MM/yyyy").format(fechaStr1);
+			Date fecha2 = (Date) spinnerFechaIn.getValue();
+			String fechaIn = new SimpleDateFormat("dd/MM/yyyy").format(fecha2);
+			Date fecha3 = (Date) spinnerFechaFin.getValue();
+			String fechaFin = new SimpleDateFormat("dd/MM/yyyy").format(fecha3);
+
+			cliente.setFechaNacimiento(fechaStr);
+			cliente.setFechaInicial(fechaIn);
+			cliente.setFechaFinal(fechaFin);
+
 			if (!path.equals("Predeterminado")) {
 				BufferedImage imagen;
 				try {
@@ -776,7 +780,7 @@ public class Clientes {
 				}
 			}
 
-			ClienteModelo.obtenerInstancia().editarCliente(cliente);
+			controlador.actualizarCliente(cliente);
 		});
 		btnGuardar.setBounds(462, 490, 120, 40);
 		panelCrear.add(btnGuardar);
@@ -841,20 +845,23 @@ public class Clientes {
 					botones[index].setBackground(new Color(217, 217, 217));
 					switch (index) {
 					case 0:
-						detallesInformacion();
+						if (cliente != null) detallesInformacion(cliente);
 						break;
 					case 1:
-						detallesHistorialPago();
+						if (cliente != null) detallesHistorialPago(cliente);
 						break;
 					case 2:
-						detallesHistorialAsistencia();
+						if (cliente != null) detallesHistorialAsistencia(cliente);
 						break;
 					case 3:
-						detallesInformacion();
-						JOptionPane.showMessageDialog(null, "¡Descarga exitosa!", "", JOptionPane.INFORMATION_MESSAGE);
+						if (cliente != null) {
+							detallesInformacion(cliente);
+							ClienteModelo.obtenerInstancia().generarPDFReporte(cliente);
+						}
+
 						break;
 					case 4:
-						credencialCliente();
+						if (cliente != null) credencialCliente(cliente);
 						break;
 					default:
 						break;
@@ -869,9 +876,19 @@ public class Clientes {
 		btnBuscar = new JButton("");
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				cliente = null;
+
 				// Habilitar los botones cuando se presiona el botón Buscar
 				for (JButton boton : botones) {
-					boton.setEnabled(true);
+					cliente = controlador.buscarClientePorID(Integer.parseInt(textID.getText()));
+
+					if (cliente != null) {
+						if (!panelInfo.isVisible()) panelInfo.setVisible(true);
+						boton.setEnabled(true);
+					} else {
+						if (panelInfo.isVisible()) panelInfo.setVisible(false);
+						boton.setEnabled(false);
+					}
 				}
 			}
 		});
@@ -886,7 +903,8 @@ public class Clientes {
 		btnReporte = new JButton("Renovar suscripción");
 		btnReporte.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				renovar();
+				if (cliente != null) renovar(cliente);
+
 			}
 		});
 		btnReporte.setForeground(Color.white);
@@ -898,26 +916,26 @@ public class Clientes {
 		return panel;
 	}
 
-	public void panelDetalles() {
-		JLabel id = new JLabel("ID del cliente: ");
+	public void panelDetalles(Cliente cliente) {
+		JLabel id = new JLabel("ID del cliente: " + cliente.getID());
 		configurarLabelsIzq(id);
 		panelInfo.add(id);
 		id.setBounds(87, 20, 500, 20);
 
-		JLabel nombre = new JLabel("Nombre: ");
+		JLabel nombre = new JLabel("Nombre: " + cliente.getNombre());
 		configurarLabelsIzq(nombre);
 		panelInfo.add(nombre);
 		nombre.setBounds(600, 20, 300, 20);
 	}
 
-	public void credencialCliente() {
+	public void credencialCliente(Cliente cliente) {
 		btnElim = new JButton("Descargar");
 		btnElim.setFocusable(false);
 		btnElim.setBackground(new Color(89, 89, 89));
 		btnElim.setForeground(Color.white);
 		btnElim.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "¡Descarga exitosa!", "", JOptionPane.INFORMATION_MESSAGE);
+				ClienteModelo.obtenerInstancia().generarPDFCredencial(cliente);
 			}
 		});
 		btnElim.setFocusable(false);
@@ -925,7 +943,7 @@ public class Clientes {
 		panelInfo.add(btnElim);
 
 		lblPersona = new JLabel();
-		lblPersona.setIcon(new ImageIcon(Clientes.class.getResource("/img/usuarioGym 1.png")));
+		lblPersona.setIcon(new ImageIcon(cliente.getImagen()));
 		lblPersona.setBounds(36, 33, 217, 218);
 		panelInfo.add(lblPersona);
 
@@ -934,39 +952,38 @@ public class Clientes {
 		lblCodigo.setBounds(299, 241, 327, 59);
 		panelInfo.add(lblCodigo);
 
-		lblFecha = new JLabel("Fecha de nacimiento: ");
+		lblFecha = new JLabel("Fecha de nacimiento: " + cliente.getFechaNacimiento());
 		configurarLabels(lblFecha);
 		lblFecha.setBounds(299, 33, 327, 20);
 		panelInfo.add(lblFecha);
 
-		lblTlefono = new JLabel("Teléfono: ");
+		lblTlefono = new JLabel("Teléfono: " + cliente.getTelefono());
 		configurarLabels(lblTlefono);
 		lblTlefono.setBounds(299, 73, 327, 20);
 		panelInfo.add(lblTlefono);
 
-		lblCorreoElectrnico = new JLabel("Correo electrónico: ");
+		lblCorreoElectrnico = new JLabel("Correo electrónico: " + cliente.getCorreo());
 		configurarLabels(lblCorreoElectrnico);
 		lblCorreoElectrnico.setBounds(299, 113, 327, 20);
 		panelInfo.add(lblCorreoElectrnico);
 
-		lblFechaDeRegistro = new JLabel("Fecha de registro: ");
+		lblFechaDeRegistro = new JLabel("Fecha de registro: " + cliente.getFechaInicial());
 		configurarLabels(lblFechaDeRegistro);
 		lblFechaDeRegistro.setBounds(299, 153, 327, 20);
 		panelInfo.add(lblFechaDeRegistro);
 
-		lblMembresia = new JLabel("Suscripción: ");
+		lblMembresia = new JLabel("Suscripción: " + cliente.getPlanMembresia());
 		configurarLabels(lblMembresia);
 		lblMembresia.setBounds(299, 193, 327, 20);
 		panelInfo.add(lblMembresia);
 
-		lblPeterParker = new JLabel("Usuario");
+		lblPeterParker = new JLabel(cliente.getNombre());
 		configurarLabels(lblPeterParker);
 		lblPeterParker.setBounds(36, 270, 217, 20);
 		panelInfo.add(lblPeterParker);
 	}
 
-	public void detallesInformacion() {
-
+	public void detallesInformacion(Cliente cliente) {
 		JLabel lblPlanDeLa = new JLabel("Plan de la membresía:");
 		configurarLabelsIzq(lblPlanDeLa);
 		lblPlanDeLa.setBounds(80, 180, 200, 20);
@@ -1009,50 +1026,51 @@ public class Clientes {
 		panelInfo.add(lblFechaFinal);
 
 		lblNewLabel = new JLabel();
-		lblNewLabel.setIcon(new ImageIcon(Clientes.class.getResource("/img/usuarioGym 1.png")));
+		//lblNewLabel.setIcon(new ImageIcon(Clientes.class.getResource("/img/usuarioGym 1.png")));
+		lblNewLabel.setIcon(new ImageIcon(cliente.getImagen()));
 		lblNewLabel.setBounds(650, 20, 217, 218);
 		panelInfo.add(lblNewLabel);
 		
 		 //LABELS PARA LOS DATOS
-		JLabel lblN= new JLabel(); //PARA NOMBRE
+		JLabel lblN= new JLabel(cliente.getNombre()); //PARA NOMBRE
+
 		configurarLabelsIzq(lblN);
 		lblN.setBounds(80, 60, 200, 20);
 		panelInfo.add(lblN);
-		JLabel lblAp= new JLabel(); // PARA APELLIDO
+		JLabel lblAp= new JLabel(cliente.getApellido()); // PARA APELLIDO
 		configurarLabelsIzq(lblAp);
 		lblAp.setBounds(400, 60, 200, 20);
 		panelInfo.add(lblAp);
-		JLabel lblEm= new JLabel(); //PARA EMAIL
+		JLabel lblEm= new JLabel(cliente.getCorreo()); //PARA EMAIL
 		configurarLabelsIzq(lblEm);
 		lblEm.setBounds(80, 140, 200, 20);
 		panelInfo.add(lblEm);
-		JLabel lblTelef= new JLabel(); // PARA TELEFONO
+		JLabel lblTelef= new JLabel(cliente.getTelefono()); // PARA TELEFONO
 		configurarLabelsIzq(lblTelef);
 		lblTelef.setBounds(400, 140, 200, 20);
 		panelInfo.add(lblTelef);
-		JLabel lblPlan= new JLabel(); //PARA PLAN
+		JLabel lblPlan= new JLabel(cliente.getPlanMembresia()); //PARA PLAN
 		configurarLabelsIzq(lblPlan);
 		lblPlan.setBounds(80, 220, 200, 20);
 		panelInfo.add(lblPlan);
-		JLabel lblTip= new JLabel(); // PARA TIPO
+		JLabel lblTip= new JLabel(cliente.getTipoMembresia()); // PARA TIPO
 		configurarLabelsIzq(lblTip);
 		lblTip.setBounds(400, 220, 200, 20);
 		panelInfo.add(lblTip);
-		JLabel lblFechaIn= new JLabel(); //PARA FECHA INICIAL
+		JLabel lblFechaIn= new JLabel(cliente.getFechaInicial()); //PARA FECHA INICIAL
 		configurarLabelsIzq(lblFechaIn);
 		lblFechaIn.setBounds(80, 300, 200, 20);
 		panelInfo.add(lblFechaIn);
-		JLabel lblFechaFin= new JLabel(); // PARA FECHA FINAL
+		JLabel lblFechaFin= new JLabel(cliente.getFechaFinal()); // PARA FECHA FINAL
 		configurarLabelsIzq(lblFechaFin);
 		lblFechaFin.setBounds(400, 300, 200, 20);
 		panelInfo.add(lblFechaFin);
 		///////
-
 	}
 
-	public void detallesHistorialPago() { // HistorialPago clientes
-		panelDetalles();
-		lblMembresia = new JLabel("Suscripción: ");
+	public void detallesHistorialPago(Cliente cliente) { // HistorialPago clientes
+		panelDetalles(cliente);
+		lblMembresia = new JLabel("Suscripción: " + cliente.getPlanMembresia());
 		configurarLabelsIzq(lblMembresia);
 		lblMembresia.setBounds(87, 55, 200, 20);
 		panelInfo.add(lblMembresia);
@@ -1063,15 +1081,46 @@ public class Clientes {
 			public boolean isCellEditable(int row, int column) {
 				return false; // La tabla no se edita
 			}
+
+			@Override
+			public Class<?> getColumnClass(int col) {
+				return col == 3 ? Integer.class : String.class;
+			}
+
+			private int getPrice(String planMembresia, String tipoMembresia) {
+				return switch (planMembresia) {
+					case "General" -> (tipoMembresia.equals("1 mes") ? 399 : (tipoMembresia.equals("3 meses") ? 1077 : (tipoMembresia.equals("6 meses") ? 2394 : 4788)));
+					case "Familiar" -> (tipoMembresia.equals("1 mes") ? 799 : (tipoMembresia.equals("3 meses") ? 2097 : (tipoMembresia.equals("6 meses") ? 4194 : 8388)));
+					case "Estudiante" -> (tipoMembresia.equals("1 mes") ? 599 : (tipoMembresia.equals("3 meses") ? 1797 : (tipoMembresia.equals("6 meses") ? 3594 : 7188)));
+					case "Duo" -> (tipoMembresia.equals("1 mes") ? 299 : (tipoMembresia.equals("3 meses") ? 897 : (tipoMembresia.equals("6 meses") ? 1794 : 3588)));
+					default -> 50;
+				};
+			}
+
+			@Override
+			public Object getValueAt(int fila, int col) {
+				return switch (col) {
+					case 0 -> cliente.getTipoMembresia();
+					case 1 -> cliente.getFechaInicial();
+					case 2 -> cliente.getFechaFinal();
+					case 3 -> getPrice(cliente.getTipoMembresia(), cliente.getPlanMembresia());
+					default -> null;
+				};
+			}
+
 		};
 		JTable datosTabla = new JTable(modelo);
+		datosTabla.setColumnSelectionAllowed(false);
+		Vector<Cliente> clientes = new Vector<>();
+		clientes.add(cliente);
+		modelo.addRow(clientes);
 		JScrollPane tablaScroll = new JScrollPane(datosTabla);
 		tablaScroll.setBounds(87, 95, 730, 200);
 		panelInfo.add(tablaScroll);
 	}
 
-	public void detallesHistorialAsistencia() { // HistorialAsistencia clientes
-		panelDetalles();
+	public void detallesHistorialAsistencia(Cliente cliente) { // HistorialAsistencia clientes
+		panelDetalles(cliente);
 		String titulo[] = { "Fecha", "Hora de entrada", "Hora de salida" };
 		DefaultTableModel modelo2 = new DefaultTableModel(null, titulo) {
 			@Override
@@ -1104,7 +1153,7 @@ public class Clientes {
 
 	}
 
-	public void renovar() {
+	public void renovar(Cliente cliente) {
 		// Crear una nueva ventana para editar la clase
 		JFrame renovar = new JFrame("Renovar membresía");
 		renovar.setSize(550, 500);
@@ -1129,14 +1178,17 @@ public class Clientes {
 		String[] tipo = { "General", "Estudiante", "Familiar", "Dúo" };
 		JComboBox<String> comboTipo = new JComboBox<>(tipo);
 		comboTipo.setBounds(70, 205, 170, 30);
+		comboTipo.setSelectedItem(cliente.getTipoMembresia());
 		panelEditar.add(comboTipo);
 		String[] plan = { "1 mes", "3 meses", "6 meses", "1 año" };
 		JComboBox<String> comboPlan = new JComboBox<>(plan);
 		comboPlan.setBounds(287, 205, 170, 30);
+		comboPlan.setSelectedItem(cliente.getPlanMembresia());
 		panelEditar.add(comboPlan);
 		String[] metodo = { "Efectivo", "Visa", "Cheque" };
 		JComboBox<String> comboMetodo = new JComboBox<>(metodo);
 		comboMetodo.setBounds(70, 295, 170, 30);
+		comboMetodo.setSelectedItem(cliente.getMetodoPago());
 		panelEditar.add(comboMetodo);
 		JButton btnG = new JButton("Renovar");
 		btnG.setFocusable(false);
@@ -1145,6 +1197,12 @@ public class Clientes {
 		btnG.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
+				cliente.setTipoMembresia((String) comboTipo.getSelectedItem());
+				cliente.setMetodoPago((String) comboMetodo.getSelectedItem());
+				cliente.setPlanMembresia((String) comboPlan.getSelectedItem());
+
+				controlador.actualizarCliente(cliente);
 				renovar.dispose();
 				ticket();
 			}
@@ -1175,12 +1233,12 @@ public class Clientes {
 		lblNombre.setBounds(287, 85, 200, 20);
 		panelEditar.add(lblNombre);
 
-		JLabel id_1 = new JLabel("00000");
+		JLabel id_1 = new JLabel(String.valueOf(cliente.getID()));
 		configurarLabelsIzq(id_1);
 		id_1.setBounds(70, 125, 150, 20);
 		panelEditar.add(id_1);
 
-		JLabel lblName = new JLabel("aaaa");
+		JLabel lblName = new JLabel(cliente.getNombre());
 		configurarLabelsIzq(lblName);
 		lblName.setBounds(287, 125, 200, 20);
 		panelEditar.add(lblName);
@@ -1275,7 +1333,7 @@ public class Clientes {
 			public void actionPerformed(ActionEvent e) {
 				
 				cliente=null;
-				cliente=buscarClientePorID(Integer.parseInt(textID.getText()));
+				cliente=controlador.buscarClientePorID(Integer.parseInt(textID.getText()));
 		          
 			  	if (cliente!=null) {
 					JPanel panelCredencial = eliminarCliente(cliente);
