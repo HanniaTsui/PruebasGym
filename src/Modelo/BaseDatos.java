@@ -12,7 +12,7 @@ import java.util.TimerTask;
 import javax.swing.JOptionPane;
 
 import com.code.advancedsql.MySQL;
-import com.code.advancedsql.query.Insert;
+import com.code.advancedsql.query.Insert;      
 import com.code.advancedsql.query.Select;
 
 public class BaseDatos {

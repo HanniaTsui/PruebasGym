@@ -741,7 +741,7 @@ public class ClientesVista {
 	    });
 	    btnGuardar.setBackground(new Color(0, 0, 0)); // Establecer color de fondo
 	    btnGuardar.setBounds(359, 600, 150, 40); // Ajustar posición y tamaño
-	    //p2.add(btnGuardar);
+	    // p2.add(btnGuardar);
 
 	    return panel;
 	}

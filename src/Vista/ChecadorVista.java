@@ -27,6 +27,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
 import controlador.ChecadorControlador;
+import controlador.ClientesControlador;
 import controlador.MenuControlador;
 
 public class ChecadorVista extends JFrame  {
@@ -39,6 +40,7 @@ public class ChecadorVista extends JFrame  {
 	JTextField textID;
 	
 	private ChecadorControlador controlador;
+	private ClientesControlador controladorV;
 
 	public ChecadorVista(ChecadorControlador controlador) {
 		this.controlador = controlador;
@@ -132,6 +134,11 @@ public class ChecadorVista extends JFrame  {
 	    btnBuscar = new JButton("");
 	    btnBuscar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
+	    		if(controladorV.buscarClientePorID(Integer.parseInt(textID.getText())) != null ) {
+	    			
+	    			
+	    		}
+	    		
 	    		
 	    	}
 	    });

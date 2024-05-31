@@ -46,7 +46,7 @@ public class ClientesControlador {
         ClienteModelo.obtenerInstancia().editarCliente(cliente);
     }
 
-    public ClienteObj buscarClientePorID(int id) {
+    public static  ClienteObj buscarClientePorID(int id) {
         for (ClienteObj cliente : ClienteModelo.getClient()) {
             if (cliente.getID() == id) {
                 return cliente;
@@ -58,6 +58,7 @@ public class ClientesControlador {
     public static void registrarCliente(int iD, String nombre, String apellido, String correo, String telefono, String fechaInicial,
             String fechaFinal, String tipoMembresia, String planMembresia, String fechaNacimiento, BufferedImage imagen,
             String metodoPago,String estado) {
+    	
             boolean subirCliente=ClienteModelo.obtenerInstancia().subirDatosCliente(new ClienteObj(iD,nombre,apellido,correo,telefono,fechaInicial,fechaFinal,tipoMembresia,planMembresia
                     ,fechaNacimiento,imagen,metodoPago,estado));
             if(subirCliente) {
