@@ -45,6 +45,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AttributeSet;
@@ -431,6 +433,17 @@ public class ClientesVista {
 		panelCrear.add(spinnerFechaNacimiento);
 		// sacar el modelo para convertirlo a string
 		SpinnerDateModel modeloFechaNacimiento = (SpinnerDateModel) spinnerFechaNacimiento.getModel();
+		Calendar calendar = Calendar.getInstance();
+        calendar.set(1900, Calendar.JANUARY, 1); //  Fechs inicial: Enero 1, 1900
+        Date startDate = calendar.getTime();
+        
+        calendar.set(2024, Calendar.DECEMBER, 31); // Fecha final: Diciembre 31, 2024
+        Date endDate = calendar.getTime();
+        
+        modeloFechaNacimiento.setStart(startDate);
+        modeloFechaNacimiento.setEnd(endDate);
+        
+        
 		Date fechaSeleccionada = modeloFechaNacimiento.getDate();
 		SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
 		fechaNacimiento1 = formatoFecha.format(fechaSeleccionada);
@@ -476,6 +489,11 @@ public class ClientesVista {
         Date fechaSeleccionadaIn = modeloFechaIn.getDate();
         SimpleDateFormat formatoFechaIn = new SimpleDateFormat("dd/MM/yyyy");
         fechaInicial1 = formatoFechaIn.format(fechaSeleccionadaIn);
+        spinnerFechaIn.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                calcularFechaFinal();
+            }
+        });
 
 
         labelFechaFin = new JLabel();
@@ -715,9 +733,6 @@ public class ClientesVista {
 	    btnGuardar.setForeground(new Color(255, 255, 255));
 	    btnGuardar.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent e) {
-	            JOptionPane.showMessageDialog(null, "¡Cambios de cliente realizados con éxito!", "Edición exitosa",
-	                    JOptionPane.INFORMATION_MESSAGE);
-
 	            if (panelEditar != null) {
 	                panelEditar.setVisible(false);
 	                panelEditar = null;
@@ -802,8 +817,19 @@ public class ClientesVista {
 		spinnerFechaNacimiento.setEditor(dateEditorFechaNac);
 		spinnerFechaNacimiento.setPreferredSize(new Dimension(200, 30));
 		spinnerFechaNacimiento.setBounds(360, 73, 200, 30);
+		
+		SpinnerDateModel modeloFechaNacimiento = (SpinnerDateModel) spinnerFechaNacimiento.getModel();
+		Calendar calendar = Calendar.getInstance();
+        calendar.set(1900, Calendar.JANUARY, 1); //  Fechs inicial: Enero 1, 1900
+        Date startDate = calendar.getTime();
+        
+        calendar.set(2024, Calendar.DECEMBER, 31); // Fecha final: Diciembre 31, 2024
+        Date endDate = calendar.getTime();
+        
+        modeloFechaNacimiento.setStart(startDate);
+        modeloFechaNacimiento.setEnd(endDate);
 		panelCrear.add(spinnerFechaNacimiento);
-
+		
 		textTel = new JTextField();
 		textTel.setColumns(10);
 		validacionTel(textTel);
@@ -844,11 +870,16 @@ public class ClientesVista {
         spinnerFechaIn.setBounds(70, 350, 200, 30);
         panelCrear.add(spinnerFechaIn);
         // convertir spinner a texto con su formato
+        
         modeloFechaIn = (SpinnerDateModel) spinnerFechaIn.getModel();
         Date fechaSeleccionadaIn = modeloFechaIn.getDate();
         SimpleDateFormat formatoFechaIn = new SimpleDateFormat("dd/MM/yyyy");
         fechaInicial1 = formatoFechaIn.format(fechaSeleccionadaIn);
-
+        spinnerFechaIn.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                calcularFechaFinal();
+            }
+        });
 
         String fechaFinString = cliente.getFechaFinal();
         // Crear el JLabel para mostrar la fecha final
@@ -933,42 +964,42 @@ public class ClientesVista {
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 		btnGuardar.setBackground(new Color(0, 45, 78));
 		btnGuardar.addActionListener(e -> {
-		cliente.setNombre(textNombre.getText());
-        cliente.setApellido(textApellidos.getText());
-        cliente.setCorreo(textEmail.getText());
-        cliente.setTelefono(textTel.getText());
-        cliente.setMetodoPago((String) comboPago.getSelectedItem());
-        cliente.setPlanMembresia((String) comboTipo.getSelectedItem());
-        cliente.setTipoMembresia((String) comboMembresia.getSelectedItem());
-
-        // Obtener y asignar las nuevas fechas seleccionadas
-        Date fechaNac = (Date) spinnerFechaNacimiento.getValue();
-        cliente.setFechaNacimiento(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
-
-        Date fechaIni = (Date) spinnerFechaIn.getValue();
-        cliente.setFechaInicial(new SimpleDateFormat("dd/MM/yyyy").format(fechaIni));
-
-        String fechaFinS = labelFechaFin.getText();
-        // Parsear la fecha final de nuevo a un objeto Date
-        Date fechaFin = null;
-        try {
-            fechaFin = new SimpleDateFormat("dd/MM/yyyy").parse(fechaFinS);
-        } catch (ParseException ex) {
-            ex.printStackTrace();
-        }
-        cliente.setFechaFinal(new SimpleDateFormat("dd/MM/yyyy").format(fechaFin));
-
-        if (!path.equals("Predeterminado")) {
-            BufferedImage imagen;
-            try {
-                imagen = ImageIO.read(new File(path));
-                cliente.setImagen(imagen);
-            } catch (IOException exception) {
-                JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-
-        ClienteModelo.obtenerInstancia().editarCliente(cliente);
+			cliente.setNombre(textNombre.getText());
+	        cliente.setApellido(textApellidos.getText());
+	        cliente.setCorreo(textEmail.getText());
+	        cliente.setTelefono(textTel.getText());
+	        cliente.setMetodoPago((String) comboPago.getSelectedItem());
+	        cliente.setPlanMembresia((String) comboTipo.getSelectedItem());
+	        cliente.setTipoMembresia((String) comboMembresia.getSelectedItem());
+	
+	        // Obtener y asignar las nuevas fechas seleccionadas
+	        Date fechaNac = (Date) spinnerFechaNacimiento.getValue();
+	        cliente.setFechaNacimiento(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
+	
+	        Date fechaIni = (Date) spinnerFechaIn.getValue();
+	        cliente.setFechaInicial(new SimpleDateFormat("dd/MM/yyyy").format(fechaIni));
+	
+	        String fechaFinS = labelFechaFin.getText();
+	        // Parsear la fecha final de nuevo a un objeto Date
+	        Date fechaFin = null;
+	        try {
+	            fechaFin = new SimpleDateFormat("dd/MM/yyyy").parse(fechaFinS);
+	        } catch (ParseException ex) {
+	            ex.printStackTrace();
+	        }
+	        cliente.setFechaFinal(new SimpleDateFormat("dd/MM/yyyy").format(fechaFin));
+	
+	        if (!path.equals("Predeterminado")) {
+	            BufferedImage imagen;
+	            try {
+	                imagen = ImageIO.read(new File(path));
+	                cliente.setImagen(imagen);
+	            } catch (IOException exception) {
+	                JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
+	            }
+	        }
+	
+	        ClienteModelo.obtenerInstancia().editarCliente(cliente);
 		});
 		btnGuardar.setBounds(462, 490, 120, 40);
 		panelCrear.add(btnGuardar);

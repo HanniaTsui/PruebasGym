@@ -316,7 +316,7 @@ public class ClienteModelo {
 			 return false;
 		}
 		//client.add(cliente);
-		 JOptionPane.showMessageDialog(null, "se añadio cliente correctamente");
+		 JOptionPane.showMessageDialog(null, "Se añadió cliente correctamente");
 		 return true;
 	}
 	
