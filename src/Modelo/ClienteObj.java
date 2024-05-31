@@ -158,5 +158,10 @@ public class ClienteObj {
 	public void setMetodoPago(String metodoPago) {
 		this.metodoPago = metodoPago;
 	}
+	
+	public void setFechas(String fechaInicial, String fechaFinal) {
+        this.fechaInicial = fechaInicial;
+        this.fechaFinal = fechaFinal;
+    }
 
 }

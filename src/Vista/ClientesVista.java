@@ -18,6 +18,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -89,6 +91,12 @@ public class ClientesVista {
 	private ClientesControlador controlador;
 	SpinnerDateModel modeloFechaIn, modeloFechaFin;
 	JPanel panelEditar = null;
+	private JLabel lblPlan;
+	private JLabel lblTip;
+	private JLabel lblFechaIn;
+	private JLabel lblFechaFin;
+	private LocalDate fechaInicioOriginal;
+	private LocalDate fechaFinOriginal;
 
 	/**
 	 * Create the frame.
@@ -1297,19 +1305,19 @@ public class ClientesVista {
 		configurarLabelsIzq(lblTelef);
 		lblTelef.setBounds(400, 140, 200, 20);
 		panelInfo.add(lblTelef);
-		JLabel lblPlan = new JLabel(cliente.getPlanMembresia()); // PARA PLAN
+		lblPlan = new JLabel(cliente.getPlanMembresia()); // PARA PLAN
 		configurarLabelsIzq(lblPlan);
 		lblPlan.setBounds(80, 220, 200, 20);
 		panelInfo.add(lblPlan);
-		JLabel lblTip = new JLabel(cliente.getTipoMembresia()); // PARA TIPO
+		lblTip = new JLabel(cliente.getTipoMembresia()); // PARA TIPO
 		configurarLabelsIzq(lblTip);
 		lblTip.setBounds(400, 220, 200, 20);
 		panelInfo.add(lblTip);
-		JLabel lblFechaIn = new JLabel(cliente.getFechaInicial()); // PARA FECHA INICIAL
+		lblFechaIn = new JLabel(cliente.getFechaInicial()); // PARA FECHA INICIAL
 		configurarLabelsIzq(lblFechaIn);
 		lblFechaIn.setBounds(80, 300, 200, 20);
 		panelInfo.add(lblFechaIn);
-		JLabel lblFechaFin = new JLabel(cliente.getFechaFinal()); // PARA FECHA FINAL
+		lblFechaFin = new JLabel(cliente.getFechaFinal()); // PARA FECHA FINAL
 		configurarLabelsIzq(lblFechaFin);
 		lblFechaFin.setBounds(400, 300, 200, 20);
 		panelInfo.add(lblFechaFin);
@@ -1407,6 +1415,9 @@ public class ClientesVista {
 
 	public void renovar(ClienteObj cliente) {
 		// Crear una nueva ventana para editar la clase
+		final String fechaInicioOriginal = cliente.getFechaInicial();
+		final String fechaFinOriginal = cliente.getFechaFinal();
+
 		JFrame renovar = new JFrame("Renovar membresía");
 		renovar.setSize(550, 500);
 		renovar.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -1427,21 +1438,30 @@ public class ClientesVista {
 		newHorario.setBounds(70, 165, 200, 20);
 		panelEditar.add(newHorario);
 		configurarLabelsIzq(newHorario);
-		String[] tipo = { "General", "Estudiante", "Familiar", "Dúo" };
-		JComboBox<String> comboTipo = new JComboBox<>(tipo);
-		comboTipo.setBounds(70, 205, 170, 30);
+		
+		comboMembresia = new JComboBox();
+		comboMembresia.setModel(new DefaultComboBoxModel(new String[] { "General", "Estudiante", "Familiar", "Dúo" }));
+		comboMembresia.setBounds(70, 205, 170, 30);
+		comboMembresia.setSelectedItem(cliente.getPlanMembresia());
+		panelEditar.add(comboMembresia);
+		
+		comboTipo = new JComboBox();
+        comboTipo.setModel(new DefaultComboBoxModel(new String[] {  "1 mes", "3 meses", "6 meses", "1 año" }));
+		comboTipo.setBounds(287, 205, 170, 30);
 		comboTipo.setSelectedItem(cliente.getTipoMembresia());
+		comboTipo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	String tipoMembresia = (String) comboTipo.getSelectedItem();
+                actualizarFechasSegunMembresia(tipoMembresia);
+            }
+        });
 		panelEditar.add(comboTipo);
-		String[] plan = { "1 mes", "3 meses", "6 meses", "1 año" };
-		JComboBox<String> comboPlan = new JComboBox<>(plan);
-		comboPlan.setBounds(287, 205, 170, 30);
-		comboPlan.setSelectedItem(cliente.getPlanMembresia());
-		panelEditar.add(comboPlan);
-		String[] metodo = { "Efectivo", "Visa", "Cheque" };
+		String[] metodo = { "Efectivo", "Tarjeta de credito", "Cheque" };
 		JComboBox<String> comboMetodo = new JComboBox<>(metodo);
 		comboMetodo.setBounds(70, 295, 170, 30);
 		comboMetodo.setSelectedItem(cliente.getMetodoPago());
 		panelEditar.add(comboMetodo);
+		
 		JButton btnG = new JButton("Renovar");
 		btnG.setFocusable(false);
 		panelEditar.add(btnG);
@@ -1449,13 +1469,18 @@ public class ClientesVista {
 		btnG.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-				cliente.setTipoMembresia((String) comboTipo.getSelectedItem());
+				cliente.setTipoMembresia((String) comboMembresia.getSelectedItem());
 				cliente.setMetodoPago((String) comboMetodo.getSelectedItem());
-				cliente.setPlanMembresia((String) comboPlan.getSelectedItem());
-
-				controlador.actualizarCliente(cliente);
-				renovar.dispose();
+				cliente.setPlanMembresia((String) comboTipo.getSelectedItem());
+				
+			    
+			    String tipoMembresia = (String) comboTipo.getSelectedItem();
+                actualizarFechasSegunMembresia(tipoMembresia);
+                
+                renovar.dispose();
+				lblPlan.setText(cliente.getPlanMembresia());
+			    lblTip.setText(cliente.getTipoMembresia());;
+                controlador.actualizarCliente(cliente);
 				// ticket();
 			}
 		});
@@ -1466,7 +1491,11 @@ public class ClientesVista {
 		btnCancelar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				renovar.dispose();
+				cliente.setFechaInicial(fechaInicioOriginal);
+	            cliente.setFechaFinal(fechaFinOriginal);
+	            lblFechaIn.setText(fechaInicioOriginal);
+	            lblFechaFin.setText(fechaFinOriginal);
+		        renovar.dispose(); 
 			}
 		});
 
@@ -1495,6 +1524,49 @@ public class ClientesVista {
 		lblName.setBounds(287, 125, 200, 20);
 		panelEditar.add(lblName);
 		renovar.setLocationRelativeTo(null);
+	}
+	
+	public void actualizarFechasSegunMembresia(String tipoMembresia) {
+	    LocalDate fechaActual = LocalDate.now();
+	    LocalDate fechaInicio;
+	    LocalDate fechaFin;
+	    switch (tipoMembresia) {
+	        case "1 mes":
+	            fechaInicio = fechaActual;
+	            fechaFin = fechaActual.plusMonths(1);
+	            break;
+	        case "3 meses":
+	            fechaInicio = fechaActual;
+	            fechaFin = fechaActual.plusMonths(3);
+	            break;
+	        case "6 meses":
+	            fechaInicio = fechaActual;
+	            fechaFin = fechaActual.plusMonths(6);
+	            break;
+	        case "1 año":
+	            fechaInicio = fechaActual;
+	            fechaFin = fechaActual.plusYears(1);
+	            break;
+	        default:
+	            fechaInicio = fechaActual;
+	            fechaFin = fechaActual;
+	            break;
+	    }
+
+	    // Guardar las fechas originales antes de actualizarlas
+	    fechaInicioOriginal = fechaInicio;
+	    fechaFinOriginal = fechaFin;
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	    String fechaInicioFormateada = fechaInicio.format(formatter);
+	    String fechaFinFormateada = fechaFin.format(formatter);
+	    // Actualizar los JLabel con las nuevas fechas
+	    lblFechaIn.setText(fechaInicioFormateada);
+	    lblFechaFin.setText(fechaFinFormateada);
+	    
+
+	    cliente.setFechas(fechaInicioFormateada, fechaFinFormateada);
+	  //  controlador.actualizarCliente(cliente);
+	   
 	}
 
 	public void ticket() {
