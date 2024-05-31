@@ -1,15 +1,15 @@
 package controlador;
 
 import Vista.FramePrincipal;
-import Vista.Tarifas;
+import Vista.TarifasVista;
 
 import javax.swing.*;
 
 public class TarifasControlador {
-    private Tarifas vista;
+    private TarifasVista vista;
 
     public TarifasControlador() {
-        this.vista = new Tarifas(this);
+        this.vista = new TarifasVista(this);
     }
 
     public void tarifas() {

@@ -39,7 +39,7 @@ import javax.swing.text.PlainDocument;
 import controlador.InstructorControlador;
 import controlador.MenuControlador;
 
-public class Instructor{
+public class InstructorVista{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, panel, panelCrear, panelCredencial, panelSup;
@@ -59,7 +59,7 @@ public class Instructor{
 	/**
 	 * Create the frame.
 	 */
-	public Instructor(InstructorControlador controlador) {
+	public InstructorVista(InstructorControlador controlador) {
 		this.controlador=controlador;
 		
 	}
@@ -173,12 +173,12 @@ public class Instructor{
 	    panelCredencial.setLayout(null);
 	    
 	    lblPersona = new JLabel();
-	    lblPersona.setIcon(new ImageIcon(Instructor.class.getResource("/img/usuarioGym 1.png")));
+	    lblPersona.setIcon(new ImageIcon(InstructorVista.class.getResource("/img/usuarioGym 1.png")));
 	    lblPersona.setBounds(36, 23, 217, 218);
 	    panelCredencial.add(lblPersona);
 	    
 	    lblCodigo = new JLabel();
-	    lblCodigo.setIcon(new ImageIcon(Instructor.class.getResource("/img/codigoDeBarras.png")));
+	    lblCodigo.setIcon(new ImageIcon(InstructorVista.class.getResource("/img/codigoDeBarras.png")));
 	    lblCodigo.setBounds(299, 229, 327, 59);
 	    panelCredencial.add(lblCodigo);
 
@@ -294,7 +294,7 @@ public class Instructor{
 	    panelCrear.add(btnVolver);
 	    
 	    lblNewLabel = new JLabel();
-		lblNewLabel.setIcon(new ImageIcon(Instructor.class.getResource("/img/usuarioGym 2.png")));
+		lblNewLabel.setIcon(new ImageIcon(InstructorVista.class.getResource("/img/usuarioGym 2.png")));
 		lblNewLabel.setBounds(727, 23, 83, 85);
 		panelCrear.add(lblNewLabel);
 		
@@ -402,7 +402,7 @@ public class Instructor{
 	    panelCrear.add(btnFoto);
 	    
 	    lblFoto = new JLabel("");
-	    lblFoto.setIcon(new ImageIcon(Instructor.class.getResource("/img/usuarioGym 1.png")));
+	    lblFoto.setIcon(new ImageIcon(InstructorVista.class.getResource("/img/usuarioGym 1.png")));
 	    lblFoto.setBounds(642, 33, 217, 221);
 	    panelCrear.add(lblFoto);
 	    
@@ -519,7 +519,7 @@ public class Instructor{
 	    panelCrear.add(btnFoto);
 	    
 	    lblFoto = new JLabel("");
-	    lblFoto.setIcon(new ImageIcon(Instructor.class.getResource("/img/usuarioGym 1.png")));
+	    lblFoto.setIcon(new ImageIcon(InstructorVista.class.getResource("/img/usuarioGym 1.png")));
 	    lblFoto.setBounds(642, 33, 217, 221);
 	    panelCrear.add(lblFoto);
 	    

@@ -26,7 +26,7 @@ import controlador.InicioControlador;
 import controlador.MenuControlador;
 
 
-public class MenuPrincipal {
+public class MenuPrincipalVista {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, panel, panelSup;
@@ -37,7 +37,7 @@ public class MenuPrincipal {
 	Font forte;
 	private MenuControlador controlador;
 
-	public MenuPrincipal(MenuControlador controlador) {
+	public MenuPrincipalVista(MenuControlador controlador) {
 		this.controlador = controlador;
 	}
 	
@@ -102,7 +102,7 @@ public class MenuPrincipal {
 		panel.add(lblGym_1);
 		
 		JLabel lblLogo = new JLabel("");
-		lblLogo.setIcon(new ImageIcon(MenuPrincipal.class.getResource("/img/logoMenu.png")));
+		lblLogo.setIcon(new ImageIcon(MenuPrincipalVista.class.getResource("/img/logoMenu.png")));
 		lblLogo.setBounds(116, 106, 233, 208);
 		panel.add(lblLogo);
 		
@@ -117,7 +117,7 @@ public class MenuPrincipal {
 		    lblColores[i].setBackground(new Color(119, 182, 255));
 		    lblColores[i].setHorizontalAlignment(SwingConstants.CENTER);
 		    lblColores[i].setBounds(boundsX[i], boundsY[i], 266, 230);
-		    lblColores[i].setIcon(new ImageIcon(MenuPrincipal.class.getResource(imagenes[i])));
+		    lblColores[i].setIcon(new ImageIcon(MenuPrincipalVista.class.getResource(imagenes[i])));
 		    panel.add(lblColores[i]);
 		}
 
@@ -127,12 +127,17 @@ public class MenuPrincipal {
 	public JPanel getMenu() {
 		
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		 try {
-	            fontFile = new File(getClass().getResource("/Fuente/Forte.ttf").getPath());
-	            forte = Font.createFont(Font.TRUETYPE_FONT, fontFile);
-	            ge.registerFont(forte);
-	        } catch (FontFormatException | IOException e) {
-	        }
+		try {
+            fontFile = new File("src/Fuente/Forte.ttf");
+            forte = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+            ge.registerFont(forte);
+	 } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Error al cargar el archivo de la fuente: " + e.getMessage());
+        } catch (FontFormatException e) {
+            e.printStackTrace();
+            System.err.println("El archivo de fuente tiene un formato incorrecto: " + e.getMessage());
+        }
 		JPanel panel = new JPanel();
 		panel.setBounds(0, 0, 1200, 720);
 		panel.setBackground(Color.white);

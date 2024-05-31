@@ -3,15 +3,15 @@ package controlador;
 import Modelo.BaseDatos;
 import Modelo.Usuario;
 import Vista.FramePrincipal;
-import Vista.Inicio;
+import Vista.InicioVista;
 
 import javax.swing.*;
 
 public class InicioControlador {
-    private Inicio vista;
+    private InicioVista vista;
 
     public InicioControlador() {
-        this.vista = new Inicio(this);
+        this.vista = new InicioVista(this);
 
     }
 

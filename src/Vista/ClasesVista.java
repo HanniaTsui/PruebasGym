@@ -33,7 +33,7 @@ import javax.swing.table.DefaultTableModel;
 import controlador.ClasesControlador;
 import controlador.MenuControlador;
 
-public class Clases {
+public class ClasesVista {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, panel, panelCrear, panelSup;
@@ -54,7 +54,7 @@ public class Clases {
 	/**
 	 * Create the frame.
 	 */
-	public Clases(ClasesControlador controlador) {
+	public ClasesVista(ClasesControlador controlador) {
 		
 		this.controlador = controlador;
 		
@@ -264,7 +264,7 @@ public class Clases {
 
 	    btnBuscar.setFocusable(false);
 	    btnBuscar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-	    btnBuscar.setIcon(new ImageIcon(Clases.class.getResource("/img/buscar.png")));
+	    btnBuscar.setIcon(new ImageIcon(ClasesVista.class.getResource("/img/buscar.png")));
 	    btnBuscar.setBackground(new Color(217, 217, 217)); 
 	    btnBuscar.setBounds(816, 259, 30, 30);
 	    panel.add(btnBuscar);

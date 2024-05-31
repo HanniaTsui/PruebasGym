@@ -10,7 +10,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import Modelo.Cliente;
+import Modelo.ClienteObj;
 import Modelo.ClienteModelo;
 
 public class ClientesControlador {
@@ -31,7 +31,7 @@ public class ClientesControlador {
     }
 
     public void editarCliente() {
-    	FramePrincipal.obtenerInstancia().agregarPanel(vista.editarClientes());
+    	FramePrincipal.obtenerInstancia().agregarPanel(vista.panelBuscarEditar());
     }
 
     public void detallesCliente() {
@@ -39,15 +39,15 @@ public class ClientesControlador {
     }
 
     public void eliminarCliente() {
-    	FramePrincipal.obtenerInstancia().agregarPanel(vista.eliminarCliente());
+    	FramePrincipal.obtenerInstancia().agregarPanel(vista.panelEliminarCliente());
     }
 
-    public void actualizarCliente(Cliente cliente) {
+    public void actualizarCliente(ClienteObj cliente) {
         ClienteModelo.obtenerInstancia().editarCliente(cliente);
     }
 
-    public Cliente buscarClientePorID(int id) {
-        for (Cliente cliente : ClienteModelo.getClient()) {
+    public ClienteObj buscarClientePorID(int id) {
+        for (ClienteObj cliente : ClienteModelo.getClient()) {
             if (cliente.getID() == id) {
                 return cliente;
             }
@@ -58,7 +58,7 @@ public class ClientesControlador {
     public static void registrarCliente(int iD, String nombre, String apellido, String correo, String telefono, String fechaInicial,
             String fechaFinal, String tipoMembresia, String planMembresia, String fechaNacimiento, BufferedImage imagen,
             String metodoPago,String estado) {
-            boolean subirCliente=ClienteModelo.obtenerInstancia().subirDatosCliente(new Cliente(iD,nombre,apellido,correo,telefono,fechaInicial,fechaFinal,tipoMembresia,planMembresia
+            boolean subirCliente=ClienteModelo.obtenerInstancia().subirDatosCliente(new ClienteObj(iD,nombre,apellido,correo,telefono,fechaInicial,fechaFinal,tipoMembresia,planMembresia
                     ,fechaNacimiento,imagen,metodoPago,estado));
             if(subirCliente) {
                 ClienteModelo.cargarCliente();

@@ -6,17 +6,17 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
-import Vista.Inicio;
-import Vista.MenuPrincipal;
+import Vista.InicioVista;
+import Vista.MenuPrincipalVista;
 import Modelo.BaseDatos;
 import Modelo.Usuario;
 
 public class Controlador implements ActionListener {
-	private  Inicio inicio1;
+	private  InicioVista inicio1;
 	
 	
 	
-	public Controlador(Inicio inicio1) {
+	public Controlador(InicioVista inicio1) {
 		this.inicio1=inicio1;
 				
 	}

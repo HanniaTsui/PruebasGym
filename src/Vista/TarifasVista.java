@@ -28,7 +28,7 @@ import controlador.ClientesControlador;
 import controlador.MenuControlador;
 import controlador.TarifasControlador;
 
-public class Tarifas {
+public class TarifasVista {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, panel, panelSup;
@@ -46,7 +46,7 @@ public class Tarifas {
 	/**
 	 * Create the frame.
 	 */
-	public Tarifas(TarifasControlador controlador) {
+	public TarifasVista(TarifasControlador controlador) {
 		
 		this.controlador = controlador;
 	}

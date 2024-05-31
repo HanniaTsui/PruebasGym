@@ -1,15 +1,15 @@
 package controlador;
 
-import Vista.Clases;
+import Vista.ClasesVista;
 import Vista.FramePrincipal;
 
 import javax.swing.*;
 
 public class ClasesControlador {
-    private Clases vista;
+    private ClasesVista vista;
 
     public ClasesControlador() {
-        this.vista = new Clases(this);
+        this.vista = new ClasesVista(this);
 
     }
 

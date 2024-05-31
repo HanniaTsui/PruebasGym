@@ -45,9 +45,9 @@ public class ClienteModelo {
 	private static final int MAX_BLOB_SIZE = 65535;
 	
 	
-	static List<Cliente> client = new ArrayList<Cliente>();
+	static List<ClienteObj> client = new ArrayList<ClienteObj>();
 
-	public static List<Cliente> getClient() {
+	public static List<ClienteObj> getClient() {
 		return client;
 		
 	}
@@ -75,7 +75,7 @@ public class ClienteModelo {
 		
 	}
 	
-	public void eliminarCliente(Cliente cliente) {
+	public void eliminarCliente(ClienteObj cliente) {
 		try {
 			// Eliminar el cliente de la base de datos
 			Delete query = BaseDatos.optenerIstancia().getMySQL().table("cliente").delete().where("ID = ?", Integer.toString(cliente.getID()));
@@ -95,7 +95,7 @@ public class ClienteModelo {
 		}
 	}
 
-	public void generarPDFCredencial(Cliente cliente) {
+	public void generarPDFCredencial(ClienteObj cliente) {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.setAcceptAllFileFilterUsed(false);
@@ -177,7 +177,7 @@ public class ClienteModelo {
 		}
 	}
 
-	public void generarPDFReporte(Cliente cliente) {
+	public void generarPDFReporte(ClienteObj cliente) {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.setAcceptAllFileFilterUsed(false);
@@ -252,7 +252,7 @@ public class ClienteModelo {
 		}
 	}
 
-	public void editarCliente(Cliente cliente) {
+	public void editarCliente(ClienteObj cliente) {
 		Update insertar =BaseDatos.optenerIstancia().getMySQL().table("cliente").update();
 		insertar.field("nombre",cliente.getNombre());
 		insertar.field("apellido",cliente.getApellido());
@@ -286,7 +286,7 @@ public class ClienteModelo {
 		JOptionPane.showMessageDialog(null, "Se actualizó el cliente correctamente");
 	}
 
-	public boolean subirDatosCliente(Cliente cliente) {
+	public boolean subirDatosCliente(ClienteObj cliente) {
 		Insert insertar=BaseDatos.optenerIstancia().getMySQL().table("cliente").insert();
 		insertar.field("ID",cliente.getID());
 		insertar.field("nombre",cliente.getNombre());
@@ -352,7 +352,7 @@ public class ClienteModelo {
 	            
 	            
 
-	            client.add(new Cliente( ID,  nombre, apellido,  correo,  telefono,  fechaInicial,
+	            client.add(new ClienteObj( ID,  nombre, apellido,  correo,  telefono,  fechaInicial,
 	        			 fechaFinal,  tipoMembresia,  planMembresia,  fechaNacimiento,  imagen,
 	        			 metodoPago,estado));
 	            

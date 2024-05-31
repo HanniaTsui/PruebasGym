@@ -29,7 +29,7 @@ import javax.swing.table.DefaultTableModel;
 import controlador.ChecadorControlador;
 import controlador.MenuControlador;
 
-public class Checador extends JFrame  {
+public class ChecadorVista extends JFrame  {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, panel, panelSup;
@@ -40,7 +40,7 @@ public class Checador extends JFrame  {
 	
 	private ChecadorControlador controlador;
 
-	public Checador(ChecadorControlador controlador) {
+	public ChecadorVista(ChecadorControlador controlador) {
 		this.controlador = controlador;
 	}
 
@@ -137,13 +137,13 @@ public class Checador extends JFrame  {
 	    });
 	    btnBuscar.setFocusable(false);
 	    btnBuscar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-	    btnBuscar.setIcon(new ImageIcon(Checador.class.getResource("/img/lupaChecador.png")));
+	    btnBuscar.setIcon(new ImageIcon(ChecadorVista.class.getResource("/img/lupaChecador.png")));
 	    btnBuscar.setBackground(new Color(217, 217, 217)); 
 	    btnBuscar.setBounds(983, 200, 20, 20);
 	    panel.add(btnBuscar);
 	    
 	    JLabel lblEscanear = new JLabel("");
-	    lblEscanear.setIcon(new ImageIcon(Checador.class.getResource("/img/escaneo-de-codigo-de-barras 1.png")));
+	    lblEscanear.setIcon(new ImageIcon(ChecadorVista.class.getResource("/img/escaneo-de-codigo-de-barras 1.png")));
 	    lblEscanear.setBounds(777, 230, 206, 203);
 	    panel.add(lblEscanear);
 	    
@@ -163,7 +163,7 @@ public class Checador extends JFrame  {
 	    panel.add(lblNewLabel_1);
 	    
 	    JLabel lblLogoCheck = new JLabel("");
-	    lblLogoCheck.setIcon(new ImageIcon(Checador.class.getResource("/img/usuarioGym Ch.png")));
+	    lblLogoCheck.setIcon(new ImageIcon(ChecadorVista.class.getResource("/img/usuarioGym Ch.png")));
 	    lblLogoCheck.setBounds(5, 5, 116, 116);
 	    panel_1.add(lblLogoCheck);
 	    
@@ -185,7 +185,7 @@ public class Checador extends JFrame  {
 	    panel_1.add(lblInicioSus);
 	    
 	    JLabel lblCodigoBarra = new JLabel("");
-	    lblCodigoBarra.setIcon(new ImageIcon(Checador.class.getResource("/img/image 10.png")));
+	    lblCodigoBarra.setIcon(new ImageIcon(ChecadorVista.class.getResource("/img/image 10.png")));
 	    lblCodigoBarra.setBounds(140, 95, 315, 23);
 	    panel_1.add(lblCodigoBarra);
 	    

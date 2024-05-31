@@ -1,16 +1,16 @@
 package controlador;
 
 import Vista.FramePrincipal;
-import Vista.Instructor;
-import Vista.Tarifas;
+import Vista.InstructorVista;
+import Vista.TarifasVista;
 
 import javax.swing.*;
 
 public class InstructorControlador {
-    private Instructor instructor;
+    private InstructorVista instructor;
 
     public InstructorControlador() {
-        this.instructor = new Instructor(this);
+        this.instructor = new InstructorVista(this);
     }
 
     public void instructor() {

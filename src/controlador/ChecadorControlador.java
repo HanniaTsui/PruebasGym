@@ -1,16 +1,16 @@
 package controlador;
 
-import Vista.Checador;
+import Vista.ChecadorVista;
 import Vista.FramePrincipal;
 
 import javax.swing.*;
 
 public class ChecadorControlador {
 
-    private Checador vista;
+    private ChecadorVista vista;
 
     public ChecadorControlador() {
-        this.vista = new Checador(this);
+        this.vista = new ChecadorVista(this);
     }
 
     public void checador() {

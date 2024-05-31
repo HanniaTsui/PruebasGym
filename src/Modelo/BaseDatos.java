@@ -47,7 +47,7 @@ public class BaseDatos {
 			 return;
 		}
 		user.add(usuario);
-		 JOptionPane.showMessageDialog(null, "se añadio correctamente");
+		 JOptionPane.showMessageDialog(null, "¡Registro exitoso!");
 	}
  
     public void cargarBase() {

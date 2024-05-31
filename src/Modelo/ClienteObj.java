@@ -2,7 +2,7 @@ package Modelo;
 
 import java.awt.image.BufferedImage;
 
-public class Cliente {
+public class ClienteObj {
 	int ID;
 	String nombre; 
 	String apellido; 
@@ -18,7 +18,7 @@ public class Cliente {
 	String estado;
 	
 	
-	public Cliente(int iD, String nombre, String apellido, String correo, String telefono, String fechaInicial,
+	public ClienteObj(int iD, String nombre, String apellido, String correo, String telefono, String fechaInicial,
 			String fechaFinal, String tipoMembresia, String planMembresia, String fechaNacimiento, BufferedImage imagen,
 			String metodoPago,String estado) {
 		
