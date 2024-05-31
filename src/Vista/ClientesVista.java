@@ -520,7 +520,7 @@ public class ClientesVista {
 		comboPago.setBounds(360, 435, 200, 30);
 		panelCrear.add(comboPago);
 
-		JLabel lblFoto = new JLabel("");
+		JLabel lblFoto = new JLabel("",0);
 		lblFoto.setIcon(new ImageIcon(ClientesVista.class.getResource("/img/usuarioGym 1.png")));
 		lblFoto.setBounds(642, 33, 217, 221);
 		panelCrear.add(lblFoto);
@@ -741,7 +741,7 @@ public class ClientesVista {
 	    });
 	    btnGuardar.setBackground(new Color(0, 0, 0)); // Establecer color de fondo
 	    btnGuardar.setBounds(359, 600, 150, 40); // Ajustar posición y tamaño
-	    p2.add(btnGuardar);
+	    //p2.add(btnGuardar);
 
 	    return panel;
 	}
@@ -1694,24 +1694,24 @@ public class ClientesVista {
 	}
 
 	public void validacionTexto(JTextField text) {
-		text.addKeyListener(new KeyListener() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				char l = e.getKeyChar();
-				if (!Character.isLetter(l)|| l == ' ') {
-					e.consume();
-				}
-			}
+        text.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char l = e.getKeyChar();
+                if (!Character.isLetter(l) && l !=32) {
+                    e.consume();
+                }
+            }
 
-			@Override
-			public void keyPressed(KeyEvent e) {
-			}
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
 
-			@Override
-			public void keyReleased(KeyEvent e) {
-			}
-		});
-	}
+            @Override
+            public void keyReleased(KeyEvent e) {
+            }
+        });
+    }
 
 	public void validacionTel(JTextField txt) {
 		txt.addKeyListener(new KeyListener() {
