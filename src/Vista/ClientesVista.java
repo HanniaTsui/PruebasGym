@@ -57,7 +57,7 @@ import controlador.ClientesControlador;
 import controlador.InicioControlador;
 import controlador.MenuControlador;
 
-public class Clientes {
+public class ClientesVista {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, panel, panelInfo, panelCrear, panelMenuVertical, panelCredencial, p2, panelSup;
@@ -91,7 +91,7 @@ public class Clientes {
 	/**
 	 * Create the frame.
 	 */
-	public Clientes(ClientesControlador controlador) {
+	public ClientesVista(ClientesControlador controlador) {
 		this.controlador = controlador;
 
 	}
@@ -498,12 +498,12 @@ public class Clientes {
         panelCrear.add(comboTipo);
 
 		comboPago = new JComboBox();
-		comboPago.setModel(new DefaultComboBoxModel(new String[] { "  ", "Efectivo", "Visa", "Cheque" }));
+		comboPago.setModel(new DefaultComboBoxModel(new String[] { "  ", "Efectivo", "Tarjeta de credito", "Cheque" }));
 		comboPago.setBounds(360, 435, 200, 30);
 		panelCrear.add(comboPago);
 
 		JLabel lblFoto = new JLabel("");
-		lblFoto.setIcon(new ImageIcon(Clientes.class.getResource("/img/usuarioGym 1.png")));
+		lblFoto.setIcon(new ImageIcon(ClientesVista.class.getResource("/img/usuarioGym 1.png")));
 		lblFoto.setBounds(642, 33, 217, 221);
 		panelCrear.add(lblFoto);
 
@@ -706,7 +706,7 @@ public class Clientes {
 	    btnBuscar.setFocusable(false);
 	    btnBuscar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 	            BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-	    btnBuscar.setIcon(new ImageIcon(Clientes.class.getResource("/img/buscar.png")));
+	    btnBuscar.setIcon(new ImageIcon(ClientesVista.class.getResource("/img/buscar.png")));
 	    btnBuscar.setBackground(new Color(217, 217, 217));
 	    btnBuscar.setBounds(609, 102, 50, 50);
 	    p2.add(btnBuscar);
@@ -884,7 +884,7 @@ public class Clientes {
         panelCrear.add(comboTipo);
 
 		comboPago = new JComboBox();
-		comboPago.setModel(new DefaultComboBoxModel(new String[] { "  ", "Efectivo", "Visa", "Cheque" }));
+		comboPago.setModel(new DefaultComboBoxModel(new String[] { "  ", "Efectivo", "Tarjeta de credito", "Cheque" }));
 		comboPago.setSelectedItem(cliente.getMetodoPago());
 		comboPago.setBounds(360, 435, 200, 30);
 		panelCrear.add(comboPago);
@@ -1097,7 +1097,7 @@ public class Clientes {
 		btnBuscar.setFocusable(false);
 		btnBuscar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		btnBuscar.setIcon(new ImageIcon(Clientes.class.getResource("/img/buscar.png")));
+		btnBuscar.setIcon(new ImageIcon(ClientesVista.class.getResource("/img/buscar.png")));
 		btnBuscar.setBackground(new Color(217, 217, 217));
 		btnBuscar.setBounds(783, 172, 50, 50);
 		panel.add(btnBuscar);
@@ -1164,7 +1164,7 @@ public class Clientes {
 		panelInfo.add(lblPersona);
 
 		lblCodigo = new JLabel();
-		lblCodigo.setIcon(new ImageIcon(Clientes.class.getResource("/img/codigoDeBarras.png")));
+		lblCodigo.setIcon(new ImageIcon(ClientesVista.class.getResource("/img/codigoDeBarras.png")));
 		lblCodigo.setBounds(299, 241, 327, 59);
 		panelInfo.add(lblCodigo);
 
@@ -1574,7 +1574,7 @@ public class Clientes {
 		btnBuscar.setFocusable(false);
 		btnBuscar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		btnBuscar.setIcon(new ImageIcon(Clientes.class.getResource("/img/buscar.png")));
+		btnBuscar.setIcon(new ImageIcon(ClientesVista.class.getResource("/img/buscar.png")));
 		btnBuscar.setBackground(new Color(217, 217, 217));
 		btnBuscar.setBounds(783, 172, 50, 50);
 		panel.add(btnBuscar);
@@ -1619,7 +1619,7 @@ public class Clientes {
 		panelCredencial.add(lblPersona);
 
 		lblCodigo = new JLabel();
-		lblCodigo.setIcon(new ImageIcon(Clientes.class.getResource("/img/codigoDeBarras.png")));
+		lblCodigo.setIcon(new ImageIcon(ClientesVista.class.getResource("/img/codigoDeBarras.png")));
 		lblCodigo.setBounds(299, 229, 327, 59);
 		panelCredencial.add(lblCodigo);
 

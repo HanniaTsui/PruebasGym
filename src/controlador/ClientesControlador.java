@@ -1,6 +1,6 @@
 package controlador;
 
-import Vista.Clientes;
+import Vista.ClientesVista;
 import Vista.FramePrincipal;
 
 import java.awt.image.BufferedImage;
@@ -15,10 +15,10 @@ import Modelo.ClienteModelo;
 
 public class ClientesControlador {
 
-    private Clientes vista;
+    private ClientesVista vista;
 
     public ClientesControlador() {
-        this.vista = new Clientes(this);
+        this.vista = new ClientesVista(this);
 
     }
 
