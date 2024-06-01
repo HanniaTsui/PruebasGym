@@ -17,6 +17,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -26,6 +27,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
+import Modelo.ChecadorObj;
+import Modelo.ClienteObj;
 import controlador.ChecadorControlador;
 import controlador.ClientesControlador;
 import controlador.MenuControlador;
@@ -38,6 +41,8 @@ public class ChecadorVista extends JFrame  {
 	JLabel lblTitulo, lblGym;
 	JButton btnVolver,btnBuscar;
 	JTextField textID;
+	DefaultTableModel modelo;
+	JTable datosTabla;
 	
 	private ChecadorControlador controlador;
 	private ClientesControlador controladorV;
@@ -46,7 +51,7 @@ public class ChecadorVista extends JFrame  {
 		this.controlador = controlador;
 	}
 
-
+	
 	public JPanel checador() {
 		JPanel panel = getMenu();
 		JLabel lblTitutlo = new JLabel("Checador");
@@ -80,13 +85,13 @@ public class ChecadorVista extends JFrame  {
         panel.add(labelFecha);
 	    
 	    String titles[]= {"ID", "Nombre", "Estado de la suscripción", "Hora de entrada", "Hora de salida"};
-		DefaultTableModel modelo = new DefaultTableModel(null, titles) {
+		 modelo = new DefaultTableModel(null, titles) {
             @Override
             public boolean isCellEditable(int row, int column) {	              
                 return false; //La tabla no se edita
             }
 	     };
-		JTable datosTabla = new JTable(modelo);
+		 datosTabla = new JTable(modelo);
 		JScrollPane tablaScroll = new JScrollPane(datosTabla);
 		tablaScroll.setBounds(73,170,500,470);
 		panel.add(tablaScroll);
@@ -133,14 +138,21 @@ public class ChecadorVista extends JFrame  {
 	    
 	    btnBuscar = new JButton("");
 	    btnBuscar.addActionListener(new ActionListener() {
-	    	public void actionPerformed(ActionEvent e) {
-	    		if(controladorV.buscarClientePorID(Integer.parseInt(textID.getText())) != null ) {
-	    			
-	    			
-	    		}
-	    		
-	    		
-	    	}
+	        public void actionPerformed(ActionEvent e) {
+	        	
+	            int idCliente = Integer.parseInt(textID.getText());
+	            ClienteObj cliente = controladorV.buscarClientePorID(idCliente);
+	            if (cliente != null) {
+	                String horaActual = new SimpleDateFormat("HH:mm:ss").format(new Date());
+	               ChecadorObj checador= controlador.registrarChecada(idCliente, horaActual);
+	                // No se espera un valor de retorno del método registrarChecada, ya que es void
+	                // No hay necesidad de asignar el resultado a una variable ChecadorObj
+	                actualizarTabla(checador); // Actualizar la tabla después de registrar la checada
+	            } else {
+	                // Mostrar un mensaje de error
+	                JOptionPane.showMessageDialog(panel, "Cliente no encontrado", "Error", JOptionPane.ERROR_MESSAGE);
+	            }
+	        }
 	    });
 	    btnBuscar.setFocusable(false);
 	    btnBuscar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
@@ -228,5 +240,25 @@ public class ChecadorVista extends JFrame  {
     	btn.setFocusable(false);
     	btn.setBackground(new Color(217, 217, 217)); 
     }
+	public void actualizarTabla(ChecadorObj checadorObj) {
+	     modelo = (DefaultTableModel) datosTabla.getModel();
+	    boolean encontrado = false;
+	    for (int i = 0; i < modelo.getRowCount(); i++) {
+	        if ((int) modelo.getValueAt(i, 0) == checadorObj.getIdCliente()) {
+	            modelo.setValueAt(checadorObj.getHoraSalida(), i, 4);
+	            encontrado = true;
+	            break;
+	        }
+	    }
+	    if (!encontrado) {
+	        Object[] rowData = {
+	            checadorObj.getIdCliente(),
+	            checadorObj.getEstadoCliente(),
+	            checadorObj.getHoraEntrada(),
+	            checadorObj.getHoraSalida()
+	        };
+	        modelo.addRow(rowData);
+	    }
+	}
 
 }
