@@ -1222,7 +1222,7 @@ public class ClientesVista {
 		lblCorreoElectrnico.setBounds(299, 113, 327, 20);
 		panelInfo.add(lblCorreoElectrnico);
 
-		lblFechaDeRegistro = new JLabel("Fecha de registro: " + cliente.getFechaInicial());
+		lblFechaDeRegistro = new JLabel("Fecha inicial: " + cliente.getFechaInicial());
 		configurarLabels(lblFechaDeRegistro);
 		lblFechaDeRegistro.setBounds(299, 153, 327, 20);
 		panelInfo.add(lblFechaDeRegistro);
@@ -1661,19 +1661,30 @@ public class ClientesVista {
 
 				cliente = null;
 				cliente = controlador.buscarClientePorID(Integer.parseInt(textID.getText()));
-
-				if (cliente != null) {
-					JPanel panelCredencial = eliminarCliente(cliente);
-					panel.add(panelCredencial);
-					panelCredencial.setVisible(true);
-				} else {
-					// Si no se encuentra el cliente, mostrar mensaje
-					JOptionPane.showMessageDialog(null, "No se encontró ningún cliente con la ID proporcionada",
-							"Cliente no encontrado", JOptionPane.INFORMATION_MESSAGE);
-				}
-
-			}
-		});
+				 if (cliente != null) {
+			            // Si hay un panel de cliente existente, eliminarlo
+			            if (panelCredencial != null) {
+			                panel.remove(panelCredencial);
+			                panelCredencial.setVisible(false);
+			            }
+			            
+			            // Crear un nuevo panel de credencial para el cliente encontrado
+			            panelCredencial = eliminarCliente(cliente);
+			            
+			            // Añadir el nuevo panel de cliente al panel principal
+			            panel.add(panelCredencial);
+			            panelCredencial.setVisible(true);
+			            
+			            // Actualizar el panel principal para reflejar los cambios
+			            panel.revalidate();
+			            panel.repaint();
+			        } else {
+			            // Si no se encuentra el cliente, mostrar mensaje
+			            JOptionPane.showMessageDialog(null, "No se encontró ningún cliente con la ID proporcionada",
+			                    "Cliente no encontrado", JOptionPane.INFORMATION_MESSAGE);
+			        }
+			    }
+			});
 		btnBuscar.setFocusable(false);
 		btnBuscar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
@@ -1741,7 +1752,7 @@ public class ClientesVista {
 		lblCorreoElectrnico.setBounds(299, 113, 327, 20);
 		panelCredencial.add(lblCorreoElectrnico);
 
-		lblFechaDeRegistro = new JLabel("Fecha de registro: " + cliente.getFechaInicial());
+		lblFechaDeRegistro = new JLabel("Fecha inicial: " + cliente.getFechaInicial());
 		configurarLabels(lblFechaDeRegistro);
 		lblFechaDeRegistro.setBounds(299, 153, 327, 20);
 		panelCredencial.add(lblFechaDeRegistro);

@@ -2,19 +2,31 @@ package Modelo;
 
 public class ChecadorObj {
     private int idCliente;
+    private String nombreCliente;
     private String estadoCliente;
     private String horaEntrada;
     private String horaSalida;
 
-    public ChecadorObj(int idCliente, String estadoCliente, String horaEntrada, String horaSalida) {
+    public ChecadorObj(int idCliente, String nombreCliente, String estadoCliente, String horaEntrada, String horaSalida) {
         this.idCliente = idCliente;
+        this.nombreCliente = nombreCliente;
         this.estadoCliente = estadoCliente;
         this.horaEntrada = horaEntrada;
         this.horaSalida = horaSalida;
     }
 
 
-    public int getIdCliente() {
+    public String getNombreCliente() {
+		return nombreCliente;
+	}
+
+
+	public void setNombreCliente(String nombreCliente) {
+		this.nombreCliente = nombreCliente;
+	}
+
+
+	public int getIdCliente() {
         return idCliente;
     }
 

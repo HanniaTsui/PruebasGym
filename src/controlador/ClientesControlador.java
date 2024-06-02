@@ -6,6 +6,8 @@ import Vista.FramePrincipal;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -16,7 +18,7 @@ import Modelo.ClienteModelo;
 public class ClientesControlador {
 
     private ClientesVista vista;
-
+    private static List<ClienteObj> cliente = ClienteModelo.obtenerInstancia().getClient();
     public ClientesControlador() {
         this.vista = new ClientesVista(this);
 
@@ -43,11 +45,13 @@ public class ClientesControlador {
     }
 
     public void actualizarCliente(ClienteObj cliente) {
+    	
         ClienteModelo.obtenerInstancia().editarCliente(cliente);
     }
 
     public static  ClienteObj buscarClientePorID(int id) {
-        for (ClienteObj cliente : ClienteModelo.getClient()) {
+    	
+        for (ClienteObj cliente : cliente) {
             if (cliente.getID() == id) {
                 return cliente;
             }

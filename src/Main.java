@@ -19,6 +19,8 @@ public class Main {
                 e.printStackTrace();
             }
         });
+        //System.out.println("Java version: " + System.getProperty("java.version"));
+    
     }
 
     private static void setLookAndFeel() {

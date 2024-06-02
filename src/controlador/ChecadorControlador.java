@@ -26,10 +26,10 @@ public class ChecadorControlador {
         FramePrincipal.obtenerInstancia().agregarPanel(vista.checador());
     }
 
-    public ChecadorObj registrarChecada(int idCliente, String horaActual) {
+    public ChecadorObj registrarChecada(int idCliente, String nombre, String horaActual) {
         ClienteObj cliente = clientesControlador.buscarClientePorID(idCliente); // Usa el método buscarClientePorID del controlador de clientes
         if (cliente != null) {
-            ChecadorObj checador = modelo.registrarChecada(idCliente, horaActual);
+            ChecadorObj checador = modelo.registrarChecada(idCliente, nombre, horaActual);
             vista.actualizarTabla(checador);
             return checador;
         } else {
@@ -41,4 +41,5 @@ public class ChecadorControlador {
     public String obtenerHoraActual() {
         return new SimpleDateFormat("HH:mm:ss").format(new Date());
     }
+    
 }

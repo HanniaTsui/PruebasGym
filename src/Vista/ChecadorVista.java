@@ -7,11 +7,15 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -23,11 +27,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
+import Modelo.ChecadorModelo;
 import Modelo.ChecadorObj;
+import Modelo.ClienteModelo;
 import Modelo.ClienteObj;
 import controlador.ChecadorControlador;
 import controlador.ClientesControlador;
@@ -41,17 +48,17 @@ public class ChecadorVista extends JFrame  {
 	JLabel lblTitulo, lblGym;
 	JButton btnVolver,btnBuscar;
 	JTextField textID;
-	DefaultTableModel modelo;
+	private DefaultTableModel modelo;
 	JTable datosTabla;
-	
 	private ChecadorControlador controlador;
 	private ClientesControlador controladorV;
-
+	static List<ChecadorObj> check;
+	static List<ChecadorObj> registros;
 	public ChecadorVista(ChecadorControlador controlador) {
-		this.controlador = controlador;
-	}
+        this.controlador = controlador;
+        cargarClientesSegundoPlano();
+    }
 
-	
 	public JPanel checador() {
 		JPanel panel = getMenu();
 		JLabel lblTitutlo = new JLabel("Checador");
@@ -84,17 +91,19 @@ public class ChecadorVista extends JFrame  {
         
         panel.add(labelFecha);
 	    
-	    String titles[]= {"ID", "Nombre", "Estado de la suscripción", "Hora de entrada", "Hora de salida"};
-		 modelo = new DefaultTableModel(null, titles) {
+        String titles[] = {"ID", "Nombre", "Estado de la suscripción", "Hora de entrada", "Hora de salida"};
+        modelo = new DefaultTableModel(null, titles) {
             @Override
-            public boolean isCellEditable(int row, int column) {	              
-                return false; //La tabla no se edita
+            public boolean isCellEditable(int row, int column) {
+                return false;
             }
-	     };
-		 datosTabla = new JTable(modelo);
-		JScrollPane tablaScroll = new JScrollPane(datosTabla);
-		tablaScroll.setBounds(73,170,500,470);
-		panel.add(tablaScroll);
+        };
+        datosTabla = new JTable(modelo);
+        JScrollPane tablaScroll = new JScrollPane(datosTabla);
+        tablaScroll.setBounds(73, 170, 500, 470);
+        panel.add(tablaScroll);
+
+        cargarDatosEnTabla();
 		
 		JLabel lblClientesActivos = new JLabel("Clientes activos: ");
 		configurarLabelsIzq(lblClientesActivos);
@@ -110,7 +119,9 @@ public class ChecadorVista extends JFrame  {
 		configurarLabelsIzq(lblIngresar);
 		lblIngresar.setBounds(733, 200, 100, 20);
 		panel.add(lblIngresar);
-	    
+		
+		
+		
 		textID = new JTextField("");
 		textID.setBackground(new Color(217, 217, 217));
 	    textID.setColumns(10);
@@ -143,11 +154,13 @@ public class ChecadorVista extends JFrame  {
 	            int idCliente = Integer.parseInt(textID.getText());
 	            ClienteObj cliente = controladorV.buscarClientePorID(idCliente);
 	            if (cliente != null) {
-	                String horaActual = new SimpleDateFormat("HH:mm:ss").format(new Date());
-	               ChecadorObj checador= controlador.registrarChecada(idCliente, horaActual);
+	            	String nombreCliente = cliente.getNombre(); // Assuming ClienteObj has getNombre() method
+  	                String horaActual = new SimpleDateFormat("HH:mm:ss").format(new Date());
+	               ChecadorObj checador= controlador.registrarChecada(idCliente, nombreCliente, horaActual);
 	                // No se espera un valor de retorno del método registrarChecada, ya que es void
 	                // No hay necesidad de asignar el resultado a una variable ChecadorObj
 	                actualizarTabla(checador); // Actualizar la tabla después de registrar la checada
+	                
 	            } else {
 	                // Mostrar un mensaje de error
 	                JOptionPane.showMessageDialog(panel, "Cliente no encontrado", "Error", JOptionPane.ERROR_MESSAGE);
@@ -155,6 +168,7 @@ public class ChecadorVista extends JFrame  {
 	        }
 	    });
 	    btnBuscar.setFocusable(false);
+	    desactivarBoton(btnBuscar);
 	    btnBuscar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 	    btnBuscar.setIcon(new ImageIcon(ChecadorVista.class.getResource("/img/lupaChecador.png")));
 	    btnBuscar.setBackground(new Color(217, 217, 217)); 
@@ -240,25 +254,64 @@ public class ChecadorVista extends JFrame  {
     	btn.setFocusable(false);
     	btn.setBackground(new Color(217, 217, 217)); 
     }
-	public void actualizarTabla(ChecadorObj checadorObj) {
-	     modelo = (DefaultTableModel) datosTabla.getModel();
-	    boolean encontrado = false;
-	    for (int i = 0; i < modelo.getRowCount(); i++) {
-	        if ((int) modelo.getValueAt(i, 0) == checadorObj.getIdCliente()) {
-	            modelo.setValueAt(checadorObj.getHoraSalida(), i, 4);
-	            encontrado = true;
-	            break;
+	private void cargarClientesSegundoPlano() {
+		SwingWorker<List<ClienteObj>, Void> worker = new SwingWorker<>() {
+			@Override
+			protected List<ClienteObj> doInBackground() {
+				ClienteModelo.cargarCliente();
+				return ClienteModelo.getClient();
+			}
+
+		};
+		worker.execute();
+	}
+	  private void cargarDatosEnTabla() {
+	        modelo = (DefaultTableModel) datosTabla.getModel();
+	        List<ChecadorObj> registros = ChecadorModelo.obtenerInstancia().getRegistros();
+	        for (ChecadorObj registro : registros) {
+	            Object[] rowData = {
+	                registro.getIdCliente(),
+	                registro.getNombreCliente(),
+	                registro.getEstadoCliente(),
+	                registro.getHoraEntrada(),
+	                registro.getHoraSalida()
+	            };
+	            modelo.addRow(rowData);
 	        }
 	    }
-	    if (!encontrado) {
-	        Object[] rowData = {
-	            checadorObj.getIdCliente(),
-	            checadorObj.getEstadoCliente(),
-	            checadorObj.getHoraEntrada(),
-	            checadorObj.getHoraSalida()
-	        };
-	        modelo.addRow(rowData);
+
+	    public void actualizarTabla(ChecadorObj checadorObj) {
+	        modelo = (DefaultTableModel) datosTabla.getModel();
+	        boolean encontrado = false;
+	        for (int i = 0; i < modelo.getRowCount(); i++) {
+	            if ((int) modelo.getValueAt(i, 0) == checadorObj.getIdCliente()) {
+	                modelo.setValueAt(checadorObj.getHoraSalida(), i, 4);
+	                encontrado = true;
+	                break;
+	            }
+	        }
+	        if (!encontrado) {
+	            Object[] rowData = {
+	                checadorObj.getIdCliente(),
+	                checadorObj.getNombreCliente(),
+	                checadorObj.getEstadoCliente(),
+	                checadorObj.getHoraEntrada(),
+	                checadorObj.getHoraSalida()
+	            };
+	            modelo.addRow(rowData);
+	        }
 	    }
+	public void desactivarBoton(JButton btn) {
+		btn.setEnabled(false);
+		textID.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (textID.getText().isEmpty()) {
+					btn.setEnabled(false);
+				} else
+					btn.setEnabled(true);
+			}
+		});
 	}
 
 }
