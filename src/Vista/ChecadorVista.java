@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class ChecadorVista extends JFrame  {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, panel, panelSup;
 	private final JPanel panelNegro = new JPanel();
-	JLabel lblTitulo, lblGym;
+	JLabel lblTitulo, lblGym,lblLogoCheck,lblUserCheck,lblEstado,lblInicioSus;
 	JButton btnVolver,btnBuscar;
 	JTextField textID;
 	private DefaultTableModel modelo;
@@ -54,8 +55,11 @@ public class ChecadorVista extends JFrame  {
 	private ClientesControlador controladorV;
 	static List<ChecadorObj> check;
 	static List<ChecadorObj> registros;
+	
+	ClienteObj cliente;
 	public ChecadorVista(ChecadorControlador controlador) {
         this.controlador = controlador;
+        this.controladorV = new ClientesControlador(); 
         cargarClientesSegundoPlano();
     }
 
@@ -154,15 +158,30 @@ public class ChecadorVista extends JFrame  {
 	            int idCliente = Integer.parseInt(textID.getText());
 	            ClienteObj cliente = controladorV.buscarClientePorID(idCliente);
 	            if (cliente != null) {
-	            	String nombreCliente = cliente.getNombre(); // Assuming ClienteObj has getNombre() method
+	            	String nombreCliente = cliente.getNombre(); 
   	                String horaActual = new SimpleDateFormat("HH:mm:ss").format(new Date());
 	               ChecadorObj checador= controlador.registrarChecada(idCliente, nombreCliente, horaActual);
-	                // No se espera un valor de retorno del método registrarChecada, ya que es void
-	                // No hay necesidad de asignar el resultado a una variable ChecadorObj
-	                actualizarTabla(checador); // Actualizar la tabla después de registrar la checada
+	               //cargar imagen 
+	               BufferedImage imagenCliente = cliente.getImagen();
+                   if (imagenCliente != null) {
+                       ImageIcon icon = new ImageIcon(imagenCliente);
+                       lblLogoCheck.setIcon(icon);
+                   } else {
+                       JOptionPane.showMessageDialog(null, "El cliente no tiene una imagen asociada.");
+                   }
+                   //cambiar nombre
+                   lblUserCheck.setText(nombreCliente);
+                   //colocar estado
+                   lblEstado.setText(cliente.getEstado());
+                   //suscripcion
+                   lblInicioSus.setText("Suscripción: "+cliente.getPlanMembresia());
+                   
+                  
+	                
+	                actualizarTabla(checador); 
 	                
 	            } else {
-	                // Mostrar un mensaje de error
+	                
 	                JOptionPane.showMessageDialog(panel, "Cliente no encontrado", "Error", JOptionPane.ERROR_MESSAGE);
 	            }
 	        }
@@ -195,8 +214,8 @@ public class ChecadorVista extends JFrame  {
 	    lblNewLabel_1.setBounds(616, 460, 510, 20);
 	    panel.add(lblNewLabel_1);
 	    
-	    JLabel lblLogoCheck = new JLabel("");
-	    lblLogoCheck.setIcon(new ImageIcon(ChecadorVista.class.getResource("/img/usuarioGym Ch.png")));
+	     lblLogoCheck = new JLabel("");
+	   lblLogoCheck.setIcon(new ImageIcon(ChecadorVista.class.getResource("/img/usuarioGym Ch.png")));
 	    lblLogoCheck.setBounds(5, 5, 116, 116);
 	    panel_1.add(lblLogoCheck);
 	    
@@ -205,14 +224,14 @@ public class ChecadorVista extends JFrame  {
 	    lblEstadoMem.setBounds(140, 5, 315, 20);
 	    panel_1.add(lblEstadoMem);
 	    
-	    JLabel lblEstado = new JLabel("Activo");
+	     lblEstado = new JLabel();
 	    lblEstado.setFont(new Font("Arial Black", Font.PLAIN, 14));
 	    lblEstado.setForeground(new Color(0, 128, 0));
 	    lblEstado.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblEstado.setBounds(140, 35, 315, 20);
 	    panel_1.add(lblEstado);
 	    
-	    JLabel lblInicioSus = new JLabel("Suscripcion: -");
+	     lblInicioSus = new JLabel("Suscripcion: ");
 	    lblInicioSus.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblInicioSus.setBounds(140, 65, 315, 20);
 	    panel_1.add(lblInicioSus);
@@ -222,7 +241,7 @@ public class ChecadorVista extends JFrame  {
 	    lblCodigoBarra.setBounds(140, 95, 315, 23);
 	    panel_1.add(lblCodigoBarra);
 	    
-	    JLabel lblUserCheck = new JLabel("Usuario");
+	     lblUserCheck = new JLabel("Usuario");
 	    lblUserCheck.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblUserCheck.setBounds(0, 125, 125, 13);
 	    panel_1.add(lblUserCheck);
@@ -230,7 +249,7 @@ public class ChecadorVista extends JFrame  {
 		return panel;
 	}
 
-	public void configurarLabelsIzq(JLabel lbl) { // Configurar Labels a la izquierda  
+	public void configurarLabelsIzq(JLabel lbl) { 
 		lbl.setForeground(new Color(0, 0, 0));
 		lbl.setHorizontalAlignment(SwingConstants.LEFT);
 		lbl.setFont(new Font("Arial Black", Font.PLAIN, 14));
