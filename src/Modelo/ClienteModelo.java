@@ -253,6 +253,7 @@ public class ClienteModelo {
 	}
 
 	public void editarCliente(ClienteObj cliente) {
+		String estadoActual = ClienteModelo.obtenerInstancia().estado(cliente.getFechaFinal()) ? "Activo" : "No activo";
 		Update insertar =BaseDatos.optenerIstancia().getMySQL().table("cliente").update();
 		insertar.field("nombre",cliente.getNombre());
 		insertar.field("apellido",cliente.getApellido());
@@ -263,6 +264,7 @@ public class ClienteModelo {
 		insertar.field("tipoMembresia",cliente.getTipoMembresia());
 		insertar.field("planMembresia",cliente.getPlanMembresia());
 		insertar.field("fechaNacimiento",cliente.getFechaNacimiento());
+		insertar.field("estado",estadoActual);
 
 		try {
 			insertar.field("imagen",convertImageToBinary(cliente.getImagen()));
@@ -298,6 +300,7 @@ public class ClienteModelo {
 		insertar.field("tipoMembresia",cliente.getTipoMembresia());
 		insertar.field("planMembresia",cliente.getPlanMembresia());
 		insertar.field("fechaNacimiento",cliente.getFechaNacimiento());
+		insertar.field("estado",cliente.getEstado());
 		try {
 			insertar.field("imagen",convertImageToBinary(cliente.getImagen()));
 		} catch (IOException e) {

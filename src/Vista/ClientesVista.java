@@ -657,7 +657,7 @@ public class ClientesVista {
 			return false;
 		}
 		String metodoPago = (String) comboPago.getSelectedItem();
-		String estado = ClienteModelo.obtenerInstancia().estado(fechaFinal) ? "activo" : "inactivo";
+		String estado = ClienteModelo.obtenerInstancia().estado(fechaFinal) ? "Activo" : "No activo";
 		
 
 		ClientesControlador.registrarCliente(ID, nombre, apellido, correo, telefono, fechaInicial, fechaFinal,
@@ -872,14 +872,28 @@ public class ClientesVista {
 		lblMtodoDePago.setBounds(360, 400, 200, 20);
 		panelCrear.add(lblMtodoDePago);
 
-		JSpinner spinnerFechaIn = new JSpinner(new SpinnerDateModel());
+		String fecha1String = cliente.getFechaInicial();
+		// Crear el formato de fecha y parsear la cadena a un objeto Date
+		SimpleDateFormat dateFormatA = new SimpleDateFormat("dd/MM/yyyy");
+		Date fechaInicial = null;
+		try {
+			fechaInicial = dateFormatA.parse(fecha1String);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		// Crear el modelo de fecha del spinner con la fecha de nacimiento obtenida
+		SpinnerDateModel modelA = new SpinnerDateModel(fechaInicial, null, null, java.util.Calendar.DAY_OF_MONTH);
+		// Crear el spinner con el modelo
+		JSpinner spinnerFechaIn = new JSpinner(modelA);
         JSpinner.DateEditor dateEditorFechaIn = new JSpinner.DateEditor(spinnerFechaIn, "dd/MM/yyyy");
         spinnerFechaIn.setEditor(dateEditorFechaIn);
         spinnerFechaIn.setBounds(70, 350, 200, 30);
         panelCrear.add(spinnerFechaIn);
-        // convertir spinner a texto con su formato
-        
+				
         modeloFechaIn = (SpinnerDateModel) spinnerFechaIn.getModel();
+        modeloFechaIn.setStart(startDate);
+        modeloFechaIn.setEnd(endDate);
+
         Date fechaSeleccionadaIn = modeloFechaIn.getDate();
         SimpleDateFormat formatoFechaIn = new SimpleDateFormat("dd/MM/yyyy");
         fechaInicial1 = formatoFechaIn.format(fechaSeleccionadaIn);
