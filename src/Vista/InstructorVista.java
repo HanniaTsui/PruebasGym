@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -28,6 +29,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -36,6 +38,10 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
+import Modelo.ClienteModelo;
+import Modelo.ClienteObj;
+import Modelo.InstructorModelo;
+import Modelo.InstructorObj;
 import controlador.InstructorControlador;
 import controlador.MenuControlador;
 
@@ -49,6 +55,7 @@ public class InstructorVista{
 	 private JLabel lblNombres, lblApellidos, lblFoto;
 	 private JTextField textNombre, textApellidos, textEmail, textTel;
 	 String ventanaActual;
+	 DefaultTableModel modelo;
 	 private File selectedFile;
 	 private JLabel  lblEspec;
 	 Color colorBtnVolver = new Color(174,174,174);
@@ -56,6 +63,8 @@ public class InstructorVista{
 	 Color colorBtnEliminar = new Color(0,0,0); 
 	 Color colorBtnEditar = new Color(89,89,89);
 	 InstructorControlador controlador;
+	 private boolean datosCargados = false;
+	 List<InstructorObj> instructores;
 	/**
 	 * Create the frame.
 	 */
@@ -88,16 +97,26 @@ public class InstructorVista{
 	    panel.add(btnEditar);
 	    
 	    String titles[]= {"ID", "Nombre", "Apellido", "Correo", "Telefono", "Fecha de contratación", "Especialidad"};
-		DefaultTableModel modelo = new DefaultTableModel(null, titles) {
-            @Override
-            public boolean isCellEditable(int row, int column) {	              
-                return false; //La tabla no se edita
-            }
-	     };
+	    if(modelo==null) {
+	    	 modelo = new DefaultTableModel(null, titles) {
+	             @Override
+	             public boolean isCellEditable(int row, int column) {	              
+	                 return false; //La tabla no se edita
+	             }
+	 	     };
+	    }
+	    
+		 
 	     JTable datosTabla = new JTable(modelo);
 	     JScrollPane tablaScroll = new JScrollPane(datosTabla);
 	     tablaScroll.setBounds(200,250,800,350);
 	     panel.add(tablaScroll);
+	     cargarDatosEnSegundoPlano();
+	     
+	     if (!datosCargados) {
+				cargarDatosEnSegundoPlano();
+			} 
+	     
 	     
 	     btnEditar = new JButton("Detalles");
 	     btnEditar.setForeground(new Color(255, 255, 255)); 
@@ -125,6 +144,50 @@ public class InstructorVista{
 	     btnGuardar_1.setBounds(593, 190, 120, 40);
 	     panel.add(btnGuardar_1);
 	    return panel;
+	}
+	private void cargarDatosEnSegundoPlano() {
+		SwingWorker<List<InstructorObj>, Void> worker = new SwingWorker<>() {
+			@Override
+			protected List<InstructorObj> doInBackground() {
+				InstructorModelo.cargarInstructor();
+				return InstructorModelo.getInstructor();
+			}
+
+			@Override
+			protected void done() {
+				try {
+					instructores = get();
+					datosCargados = true;
+					actualizarTabla();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		worker.execute();
+	}
+	private void actualizarTabla() {
+	    // Limpiar el modelo de la tabla
+	    modelo.setRowCount(0);
+
+	   
+	    // Agregar todos los instructores al modelo de la tabla
+	    for (InstructorObj instructor : instructores) {
+	        agregarInstructorATabla(instructor);
+	    }
+	}
+
+	private void agregarInstructorATabla(InstructorObj instructor) {
+	    modelo.addRow(new Object[]{
+	            instructor.getID(),
+	            instructor.getNombre(),
+	            instructor.getApellido(),
+	            instructor.getCorreo(),
+	            instructor.getTelefono(),
+	            instructor.getFechaContratacion(),
+	            instructor.getEspecialidad(),
+	            
+	    });
 	}
 	
 	public JPanel detallesInstructor() {

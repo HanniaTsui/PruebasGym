@@ -203,12 +203,7 @@ public class ClientesVista {
 		}
 	}
 
-	// Filtrar los clientes activos y agregarlos al modelo de la tabla
-	/*
-	 * for (Cliente cliente : clientes) { if
-	 * (ClienteModelo.obtenerInstancia().estado(cliente.getFechaFinal())) {
-	 * agregarClienteATabla(cliente); } }
-	 */
+	
 
 	private void cargarDatosEnSegundoPlano() {
 		SwingWorker<List<ClienteObj>, Void> worker = new SwingWorker<>() {
