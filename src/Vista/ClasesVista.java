@@ -542,10 +542,6 @@ public class ClasesVista {
 		    lblNewLabel_4.setBounds(109, 459, 365, 30);
 		    panel.add(lblNewLabel_4);
 		    
-		    lblNewLabel_5 = new JLabel("/");    configurarLabels(lblNewLabel_5);
-		    lblNewLabel_5.setBounds(652, 459, 20, 30);
-		    panel.add(lblNewLabel_5);
-		    
 		    JTextField textID = new JTextField("");
 		    textID.setColumns(10);
 		    textID.setForeground(Color.black);
@@ -553,17 +549,12 @@ public class ClasesVista {
 		    textID.setBounds(498, 315, 333, 30);
 		    panel.add(textID);
 		    
-		    String[] horarios = { "06:00 am",  "07:00 am","08:00 am",   "09:00 am",    "10:00 am",    "11:00 am",   "12:00 pm",
-		            "01:00 pm", "02:00 pm", "03:00 pm", "04:00 pm", "05:00 pm", "06:00 pm", "07:00 pm", "08:00 pm"  };
+		    String[] horarios = {
+		            "06:00 - 07:00",  "07:00 - 08:00","08:00 - 09:00",   "09:00 - 10:00",    "10:00 - 11:00",    "11:00 - 12:00",   "12:00 - 13:00",
+		            "13:00 - 14:00", "14:00 - 15:00",   "15:00 - 16:00",   "16:00 - 17:00",   "17:00 - 18:00",  "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00",  "21:00 - 22:00"   };
 		    JComboBox<String> comboBox = new JComboBox<>(horarios);
-	        comboBox.setBounds(498, 459, 144, 30);
+	        comboBox.setBounds(498, 459, 333, 30);
 		    panel.add(comboBox);
-		    
-		    String[] horarios2 = { "08:00 am",   "09:00 am",    "10:00 am",    "11:00 am",   "12:00 pm",
-		            "01:00 pm", "02:00 pm", "03:00 pm", "04:00 pm", "05:00 pm", "06:00 pm", "07:00 pm", "08:00 pm", "09:00 pm", "10:00 pm"  };
-		    JComboBox<String> comboBox2 = new JComboBox<>(horarios2);
-	        comboBox2.setBounds(687, 459, 144, 30);
-		    panel.add(comboBox2);
 		    
 		    JCheckBox checkLunes = new JCheckBox("Lunes");
 		    checkLunes.setOpaque(false);
