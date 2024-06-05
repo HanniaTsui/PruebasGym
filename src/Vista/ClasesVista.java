@@ -7,12 +7,15 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -22,6 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -30,7 +34,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
+import Modelo.ClasesModelo;
+import Modelo.ClasesObj;
+import Modelo.ClienteObj;
+import Modelo.DiaObj;
+import Modelo.HorarioObj;
 import controlador.ClasesControlador;
+import controlador.ClientesControlador;
 import controlador.MenuControlador;
 
 public class ClasesVista {
@@ -41,15 +51,19 @@ public class ClasesVista {
 	private JButton btnBuscar, btnVolver, btnPagar;
 	JLabel lblTitulo, lblGym, lblPersona, lblCodigo, lblFecha, lblTlefono, lblCorreoElectrnico, lblFechaDeRegistro, lblMembresia, lblPeterParker, lblNewLabel;
 	private JButton btnRegistros;
-	 String ventanaActual;
-	 private JLabel lblUsuariosInscritos, lblNewLabel_2, lblNewLabel_3,lblNewLabel_4, lblNewLabel_5;
-	 private JButton btnEdit, btnEliminar_2;
-	 Color colorBtnVolver = new Color(174,174,174);
-	 Color colorBtnGuardar = new Color(0,47,78); 
-	 Color colorBtnEliminar = new Color(0,0,0); 
-	 Color colorBtnEditar = new Color(89,89,89); 
-
-	 private ClasesControlador controlador;
+	String ventanaActual;
+	ClasesObj clasesA = null;
+	private JLabel lblUsuariosInscritos, lblNewLabel_2, lblNewLabel_3,lblNewLabel_4, lblNewLabel_5;
+	private JButton btnEdit, btnEliminar_2;
+	Color colorBtnVolver = new Color(174,174,174);
+	Color colorBtnGuardar = new Color(0,47,78); 
+	Color colorBtnEliminar = new Color(0,0,0); 
+	Color colorBtnEditar = new Color(89,89,89); 
+	ClienteObj cliente = null;
+	private ClasesControlador controlador;
+	private ClientesControlador controladorClientes;
+	private JTextField textID;
+	private JTextField textNombre;
 
 	/**
 	 * Create the frame.
@@ -61,7 +75,10 @@ public class ClasesVista {
 	}
 
 	
+	
 	public JPanel clases() {
+
+        List<ClasesObj> clases = ClasesModelo.cargarClases();
 		JPanel panel = getMenu();
 
 		JPanel panel_1 = new JPanel();
@@ -82,62 +99,61 @@ public class ClasesVista {
         btnChecador.setBounds(890, 112, 200, 30);
         panel.add(btnChecador);
         
-        ArrayList<String> tiposClase = new ArrayList<>();
-        tiposClase.add("Cardio");
-        tiposClase.add("Entrenamientos de fuerza");
-        tiposClase.add("Entrenamientos de resistencia");
-        tiposClase.add("Flexibilidad y equilibrio");
+        
 
-        ArrayList<String> detallesDeClase = new ArrayList<>();
-        detallesDeClase.add("<br>De lunes a domingo<br>Horarios disponibles:<br>6:00 - 20:00");
-        detallesDeClase.add("<br>De lunes a domingo<br>Horarios disponibles:<br>6:00 - 20:00");
-        detallesDeClase.add("<br>De lunes a domingo<br>Horarios disponibles:<br>6:00 - 20:00");
-        detallesDeClase.add("<br>De lunes a domingo<br>Horarios disponibles:<br>6:00 - 20:00");
+        for (ClasesObj clase : clases) {
+            HorarioObj horario = ClasesModelo.obtenerHorarioPorId(clase.getIdHorario());
+            DiaObj dia = ClasesModelo.obtenerDiaPorId(clase.getIdDia());
 
-       
-	    for (int i = 0; i < tiposClase.size(); i++) {
-	        JPanel panelTarifa = new JPanel(new BorderLayout());
-	        JLabel info = new JLabel("<html><div style='text-align: center;'>" + tiposClase.get(i) + "<br>" + detallesDeClase.get(i) + "</div></html>");
-	        info.setFont(new Font("Arial Black", Font.PLAIN, 16));
-	        info.setBorder(BorderFactory.createLineBorder(Color.black, 3));
-	        info.setHorizontalAlignment(SwingConstants.CENTER);
-	        info.setVerticalAlignment(SwingConstants.CENTER);
-	        info.setOpaque(true);
-	        info.setForeground(Color.black);
-	        info.setBackground(new Color(148, 182, 223));
-	        panelTarifa.add(info, BorderLayout.CENTER);
+            JPanel panelTarifa = new JPanel(new BorderLayout());
+            JLabel info = new JLabel("<html><div style='text-align: center;'>" + clase.getNombre() + 
+                                     "<br>Día: " + (dia != null ? dia.getNombreDia() : "N/A") + 
+                                     "<br>Horario: " + (horario != null ? horario.getHorarioTiempo() : "N/A") + 
+                                     "</div></html>");
+            info.setFont(new Font("Arial Black", Font.PLAIN, 16));
+            info.setBorder(BorderFactory.createLineBorder(Color.black, 3));
+            info.setHorizontalAlignment(SwingConstants.CENTER);
+            info.setVerticalAlignment(SwingConstants.CENTER);
+            info.setOpaque(true);
+            info.setForeground(Color.black);
+            info.setBackground(new Color(148, 182, 223));
+            panelTarifa.add(info, BorderLayout.CENTER);
 
-	        JButton btnDetalles = new JButton("Editar");
-	        btnDetalles.setBackground(Color.black);
-	        btnDetalles.addActionListener(new ActionListener() {
-		    	public void actionPerformed(ActionEvent e) {
-					//controlador.
-					controlador.detallesCliente();
-		    	}
-		    });
-	        btnDetalles.setForeground(Color.white);
-	        btnDetalles.setFocusable(false);
-	        btnDetalles.setBorder(null);
+            JButton btnDetalles = new JButton("Editar");
+            btnDetalles.setBackground(Color.black);
+            btnDetalles.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                	clasesA= null;
+    	            clasesA = controlador.buscarClase((clase.getID()));
 
-	        JButton btnEditar = new JButton("Inscribirse");
-	        btnEditar.setForeground(Color.white);
-	        btnEditar.setFocusable(false);
-	        btnEditar.addActionListener(new ActionListener() {
-		    	public void actionPerformed(ActionEvent e) {
-					controlador.inscribirseClase();
-		    	}
-		    });
-	        btnEditar.setBorder(null);
-	        btnEditar.setBackground(new Color(0, 33, 83));
+                   controlador.detallesClase(clase);
+                }
+            });
+            btnDetalles.setForeground(Color.white);
+            btnDetalles.setFocusable(false);
+            btnDetalles.setBorder(null);
 
-	        JPanel panelBotones = new JPanel(new GridLayout(1, 2, 5, 5));
-	        panelBotones.add(btnDetalles);
-	        panelBotones.add(btnEditar);
-	        panelBotones.setBackground(new Color(119, 182, 255));
-	        panelTarifa.add(panelBotones, BorderLayout.SOUTH);
+            JButton btnEditar = new JButton("Inscribirse");
+            btnEditar.setForeground(Color.white);
+            btnEditar.setFocusable(false);
+            btnEditar.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                	clasesA= null;
+    	            clasesA = controlador.buscarClase((clase.getID()));
+    	            controlador.inscribirseClase(clase);
+                }
+            });
+            btnEditar.setBorder(null);
+            btnEditar.setBackground(new Color(0, 33, 83));
 
-	        panel_1.add(panelTarifa);
-	    }
+            JPanel panelBotones = new JPanel(new GridLayout(1, 2, 5, 5));
+            panelBotones.add(btnDetalles);
+            panelBotones.add(btnEditar);
+            panelBotones.setBackground(new Color(119, 182, 255));
+            panelTarifa.add(panelBotones, BorderLayout.SOUTH);
+
+            panel_1.add(panelTarifa);
+        }
 
 	    JLabel lblTitutlo = new JLabel("Clases");
 	    lblTitutlo.setForeground(new Color(0, 0, 0));
@@ -203,9 +219,9 @@ public class ClasesVista {
 		return panel;
 	}
 	
-	public JPanel inscribirseClase() {
+	public JPanel inscribirseClase(ClasesObj clases) {
 		JPanel panel = getMenu();
-		JLabel lblTitutlo = new JLabel("Clase de ");
+		JLabel lblTitutlo = new JLabel("Clase de "+clases.getNombre());
 	    lblTitutlo.setForeground(new Color(0, 0, 0));
 	    lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
@@ -231,7 +247,7 @@ public class ClasesVista {
 	    lblNewLabel_4.setBounds(172, 367, 365, 30);
 	    panel.add(lblNewLabel_4);
 	    
-	    JTextField textID = new JTextField("");
+	    textID = new JTextField();
 	    textID.setColumns(10);
 	    textID.setForeground(Color.black);
 	    textID.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
@@ -256,9 +272,20 @@ public class ClasesVista {
 	    panel.add(textID);
 	    
 	    btnBuscar = new JButton("");
+	    desactivarBoton(btnBuscar);
 	    btnBuscar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		
+	    		cliente = null;
+		        cliente = controladorClientes.buscarClientePorID(Integer.parseInt(textID.getText()));
+		        
+		        if (cliente != null) {
+		           
+		            } else {
+		            
+		            JOptionPane.showMessageDialog(null, "No se encontró ningún cliente con la ID proporcionada",
+		                    "Cliente no encontrado", JOptionPane.INFORMATION_MESSAGE);
+		        }
+
 	    	}
 	    });
 
@@ -269,12 +296,29 @@ public class ClasesVista {
 	    btnBuscar.setBounds(816, 259, 30, 30);
 	    panel.add(btnBuscar);
 	    
+	    JLabel horario = new JLabel();
+	    horario.setBounds(561,318,285,30);
 	    String[] horarios = {
-	            "06:00 - 07:00",  "07:00 - 08:00","08:00 - 09:00",   "09:00 - 10:00",    "10:00 - 11:00",    "11:00 - 12:00",   "12:00 - 13:00",
-	            "13:00 - 14:00", "14:00 - 15:00",   "15:00 - 16:00",   "16:00 - 17:00",   "17:00 - 18:00",  "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00",  "21:00 - 22:00"   };
+	    	    "06:00 - 07:00",  "07:00 - 08:00", "08:00 - 09:00",   "09:00 - 10:00",    
+	    	    "10:00 - 11:00", "11:00 - 12:00", "12:00 - 13:00",   "13:00 - 14:00", 
+	    	    "14:00 - 15:00", "15:00 - 16:00", "16:00 - 17:00",   "17:00 - 18:00",  
+	    	    "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00",   "21:00 - 22:00" 
+	    	};
+
+	    	int idHorario = clases.getIdHorario();
+	    	if (idHorario >= 1 && idHorario < horarios.length) {
+	    	    String horarioTexto = horarios[idHorario-1];
+	    	    horario.setText(horarioTexto);
+	    	} else {
+	    	    // Manejar el caso en que el ID del horario está fuera del rango
+	    	    horario.setText("Horario no válido");
+	    	}
+
+	    panel.add(horario);
 	    JComboBox<String> comboBox = new JComboBox<>(horarios);
+	//    comboBox.setSelectedItem(clases.getIdHorario());
         comboBox.setBounds(561, 318, 285, 30);
-	    panel.add(comboBox);
+	//    panel.add(comboBox);
 	    
 	    JCheckBox checkLunes = new JCheckBox("Lunes");
 	    checkLunes.setOpaque(false);
@@ -352,7 +396,7 @@ public class ClasesVista {
 	    btnVolver.setForeground(new Color(255, 255, 255));
 	    btnVolver.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-				controlador.inscribirseClase();
+				//controlador.inscribirseClase();
 	    	}
 	    });
 	    btnVolver.setFocusable(false);
@@ -474,8 +518,9 @@ public class ClasesVista {
 	    panelCrear.setBounds(109, 218, 948, 432);
 	}
 	
-	public JPanel detallesClase(JPanel panel) { //EDITAR CLASE
-		JLabel lblTitutlo = new JLabel("Clase de ");
+	public JPanel detallesClase(ClasesObj clases) { //EDITAR CLASE
+		JPanel panel = getMenu();
+		JLabel lblTitutlo = new JLabel("Clase de "+clases.getNombre());
 	    lblTitutlo.setForeground(new Color(0, 0, 0));
 	    lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
@@ -488,13 +533,118 @@ public class ClasesVista {
 	    lblUsuariosInscritos.setBounds(0, 250, 1200, 20);
 	    panel.add(lblUsuariosInscritos);
 	    
-	   elementosDetallesNuevaClase(panel); // ComboBox, nombre, horario
+	    lblNewLabel_2 = new JLabel("Nombre de la clase:");
+	    lblNewLabel_2.setBounds(109, 315, 365, 30);
+	    configurarLabelsDer(lblNewLabel_2);
+	    panel.add(lblNewLabel_2);
+	    
+	    lblNewLabel_3 = new JLabel("Días disponibles:");
+	    configurarLabelsDer(lblNewLabel_3);
+	    lblNewLabel_3.setBounds(109, 386, 365, 30);
+	    panel.add(lblNewLabel_3);
+	    
+	    lblNewLabel_4 = new JLabel("Horario disponible:");
+	    configurarLabelsDer(lblNewLabel_4);
+	    lblNewLabel_4.setBounds(109, 459, 365, 30);
+	    panel.add(lblNewLabel_4);
+	    
+	    textNombre = new JTextField(clases.getNombre());
+	    textNombre.setColumns(10);
+	    textNombre.setForeground(Color.black);
+	    textNombre.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	    textNombre.setBounds(498, 315, 333, 30);
+	    panel.add(textNombre);
+	    
+	    String[] horarios = {
+	            "06:00 - 07:00",  "07:00 - 08:00","08:00 - 09:00",   "09:00 - 10:00",    "10:00 - 11:00",    "11:00 - 12:00",   "12:00 - 13:00",
+	            "13:00 - 14:00", "14:00 - 15:00",   "15:00 - 16:00",   "16:00 - 17:00",   "17:00 - 18:00",  "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00",  "21:00 - 22:00"   };
+	    JComboBox<String> comboBox = new JComboBox<>(horarios);
+	    comboBox.setSelectedItem(clases.getIdHorario());
+        comboBox.setBounds(498, 459, 333, 30);
+	    panel.add(comboBox);
+	    
+	    ButtonGroup grupoDiasSemana = new ButtonGroup();
+	    
+	    JRadioButton checkLunes = new JRadioButton("Lunes");
+	    checkLunes.setOpaque(false);
+	    checkLunes.setFont(new Font("Arial Black", Font.PLAIN, 12));
+	    checkLunes.setBounds(498, 369, 93, 30);
+	    panel.add(checkLunes);
+	    grupoDiasSemana.add(checkLunes);
+	    
+	    JRadioButton checkMartes = new JRadioButton("Martes");
+	    checkMartes.setFont(new Font("Arial Black", Font.PLAIN, 12));
+	    checkMartes.setOpaque(false);
+	    checkMartes.setBounds(591, 369, 93, 30);
+	    panel.add(checkMartes);
+	    grupoDiasSemana.add(checkMartes);
+	    
+	    JRadioButton checkMiercoles = new JRadioButton("Miércoles");
+	    checkMiercoles.setFont(new Font("Arial Black", Font.PLAIN, 12));
+	    checkMiercoles.setOpaque(false);
+	    checkMiercoles.setBounds(684, 369, 93, 30);
+	    panel.add(checkMiercoles);
+	    grupoDiasSemana.add(checkMiercoles);
+	    
+	    JRadioButton checkJueves = new JRadioButton("Jueves");
+	    checkJueves.setFont(new Font("Arial Black", Font.PLAIN, 12));
+	    checkJueves.setOpaque(false);
+	    checkJueves.setBounds(498, 401, 93, 30);
+	    panel.add(checkJueves);
+	    grupoDiasSemana.add(checkJueves);
+	    
+	    JRadioButton checkViernes = new JRadioButton("Viernes");
+	    checkViernes.setFont(new Font("Arial Black", Font.PLAIN, 12));
+	    checkViernes.setOpaque(false);
+	    checkViernes.setBounds(591, 401, 93, 30);
+	    panel.add(checkViernes);
+	    grupoDiasSemana.add(checkViernes);
+	    
+	    int idDiaClase = clases.getIdDia();
+
+	    // Seleccionar el JRadioButton correspondiente según el ID del día de la clase
+	    switch (idDiaClase) {
+	     case 1:
+	    	 checkLunes.setSelected(true);
+	         break;
+	     case 2:
+	    	 checkMartes.setSelected(true);
+	         break;
+	     case 3:
+	    	 checkMiercoles.setSelected(true);
+	         break;
+	     case 4:
+	    	 checkJueves.setSelected(true);
+	         break;
+	     case 5:
+	    	 checkViernes.setSelected(true);
+	         break;
+	    }
 	    
 	    btnPagar = new JButton("Guardar cambios");
 	    btnPagar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-				controlador.clases();
-	    		 JOptionPane.showMessageDialog(null, "¡Cambios guardados con éxito!", " ", JOptionPane.INFORMATION_MESSAGE);
+				//controlador.clases();
+	    		clases.setNombre(textNombre.getText());
+	    		int diaSeleccionado = 1;
+	            if (checkLunes.isSelected()) {
+	                diaSeleccionado = 1;
+	            } else if (checkMartes.isSelected()) {
+	                diaSeleccionado = 2;
+	            } else if (checkMiercoles.isSelected()) {
+	                diaSeleccionado = 3;
+	            } else if (checkJueves.isSelected()) {
+	                diaSeleccionado = 4;
+	            } else if (checkViernes.isSelected()) {
+	                diaSeleccionado = 5;
+	            }
+	            
+	            clases.setIdDia(diaSeleccionado);
+	  //          int indiceHorarioSeleccionado = comboBox.getSelectedIndex();
+	  //          clases.setIdHorario(indiceHorarioSeleccionado);
+	    		ClasesModelo.obtenerInstancia().editarClase(clases);
+	    		controlador.clases();
+	    		 
 	    	}
 	    });
 		btnPagar.setForeground(new Color(255,255,255));
@@ -527,7 +677,7 @@ public class ClasesVista {
 	}
 	
 	public void elementosDetallesNuevaClase(JPanel panel) { // Labels Horarios y dias
-		 lblNewLabel_2 = new JLabel("Nombre de la clase:");
+		 	lblNewLabel_2 = new JLabel("Nombre de la clase:");
 		    lblNewLabel_2.setBounds(109, 315, 365, 30);
 		    configurarLabelsDer(lblNewLabel_2);
 		    panel.add(lblNewLabel_2);
@@ -623,5 +773,19 @@ public class ClasesVista {
     	btn.setFocusable(false);
     	btn.setBackground(new Color(217, 217, 217)); 
     }
+	
+	public void desactivarBoton(JButton btn) {
+		btn.setEnabled(false);
+		textID.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (textID.getText().isEmpty()) {
+					btn.setEnabled(false);
+				} else
+					btn.setEnabled(true);
+			}
+		});
+	}
+
 
 }

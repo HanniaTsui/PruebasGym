@@ -3,10 +3,19 @@ package controlador;
 import Vista.ClasesVista;
 import Vista.FramePrincipal;
 
+import java.util.List;
+
 import javax.swing.*;
+
+import Modelo.ClasesModelo;
+import Modelo.ClasesObj;
+import Modelo.ClienteModelo;
+import Modelo.ClienteObj;
 
 public class ClasesControlador {
     private ClasesVista vista;
+    private static List<ClasesObj> clase = ClasesModelo.obtenerInstancia().getCheck();
+    
 
     public ClasesControlador() {
         this.vista = new ClasesVista(this);
@@ -17,12 +26,16 @@ public class ClasesControlador {
     	FramePrincipal.obtenerInstancia().agregarPanel(vista.clases());
     }
 
-    public void detallesCliente() {
-    	FramePrincipal.obtenerInstancia().agregarPanel(vista.detallesClase(vista.getMenu()));
+    public void detallesClase(ClasesObj i) {
+    	FramePrincipal.obtenerInstancia().agregarPanel(vista.detallesClase(i));
     }
 
-    public void inscribirseClase() {
-    	FramePrincipal.obtenerInstancia().agregarPanel(vista.inscribirseClase());
+    public void inscribirseClase(ClasesObj i) {
+    	FramePrincipal.obtenerInstancia().agregarPanel(vista.inscribirseClase(i));
+    }
+    
+    public void editarClase(ClasesObj i) {
+    	FramePrincipal.obtenerInstancia().agregarPanel(vista.detallesClase(i));
     }
 
     public void registrosClase() {
@@ -31,6 +44,16 @@ public class ClasesControlador {
 
     public void nuevaClase() {
     	FramePrincipal.obtenerInstancia().agregarPanel(vista.nuevaClase());
+    }
+    
+    
+	public static  ClasesObj buscarClase(int id) {
+	        for (ClasesObj clase : clase) {
+	            if (clase.getID() == id) {
+	                return clase;
+	            }
+	        }
+	      return null;
     }
 
 }

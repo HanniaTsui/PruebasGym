@@ -54,6 +54,7 @@ public class ClienteModelo {
 	public static ClienteModelo obtenerInstancia() {
 		return instance;
 	}
+	
 	public boolean estado(String fechaFinal) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         sdf.setLenient(false); 
