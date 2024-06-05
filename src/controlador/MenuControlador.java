@@ -1,6 +1,7 @@
 package controlador;
 
 import Vista.ChecadorVista;
+import Vista.ClientesVista;
 import Vista.FramePrincipal;
 import Vista.MenuPrincipalVista;
 
@@ -9,10 +10,8 @@ import javax.swing.*;
 public class MenuControlador {
 	
     private MenuPrincipalVista vista;
-    
     public MenuControlador() {
         this.vista = new MenuPrincipalVista(this);
-        
     }
 
     public void menu() {

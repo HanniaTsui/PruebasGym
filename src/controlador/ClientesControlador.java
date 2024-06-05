@@ -21,7 +21,6 @@ public class ClientesControlador {
     private static List<ClienteObj> cliente = ClienteModelo.obtenerInstancia().getClient();
     public ClientesControlador() {
         this.vista = new ClientesVista(this);
-
     }
 
     public void clientes() {

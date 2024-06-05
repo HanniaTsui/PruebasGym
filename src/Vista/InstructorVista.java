@@ -58,11 +58,11 @@ import controlador.MenuControlador;
 
 public class InstructorVista{
 
-	private static final long serialVersionUID = 1L;
-	private JPanel contentPane, panel, panelCrear, panelCredencial, panelSup;
-	private final JPanel panelNegro = new JPanel();
-	private JButton btnVolver,btnHistorial, btnDescargarCredencial, btnReporte, btnGuardar, btnCancelar, btnPagar;
-	JLabel lblTitulo, lblGym, lblCodigo, lblFecha, lblTlefono, lblCorreoElectrnico, lblFechaDeRegistro, lblMembresia, lblPeterParker, lblNewLabel;
+	 private static final long serialVersionUID = 1L;
+	 private JPanel contentPane, panel, panelCrear, panelCredencial, panelSup;
+	 private final JPanel panelNegro = new JPanel();
+	 private JButton btnVolver,btnHistorial, btnDescargarCredencial, btnReporte, btnGuardar, btnCancelar, btnPagar;
+	 JLabel lblTitulo, lblGym, lblCodigo, lblFecha, lblTlefono, lblCorreoElectrnico, lblFechaDeRegistro, lblMembresia, lblPeterParker, lblNewLabel;
 	 private JLabel lblNombres, lblApellidos, lblFoto;
 	 private JTextField textNombre, textApellidos, textEmail, textTel;
 	 String ventanaActual;
@@ -74,15 +74,15 @@ public class InstructorVista{
 	 Color colorBtnEliminar = new Color(0,0,0); 
 	 Color colorBtnEditar = new Color(89,89,89);
 	 InstructorControlador controlador;
-	 private boolean datosCargados = false;
-	 List<InstructorObj> instructores;
-	private JButton btnEditar;
-	private JButton btnDetalles;
-	private JTable datosTabla;
-	String path;
-	private JComboBox comboEspecialidad;
-	private SpinnerDateModel modeloFechaIn;
-	private String fechaInicial1;
+	 private static boolean datosCargados = false;
+	 static List<InstructorObj> instructores;
+	 private JButton btnEditar;
+	 private JButton btnDetalles;
+	 private JTable datosTabla;
+	 String path;
+	 private JComboBox comboEspecialidad;
+	 private SpinnerDateModel modeloFechaIn;
+	 private String fechaInicial1;
 	/**
 	 * Create the frame.
 	 */
@@ -147,32 +147,33 @@ public class InstructorVista{
 	         }
 	     });
 	     panel.add(tablaScroll);
-	     cargarDatosEnSegundoPlano();
 	     
 	     if (!datosCargados) {
 				cargarDatosEnSegundoPlano();
-			} 
-	     
+				datosCargados=true;
+			} else {
+				actualizarTabla();
+			}
 	     
 	     btnDetalles = new JButton("Detalles");
-	     btnDetalles.setEnabled(false);
-	     btnDetalles.setForeground(new Color(255, 255, 255)); 
-	     btnDetalles.addActionListener(new ActionListener() {
-	    	public void actionPerformed(ActionEvent e) {
-	    		int filaSeleccionada = datosTabla.getSelectedRow();
-	            if (filaSeleccionada != -1) {
-	                // Obtener los datos del instructor de la fila seleccionada
-	                InstructorObj instructorSeleccionado = obtenerInstructorDeFila(filaSeleccionada);
-	                // Llamar al método editarInstructor() con el instructor seleccionado como argumento
-	                controlador.detallesInstructor(instructorSeleccionado);
-	            }
-	    	}
-	     });
-	     btnDetalles.setFocusable(false);
-	     btnDetalles.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-	     btnDetalles.setBackground(new Color(0, 45, 78)); 
-	     btnDetalles.setBounds(885, 190, 115, 40);
-	     panel.add(btnDetalles);
+         btnDetalles.setEnabled(false);
+         btnDetalles.setForeground(new Color(255, 255, 255)); 
+         btnDetalles.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int filaSeleccionada = datosTabla.getSelectedRow();
+                if (filaSeleccionada != -1) {
+                    // Obtener los datos del instructor de la fila seleccionada
+                    InstructorObj instructorSeleccionado = obtenerInstructorDeFila(filaSeleccionada);
+                    // Llamar al método editarInstructor() con el instructor seleccionado como argumento
+                    controlador.detallesInstructor(instructorSeleccionado);
+                }
+            }
+         });
+         btnDetalles.setFocusable(false);
+         btnDetalles.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+         btnDetalles.setBackground(new Color(0, 45, 78)); 
+         btnDetalles.setBounds(885, 190, 115, 40);
+         panel.add(btnDetalles);
 	     
 	     JButton btnGuardar_1 = new JButton("Nuevo instructor");
 	     btnGuardar_1.setForeground(Color.WHITE);
@@ -197,9 +198,17 @@ public class InstructorVista{
 	    String telefono = (String) datosTabla.getValueAt(fila, 4);
 	    String fechaContratacion = (String) datosTabla.getValueAt(fila, 5);
 	    String especialidad = (String) datosTabla.getValueAt(fila, 6);
-	    
+	    BufferedImage imagen=null;
+	    for (InstructorObj instructorObj : instructores) {
+			if(instructorObj.getID()==id) {
+				imagen=instructorObj.getImagen();
+				break;
+			}else {
+				 imagen=null;
+			}
+		}
 	    // Crear un nuevo objeto InstructorObj con los datos obtenidos
-	    return new InstructorObj(id, nombre, apellido, correo, telefono, fechaContratacion, especialidad, null, 0);
+	    return new InstructorObj(id, nombre, apellido, correo, telefono, fechaContratacion, especialidad, imagen, 0);
 	}
 	
 	private void cargarDatosEnSegundoPlano() {
@@ -214,7 +223,6 @@ public class InstructorVista{
 			protected void done() {
 				try {
 					instructores = get();
-					datosCargados = true;
 					actualizarTabla();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -226,7 +234,7 @@ public class InstructorVista{
 	private void actualizarTabla() {
 	    // Limpiar el modelo de la tabla
 	    modelo.setRowCount(0);
-
+	    List<InstructorObj> instructores=InstructorModelo.obtenerInstancia().getInstructor();
 	   
 	    // Agregar todos los instructores al modelo de la tabla
 	    for (InstructorObj instructor : instructores) {
@@ -293,18 +301,9 @@ public class InstructorVista{
 	    panelCredencial.setLayout(null);
 	    
 	    lblFoto = new JLabel();
-//	    lblFoto.setIcon(new ImageIcon(instructor.getImagen()));
+	    lblFoto.setIcon(new ImageIcon(instructor.getImagen()));
 	    lblFoto.setBounds(36, 23, 217, 218);
 	    panelCredencial.add(lblFoto);
-	    
-	    if (instructor.getImagen() != null) {
-	        ImageIcon imageIcon = new ImageIcon(instructor.getImagen());
-	        lblFoto = new JLabel(imageIcon);
-	        lblFoto.setBounds(36, 23, 217, 218); 
-	    } else {
-	        // Manejar el caso en el que la imagen sea nula
-	        System.out.println("La imagen del instructor es nula.");
-	    }
 	    
 	    lblCodigo = new JLabel();
 	    lblCodigo.setIcon(new ImageIcon(InstructorVista.class.getResource("/img/codigoDeBarras.png")));
@@ -331,24 +330,23 @@ public class InstructorVista{
 	    panelCredencial.add(btnHistorial);
 	    
 	    btnDescargarCredencial = new JButton("Descargar credencial");
-	    btnDescargarCredencial.addActionListener(new ActionListener() {
-	    	public void actionPerformed(ActionEvent e) {
-	    		 JOptionPane.showMessageDialog(null, "Credencial descargada correctamente", "Descarga exitosa", JOptionPane.INFORMATION_MESSAGE);
-	    	}
-	    });
-	    botonesDetallesClientes(btnDescargarCredencial);
-	    btnDescargarCredencial.setBounds(690, 132, 215, 50);
-	    panelCredencial.add(btnDescargarCredencial);
-	    
-	    btnReporte = new JButton("Descargar reporte");
-	    btnReporte.addActionListener(new ActionListener() {
-	    	public void actionPerformed(ActionEvent e) {
-	    		 JOptionPane.showMessageDialog(null, "Reporte descargado correctamente", "Descarga exitosa", JOptionPane.INFORMATION_MESSAGE);
-	    	}
-	    });
-	    botonesDetallesClientes(btnReporte);
-	    btnReporte.setBounds(690, 204, 215, 50);
-	    panelCredencial.add(btnReporte);
+        btnDescargarCredencial.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                InstructorModelo.obtenerInstancia().generarPDFCredencial(instructor);
+            }
+        });
+        botonesDetallesClientes(btnDescargarCredencial);
+        btnDescargarCredencial.setBounds(690, 132, 215, 50);
+        panelCredencial.add(btnDescargarCredencial);
+
+        btnReporte = new JButton("Descargar reporte");
+        btnReporte.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                InstructorModelo.obtenerInstancia().generarPDFReporte(instructor);}
+        });
+        botonesDetallesClientes(btnReporte);
+        btnReporte.setBounds(690, 204, 215, 50);
+        panelCredencial.add(btnReporte);
 	    
 	    JLabel lblEspecialidad = new JLabel(instructor.getEspecialidad());
 	    configurarLabels(lblEspecialidad);
@@ -685,17 +683,10 @@ public class InstructorVista{
 	    panelCrear.add(btnFoto);
 	    
 	    lblFoto = new JLabel("",0);
-	 //   lblFoto.setIcon(new ImageIcon(instructor.getImagen()));
+	    lblFoto.setIcon(new ImageIcon(instructor.getImagen()));
 	    lblFoto.setBounds(642, 33, 217, 221);
 	    panelCrear.add(lblFoto);
-	    if (instructor.getImagen() != null) {
-	        ImageIcon imageIcon = new ImageIcon(instructor.getImagen());
-	        lblFoto = new JLabel(imageIcon);
-	        lblFoto.setBounds(642, 33, 217, 221); 
-	    } else {
-	        // Manejar el caso en el que la imagen sea nula
-	        System.out.println("La imagen del instructor es nula.");
-	    }
+	    
 	    
 	    comboEspecialidad = new JComboBox();
 	    comboEspecialidad.setModel(new DefaultComboBoxModel(new String[] {"Levantamiento de pesas", "Aeróbic","Gimnasia de mantenimiento", "Circuito de entrenamiento"}));

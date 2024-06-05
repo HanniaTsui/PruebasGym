@@ -60,8 +60,7 @@ public class MenuPrincipalVista {
 		    botones[i].setFocusable(false);
 		    botones[i].setBackground(Color.BLACK);
 		    botones[i].setBounds(bounds_X[i], bounds_Y[i], 266, 40);
-		    botones[i].setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		    
+		    botones[i].setBorder(BorderFactory.createLineBorder(Color.BLACK));    
 		    botones[i].addActionListener(new ActionListener() {
 		        public void actionPerformed(ActionEvent e) {
 		            switch (index) {
@@ -127,11 +126,14 @@ public class MenuPrincipalVista {
 	public JPanel getMenu() {
 		
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		try {
-            fontFile = new File("src/Fuente/Forte.ttf");
-            forte = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+        try {
+            InputStream is = getClass().getResourceAsStream("/Fuente/Forte.ttf");
+            if (is == null) {
+                throw new IOException("Font file not found");
+            }
+            forte = Font.createFont(Font.TRUETYPE_FONT, is);
             ge.registerFont(forte);
-	 } catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Error al cargar el archivo de la fuente: " + e.getMessage());
         } catch (FontFormatException e) {

@@ -80,7 +80,7 @@ public class ClientesVista {
 	BufferedImage imagen1;
 	String path;
 	DefaultTableModel modelo;
-	private boolean datosCargados = false;
+	private static boolean datosCargados = false;
 	private File selectedFile;
 	Color colorBtnVolver = new Color(174, 174, 174);
 	Color colorBtnGuardar = new Color(0, 47, 78);
@@ -136,6 +136,7 @@ public class ClientesVista {
 
 		if (!datosCargados) {
 			cargarDatosEnSegundoPlano();
+			datosCargados = true;
 		} else {
 			actualizarTabla();
 		}
@@ -217,7 +218,6 @@ public class ClientesVista {
 			protected void done() {
 				try {
 					clientes = get();
-					datosCargados = true;
 					actualizarTabla();
 				} catch (Exception e) {
 					e.printStackTrace();

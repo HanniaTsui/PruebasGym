@@ -1,9 +1,11 @@
 package Modelo;
 
+import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.PreparedStatement;
@@ -18,11 +20,28 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.code.advancedsql.query.Delete;
 import com.code.advancedsql.query.Insert;
 import com.code.advancedsql.query.Select;
 import com.code.advancedsql.query.Update;
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.colors.DeviceGray;
+import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
 
 public class InstructorModelo {
 	private static final int MAX_BLOB_SIZE = 65535;
@@ -61,10 +80,8 @@ public class InstructorModelo {
 	        	try {
 	        	    byte[] imagenBytes = (byte[]) map.get("imagen");
 	        	    imagen = convertByteArrayToImage(imagenBytes);
-	        	    System.out.println("Imagen cargada correctamente para el instructor con ID: " + ID);
 	        	} catch (IOException e) {
 	        	    e.printStackTrace();
-	        	    System.out.println("Error al cargar la imagen para el instructor con ID: " + ID);
 	        	    throw new RuntimeException(e);
 	        	}
 				
@@ -205,5 +222,163 @@ public class InstructorModelo {
 		 return true;
 	}
     
+    public void generarPDFCredencial(InstructorObj instructor) {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		chooser.setAcceptAllFileFilterUsed(false);
+		FileNameExtensionFilter pdfs = new FileNameExtensionFilter("Documentos PDF", "pdf");
+		chooser.addChoosableFileFilter(pdfs);
+		chooser.setFileFilter(pdfs);
+
+		int result = chooser.showSaveDialog(null);
+		if (result == JFileChooser.APPROVE_OPTION) {
+			File file = chooser.getSelectedFile();
+			if (!file.getName().endsWith(".pdf")) {
+				file = new File(file + ".pdf");
+			}
+
+			try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(file));
+				 Document doc = new Document(pdfDoc, PageSize.A4)) {
+
+				PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+				Table table = new Table(UnitValue.createPercentArray(new float[]{1, 3})).useAllAvailableWidth();
+
+				table.addHeaderCell(new Cell(1, 2).add(new Paragraph("Credencial del instructor")
+						.setFont(font)
+						.setFontSize(18)
+						.setFontColor(DeviceGray.BLACK)
+						.setBackgroundColor(new DeviceRgb(180, 180, 255))
+						.setTextAlignment(TextAlignment.CENTER)));
+
+				table.addCell(new Cell().add(new Paragraph("Nombre:"))
+						.setFont(font).setFontSize(12).setBold());
+				table.addCell(new Cell().add(new Paragraph(instructor.getNombre() + " " + instructor.getApellido()))
+						.setFont(font).setFontSize(12));
+
+				table.addCell(new Cell().add(new Paragraph("Especialidad:"))
+						.setFont(font).setFontSize(12).setBold());
+				table.addCell(new Cell().add(new Paragraph(instructor.getEspecialidad()))
+						.setFont(font).setFontSize(12));
+
+				table.addCell(new Cell().add(new Paragraph("Correo Electrónico:"))
+						.setFont(font).setFontSize(12).setBold());
+				table.addCell(new Cell().add(new Paragraph(instructor.getCorreo()))
+						.setFont(font).setFontSize(12));
+				
+				table.addCell(new Cell().add(new Paragraph("Fecha de contratación:"))
+						.setFont(font).setFontSize(12).setBold());
+				table.addCell(new Cell().add(new Paragraph(instructor.getFechaContratacion()))
+						.setFont(font).setFontSize(12));
+
+
+				doc.add(new Paragraph("Larry's Gym - Credencial del instructor\n\n")
+						.setFontSize(22)
+						.setTextAlignment(TextAlignment.CENTER));
+				doc.add(table);
+				JOptionPane.showMessageDialog(null, "¡Descarga exitosa!", "", JOptionPane.INFORMATION_MESSAGE);
+
+				if (Desktop.isDesktopSupported()) {
+					try {
+						Desktop.getDesktop().open(file);
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(null, "No se pudo abrir el documento", "", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+			catch (IOException ex) {
+				ex.printStackTrace();
+				JOptionPane.showMessageDialog(null, "Hubo un error al generar el PDF.", "", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	public void generarPDFReporte(InstructorObj instructor) {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		chooser.setAcceptAllFileFilterUsed(false);
+		FileNameExtensionFilter pdfs = new FileNameExtensionFilter("Documentos PDF", "pdf");
+		chooser.addChoosableFileFilter(pdfs);
+		chooser.setFileFilter(pdfs);
+
+		int result = chooser.showSaveDialog(null);
+		if (result == JFileChooser.APPROVE_OPTION) {
+			File file = chooser.getSelectedFile();
+			if (!file.getName().endsWith(".pdf")) {
+				file = new File(file + ".pdf");
+			}
+
+			try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(file));
+				 Document doc = new Document(pdfDoc, PageSize.A4)) {
+
+				PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+				Table table = new Table(UnitValue.createPercentArray(new float[]{1, 3})).useAllAvailableWidth();
+
+				table.addHeaderCell(new Cell(1, 2).add(new Paragraph("Reporte del Instructor")
+						.setFont(font)
+						.setFontSize(18)
+						.setFontColor(DeviceGray.BLACK)
+						.setBackgroundColor(new DeviceRgb(180, 180, 255))
+						.setTextAlignment(TextAlignment.CENTER)));
+
+				table.addCell(new Cell().add(new Paragraph("Instructor:"))
+						.setFont(font).setFontSize(12).setBold());
+				table.addCell(new Cell().add(new Paragraph(instructor.getNombre() + " " + instructor.getApellido()))
+						.setFont(font).setFontSize(12));
+				
+				table.addCell(new Cell().add(new Paragraph("Correo Electrónico:"))
+						.setFont(font).setFontSize(12).setBold());
+				table.addCell(new Cell().add(new Paragraph(instructor.getCorreo()))
+						.setFont(font).setFontSize(12));
+
+				table.addCell(new Cell().add(new Paragraph("Especialidad:"))
+						.setFont(font).setFontSize(12).setBold());
+				table.addCell(new Cell().add(new Paragraph(instructor.getEspecialidad()))
+						.setFont(font).setFontSize(12));
+
+				table.addCell(new Cell().add(new Paragraph("Historial de clases:"))
+						.setFont(font).setFontSize(12).setBold());
+				table.addCell(new Cell().add(new Paragraph("HOLA")))
+						.setFont(font).setFontSize(12);
+
+				doc.add(new Paragraph("Larry's Gym - Reporte del instructor\n\n")
+						.setFontSize(22)
+						.setTextAlignment(TextAlignment.CENTER));
+				doc.add(table);
+				JOptionPane.showMessageDialog(null, "¡Descarga exitosa!", "", JOptionPane.INFORMATION_MESSAGE);
+
+				if (Desktop.isDesktopSupported()) {
+					try {
+						Desktop.getDesktop().open(file);
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(null, "No se pudo abrir el documento", "", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+			catch (IOException ex) {
+				ex.printStackTrace();
+				JOptionPane.showMessageDialog(null, "Hubo un error al generar el PDF.", "", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	public void eliminarInstructor(InstructorObj ins) {
+		try {
+			// Eliminar el cliente de la base de datos
+			Delete query = BaseDatos.optenerIstancia().getMySQL().table("instructor").delete().where("ID = ?", Integer.toString(ins.getID()));
+			int execute = query.execute();
+
+			// Imprimir la consulta y el resultado
+			System.out.println(query);
+			System.out.println(execute);
+
+			// Si la eliminación en la base de datos fue exitosa, eliminar el cliente de la lista en memoria
+			if (execute > 0) {
+				System.out.println("se elimino");
+				instructor.remove(ins);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 }
