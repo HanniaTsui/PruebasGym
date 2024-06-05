@@ -181,7 +181,90 @@ public class ClasesVista {
 	    lblUsuariosInscritos.setBounds(0, 250, 1200, 20);
 	    panel.add(lblUsuariosInscritos);
 	    
-	    elementosDetallesNuevaClase(panel); //ComboBox, nombre, horario
+	    lblNewLabel_2 = new JLabel("Nombre de la clase:");
+	    lblNewLabel_2.setBounds(109, 315, 365, 30);
+	    configurarLabelsDer(lblNewLabel_2);
+	    panel.add(lblNewLabel_2);
+	    
+	    lblNewLabel_3 = new JLabel("Días disponibles:");
+	    configurarLabelsDer(lblNewLabel_3);
+	    lblNewLabel_3.setBounds(109, 386, 365, 30);
+	    panel.add(lblNewLabel_3);
+	    
+	    lblNewLabel_4 = new JLabel("Horario disponible:");
+	    configurarLabelsDer(lblNewLabel_4);
+	    lblNewLabel_4.setBounds(109, 459, 365, 30);
+	    panel.add(lblNewLabel_4);
+	    
+	    JTextField textID = new JTextField("");
+	    textID.setColumns(10);
+	    textID.setForeground(Color.black);
+	    textID.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	    textID.setBounds(498, 315, 333, 30);
+	    panel.add(textID);
+	    
+	    String[] horarios = {
+	            "06:00 - 07:00",  "07:00 - 08:00","08:00 - 09:00",   "09:00 - 10:00",    "10:00 - 11:00",    "11:00 - 12:00",   "12:00 - 13:00",
+	            "13:00 - 14:00", "14:00 - 15:00",   "15:00 - 16:00",   "16:00 - 17:00",   "17:00 - 18:00",  "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00",  "21:00 - 22:00"   };
+	    JComboBox<String> comboBox = new JComboBox<>(horarios);
+        comboBox.setBounds(498, 459, 333, 30);
+	    panel.add(comboBox);
+	    
+	    ButtonGroup grupoDiasSemana = new ButtonGroup();
+	    
+	    JRadioButton checkLunes = new JRadioButton("Lunes");
+	    checkLunes.setOpaque(false);
+	    checkLunes.setFont(new Font("Arial Black", Font.PLAIN, 12));
+	    checkLunes.setBounds(498, 369, 93, 30);
+	    panel.add(checkLunes);
+	    grupoDiasSemana.add(checkLunes);
+	    
+	    JRadioButton checkMartes = new JRadioButton("Martes");
+	    checkMartes.setFont(new Font("Arial Black", Font.PLAIN, 12));
+	    checkMartes.setOpaque(false);
+	    checkMartes.setBounds(591, 369, 93, 30);
+	    panel.add(checkMartes);
+	    grupoDiasSemana.add(checkMartes);
+	    JRadioButton checkMiercoles = new JRadioButton("Miércoles");
+	    checkMiercoles.setFont(new Font("Arial Black", Font.PLAIN, 12));
+	    checkMiercoles.setOpaque(false);
+	    checkMiercoles.setBounds(684, 369, 93, 30);
+	    panel.add(checkMiercoles);
+	    grupoDiasSemana.add(checkMiercoles);
+	    JRadioButton checkJueves = new JRadioButton("Jueves");
+	    checkJueves.setFont(new Font("Arial Black", Font.PLAIN, 12));
+	    checkJueves.setOpaque(false);
+	    checkJueves.setBounds(498, 401, 93, 30);
+	    panel.add(checkJueves);
+	    grupoDiasSemana.add(checkJueves);
+	    
+	    JRadioButton checkViernes = new JRadioButton("Viernes");
+	    checkViernes.setFont(new Font("Arial Black", Font.PLAIN, 12));
+	    checkViernes.setOpaque(false);
+	    checkViernes.setBounds(591, 401, 93, 30);
+	    panel.add(checkViernes);
+	    grupoDiasSemana.add(checkViernes);
+	    
+	 //   int idDiaClase = clases.getIdDia();
+	    int idDiaClase=1; //CAMBIAR
+	    // Seleccionar el JRadioButton correspondiente según el ID del día de la clase
+	    switch (idDiaClase) {
+	     case 1:
+	    	 checkLunes.setSelected(true);
+	         break;
+	     case 2:
+	    	 checkMartes.setSelected(true);
+	         break;
+	     case 3:
+	    	 checkMiercoles.setSelected(true);
+	         break;
+	     case 4:
+	    	 checkJueves.setSelected(true);
+	         break;
+	     case 5:
+	    	 checkViernes.setSelected(true);
+	         break;
+	    }
 	    
 	    btnPagar = new JButton("Crear nueva clase");
 	    btnPagar.addActionListener(new ActionListener() {
@@ -320,41 +403,62 @@ public class ClasesVista {
         comboBox.setBounds(561, 318, 285, 30);
 	//    panel.add(comboBox);
 	    
-	    JCheckBox checkLunes = new JCheckBox("Lunes");
+        ButtonGroup grupoDiasSemana = new ButtonGroup();
+	    
+	    JRadioButton checkLunes = new JRadioButton("Lunes");
 	    checkLunes.setOpaque(false);
 	    checkLunes.setFont(new Font("Arial Black", Font.PLAIN, 12));
 	    checkLunes.setBounds(567, 372, 93, 30);
 	    panel.add(checkLunes);
+	    grupoDiasSemana.add(checkLunes);
 	    
-	    JCheckBox checkMartes = new JCheckBox("Martes");
+	    JRadioButton checkMartes = new JRadioButton("Martes");
 	    checkMartes.setFont(new Font("Arial Black", Font.PLAIN, 12));
 	    checkMartes.setOpaque(false);
 	    checkMartes.setBounds(660, 372, 93, 30);
 	    panel.add(checkMartes);
+	    grupoDiasSemana.add(checkMartes);
 	    
-	    JCheckBox checkMiercoles = new JCheckBox("Miércoles");
+	    JRadioButton checkMiercoles = new JRadioButton("Miércoles");
 	    checkMiercoles.setFont(new Font("Arial Black", Font.PLAIN, 12));
 	    checkMiercoles.setOpaque(false);
 	    checkMiercoles.setBounds(753, 372, 93, 30);
 	    panel.add(checkMiercoles);
+	    grupoDiasSemana.add(checkMiercoles);
 	    
-	    JCheckBox checkJueves = new JCheckBox("Jueves");
+	    JRadioButton checkJueves = new JRadioButton("Jueves");
 	    checkJueves.setFont(new Font("Arial Black", Font.PLAIN, 12));
 	    checkJueves.setOpaque(false);
 	    checkJueves.setBounds(567, 424, 93, 30);
 	    panel.add(checkJueves);
+	    grupoDiasSemana.add(checkJueves);
 	    
-	    JCheckBox checkViernes = new JCheckBox("Viernes");
+	    JRadioButton checkViernes = new JRadioButton("Viernes");
 	    checkViernes.setFont(new Font("Arial Black", Font.PLAIN, 12));
 	    checkViernes.setOpaque(false);
 	    checkViernes.setBounds(660, 424, 93, 30);
 	    panel.add(checkViernes);
+	    grupoDiasSemana.add(checkViernes);
 	    
-	    JCheckBox checkSabado = new JCheckBox("Sábado");
-	    checkSabado.setFont(new Font("Arial Black", Font.PLAIN, 12));
-	    checkSabado.setOpaque(false);
-	    checkSabado.setBounds(753, 424, 93, 30);
-	    panel.add(checkSabado);
+	    int idDiaClase = clases.getIdDia();
+	    // Seleccionar el JRadioButton correspondiente según el ID del día de la clase
+	    switch (idDiaClase) {
+	     case 1:
+	    	 checkLunes.setSelected(true);
+	         break;
+	     case 2:
+	    	 checkMartes.setSelected(true);
+	         break;
+	     case 3:
+	    	 checkMiercoles.setSelected(true);
+	         break;
+	     case 4:
+	    	 checkJueves.setSelected(true);
+	         break;
+	     case 5:
+	    	 checkViernes.setSelected(true);
+	         break;
+	    }
 	    
 	    btnPagar = new JButton("Inscribir");
 	    btnPagar.addActionListener(new ActionListener() {
@@ -676,72 +780,6 @@ public class ClasesVista {
 		return panel;
 	}
 	
-	public void elementosDetallesNuevaClase(JPanel panel) { // Labels Horarios y dias
-		 	lblNewLabel_2 = new JLabel("Nombre de la clase:");
-		    lblNewLabel_2.setBounds(109, 315, 365, 30);
-		    configurarLabelsDer(lblNewLabel_2);
-		    panel.add(lblNewLabel_2);
-		    
-		    lblNewLabel_3 = new JLabel("Días disponibles:");
-		    configurarLabelsDer(lblNewLabel_3);
-		    lblNewLabel_3.setBounds(109, 386, 365, 30);
-		    panel.add(lblNewLabel_3);
-		    
-		    lblNewLabel_4 = new JLabel("Horario disponible:");
-		    configurarLabelsDer(lblNewLabel_4);
-		    lblNewLabel_4.setBounds(109, 459, 365, 30);
-		    panel.add(lblNewLabel_4);
-		    
-		    JTextField textID = new JTextField("");
-		    textID.setColumns(10);
-		    textID.setForeground(Color.black);
-		    textID.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		    textID.setBounds(498, 315, 333, 30);
-		    panel.add(textID);
-		    
-		    String[] horarios = {
-		            "06:00 - 07:00",  "07:00 - 08:00","08:00 - 09:00",   "09:00 - 10:00",    "10:00 - 11:00",    "11:00 - 12:00",   "12:00 - 13:00",
-		            "13:00 - 14:00", "14:00 - 15:00",   "15:00 - 16:00",   "16:00 - 17:00",   "17:00 - 18:00",  "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00",  "21:00 - 22:00"   };
-		    JComboBox<String> comboBox = new JComboBox<>(horarios);
-	        comboBox.setBounds(498, 459, 333, 30);
-		    panel.add(comboBox);
-		    
-		    JCheckBox checkLunes = new JCheckBox("Lunes");
-		    checkLunes.setOpaque(false);
-		    checkLunes.setFont(new Font("Arial Black", Font.PLAIN, 12));
-		    checkLunes.setBounds(498, 369, 93, 30);
-		    panel.add(checkLunes);
-		    
-		    JCheckBox checkMartes = new JCheckBox("Martes");
-		    checkMartes.setFont(new Font("Arial Black", Font.PLAIN, 12));
-		    checkMartes.setOpaque(false);
-		    checkMartes.setBounds(591, 369, 93, 30);
-		    panel.add(checkMartes);
-		    
-		    JCheckBox checkMiercoles = new JCheckBox("Miércoles");
-		    checkMiercoles.setFont(new Font("Arial Black", Font.PLAIN, 12));
-		    checkMiercoles.setOpaque(false);
-		    checkMiercoles.setBounds(684, 369, 93, 30);
-		    panel.add(checkMiercoles);
-		    
-		    JCheckBox checkJueves = new JCheckBox("Jueves");
-		    checkJueves.setFont(new Font("Arial Black", Font.PLAIN, 12));
-		    checkJueves.setOpaque(false);
-		    checkJueves.setBounds(498, 401, 93, 30);
-		    panel.add(checkJueves);
-		    
-		    JCheckBox checkViernes = new JCheckBox("Viernes");
-		    checkViernes.setFont(new Font("Arial Black", Font.PLAIN, 12));
-		    checkViernes.setOpaque(false);
-		    checkViernes.setBounds(591, 401, 93, 30);
-		    panel.add(checkViernes);
-		    
-		    JCheckBox checkSabado = new JCheckBox("Sábado");
-		    checkSabado.setFont(new Font("Arial Black", Font.PLAIN, 12));
-		    checkSabado.setOpaque(false);
-		    checkSabado.setBounds(684, 401, 93, 30);
-		    panel.add(checkSabado);
-	}
 	
 	public void configurarLabelsIzq(JLabel lbl) { // Configurar Labels a la izquierda  
 		lbl.setForeground(new Color(0, 0, 0));
