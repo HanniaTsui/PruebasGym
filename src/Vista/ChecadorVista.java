@@ -278,6 +278,7 @@ public class ChecadorVista extends JFrame  {
 			@Override
 			protected List<ClienteObj> doInBackground() {
 				ClienteModelo.cargarCliente();
+				cargarDatosEnTabla();
 				return ClienteModelo.getClient();
 			}
 
@@ -296,6 +297,8 @@ public class ChecadorVista extends JFrame  {
 	                registro.getHoraSalida()
 	            };
 	            modelo.addRow(rowData);
+
+                actualizarTabla(registro);
 	        }
 	    }
 
