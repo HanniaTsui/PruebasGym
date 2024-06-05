@@ -2,6 +2,7 @@ package Vista;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -9,9 +10,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -32,6 +40,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AttributeSet;
@@ -42,6 +52,7 @@ import Modelo.ClienteModelo;
 import Modelo.ClienteObj;
 import Modelo.InstructorModelo;
 import Modelo.InstructorObj;
+import controlador.ClientesControlador;
 import controlador.InstructorControlador;
 import controlador.MenuControlador;
 
@@ -51,7 +62,7 @@ public class InstructorVista{
 	private JPanel contentPane, panel, panelCrear, panelCredencial, panelSup;
 	private final JPanel panelNegro = new JPanel();
 	private JButton btnVolver,btnHistorial, btnDescargarCredencial, btnReporte, btnGuardar, btnCancelar, btnPagar;
-	JLabel lblTitulo, lblGym, lblPersona, lblCodigo, lblFecha, lblTlefono, lblCorreoElectrnico, lblFechaDeRegistro, lblMembresia, lblPeterParker, lblNewLabel;
+	JLabel lblTitulo, lblGym, lblCodigo, lblFecha, lblTlefono, lblCorreoElectrnico, lblFechaDeRegistro, lblMembresia, lblPeterParker, lblNewLabel;
 	 private JLabel lblNombres, lblApellidos, lblFoto;
 	 private JTextField textNombre, textApellidos, textEmail, textTel;
 	 String ventanaActual;
@@ -65,6 +76,13 @@ public class InstructorVista{
 	 InstructorControlador controlador;
 	 private boolean datosCargados = false;
 	 List<InstructorObj> instructores;
+	private JButton btnEditar;
+	private JButton btnDetalles;
+	private JTable datosTabla;
+	String path;
+	private JComboBox comboEspecialidad;
+	private SpinnerDateModel modeloFechaIn;
+	private String fechaInicial1;
 	/**
 	 * Create the frame.
 	 */
@@ -83,14 +101,21 @@ public class InstructorVista{
 		lblTitutlo.setBounds(427, 114, 346, 33);
 		panel.add(lblTitutlo);
 		
-		JButton btnEditar = new JButton("Editar");
+		btnEditar = new JButton("Editar");
 		btnEditar.setForeground(new Color(255, 255, 255));
 		btnEditar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		controlador.editarInstructor();
+	    		int filaSeleccionada = datosTabla.getSelectedRow();
+	            if (filaSeleccionada != -1) {
+	                // Obtener los datos del instructor de la fila seleccionada
+	                InstructorObj instructorSeleccionado = obtenerInstructorDeFila(filaSeleccionada);
+	                // Llamar al método editarInstructor() con el instructor seleccionado como argumento
+	                controlador.editarInstructor(instructorSeleccionado);
+	            }
 	    	}
 	    });
 		btnEditar.setFocusable(false);
+		btnEditar.setEnabled(false);
 		btnEditar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 		btnEditar.setBackground(new Color(0, 0, 0)); 
 		btnEditar.setBounds(739, 190, 120, 40);
@@ -107,9 +132,20 @@ public class InstructorVista{
 	    }
 	    
 		 
-	     JTable datosTabla = new JTable(modelo);
+	     datosTabla = new JTable(modelo);
 	     JScrollPane tablaScroll = new JScrollPane(datosTabla);
 	     tablaScroll.setBounds(200,250,800,350);
+	     datosTabla.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+	         public void valueChanged(ListSelectionEvent event) {
+	             // Verificar si se ha seleccionado una fila
+	             if (!event.getValueIsAdjusting()) {
+	                 // Habilitar o deshabilitar los botones según si hay una fila seleccionada
+	                 boolean filaSeleccionada = datosTabla.getSelectedRow() != -1;
+	                btnEditar.setEnabled(filaSeleccionada);
+	                btnDetalles.setEnabled(filaSeleccionada);
+	             }
+	         }
+	     });
 	     panel.add(tablaScroll);
 	     cargarDatosEnSegundoPlano();
 	     
@@ -118,18 +154,25 @@ public class InstructorVista{
 			} 
 	     
 	     
-	     btnEditar = new JButton("Detalles");
-	     btnEditar.setForeground(new Color(255, 255, 255)); 
-	     btnEditar.addActionListener(new ActionListener() {
+	     btnDetalles = new JButton("Detalles");
+	     btnDetalles.setEnabled(false);
+	     btnDetalles.setForeground(new Color(255, 255, 255)); 
+	     btnDetalles.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		controlador.detallesInstructor();
+	    		int filaSeleccionada = datosTabla.getSelectedRow();
+	            if (filaSeleccionada != -1) {
+	                // Obtener los datos del instructor de la fila seleccionada
+	                InstructorObj instructorSeleccionado = obtenerInstructorDeFila(filaSeleccionada);
+	                // Llamar al método editarInstructor() con el instructor seleccionado como argumento
+	                controlador.detallesInstructor(instructorSeleccionado);
+	            }
 	    	}
 	     });
-	     btnEditar.setFocusable(false);
-	     btnEditar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-	     btnEditar.setBackground(new Color(0, 45, 78)); 
-	     btnEditar.setBounds(885, 190, 115, 40);
-	     panel.add(btnEditar);
+	     btnDetalles.setFocusable(false);
+	     btnDetalles.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	     btnDetalles.setBackground(new Color(0, 45, 78)); 
+	     btnDetalles.setBounds(885, 190, 115, 40);
+	     panel.add(btnDetalles);
 	     
 	     JButton btnGuardar_1 = new JButton("Nuevo instructor");
 	     btnGuardar_1.setForeground(Color.WHITE);
@@ -145,6 +188,20 @@ public class InstructorVista{
 	     panel.add(btnGuardar_1);
 	    return panel;
 	}
+	
+	private InstructorObj obtenerInstructorDeFila(int fila) {
+	    int id = (int) datosTabla.getValueAt(fila, 0);
+	    String nombre = (String) datosTabla.getValueAt(fila, 1);
+	    String apellido = (String) datosTabla.getValueAt(fila, 2);
+	    String correo = (String) datosTabla.getValueAt(fila, 3);
+	    String telefono = (String) datosTabla.getValueAt(fila, 4);
+	    String fechaContratacion = (String) datosTabla.getValueAt(fila, 5);
+	    String especialidad = (String) datosTabla.getValueAt(fila, 6);
+	    
+	    // Crear un nuevo objeto InstructorObj con los datos obtenidos
+	    return new InstructorObj(id, nombre, apellido, correo, telefono, fechaContratacion, especialidad, null, 0);
+	}
+	
 	private void cargarDatosEnSegundoPlano() {
 		SwingWorker<List<InstructorObj>, Void> worker = new SwingWorker<>() {
 			@Override
@@ -190,7 +247,7 @@ public class InstructorVista{
 	    });
 	}
 	
-	public JPanel detallesInstructor() {
+	public JPanel detallesInstructor(InstructorObj instructor) {
 		JPanel panel = getMenu();
 		JLabel lblTitutlo = new JLabel("Detalles de instructor");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
@@ -235,21 +292,30 @@ public class InstructorVista{
 	    panel.add(panelCredencial);
 	    panelCredencial.setLayout(null);
 	    
-	    lblPersona = new JLabel();
-	    lblPersona.setIcon(new ImageIcon(InstructorVista.class.getResource("/img/usuarioGym 1.png")));
-	    lblPersona.setBounds(36, 23, 217, 218);
-	    panelCredencial.add(lblPersona);
+	    lblFoto = new JLabel();
+//	    lblFoto.setIcon(new ImageIcon(instructor.getImagen()));
+	    lblFoto.setBounds(36, 23, 217, 218);
+	    panelCredencial.add(lblFoto);
+	    
+	    if (instructor.getImagen() != null) {
+	        ImageIcon imageIcon = new ImageIcon(instructor.getImagen());
+	        lblFoto = new JLabel(imageIcon);
+	        lblFoto.setBounds(36, 23, 217, 218); 
+	    } else {
+	        // Manejar el caso en el que la imagen sea nula
+	        System.out.println("La imagen del instructor es nula.");
+	    }
 	    
 	    lblCodigo = new JLabel();
 	    lblCodigo.setIcon(new ImageIcon(InstructorVista.class.getResource("/img/codigoDeBarras.png")));
 	    lblCodigo.setBounds(299, 229, 327, 59);
 	    panelCredencial.add(lblCodigo);
 
-	    lblCorreoElectrnico = new JLabel("Correo electrónico: "+"Castillo2@gmail.com");
+	    lblCorreoElectrnico = new JLabel("Correo electrónico: "+instructor.getCorreo());
 	    configurarLabels(lblCorreoElectrnico);lblCorreoElectrnico.setBounds(299, 124, 327, 20);
 	    panelCredencial.add(lblCorreoElectrnico);
 	    
-	    lblPeterParker = new JLabel("Luis Castillo");
+	    lblPeterParker = new JLabel(instructor.getNombre() + " "+ instructor.getApellido());
 	    configurarLabels(lblPeterParker);lblPeterParker.setBounds(36, 260, 217, 20);
 	    panelCredencial.add(lblPeterParker);
 	    
@@ -284,12 +350,12 @@ public class InstructorVista{
 	    btnReporte.setBounds(690, 204, 215, 50);
 	    panelCredencial.add(btnReporte);
 	    
-	    JLabel lblEspecialidad = new JLabel("Instructor de levantamiento de pesas");
+	    JLabel lblEspecialidad = new JLabel(instructor.getEspecialidad());
 	    configurarLabels(lblEspecialidad);
 	    lblEspecialidad.setBounds(299, 74, 327, 20);
 	    panelCredencial.add(lblEspecialidad);
 	    
-	    JLabel lblFechaDeContratacin = new JLabel("Fecha de contratación: 21/07/2022");
+	    JLabel lblFechaDeContratacin = new JLabel("Fecha de contratación: "+ instructor.getFechaContratacion());
 	    lblFechaDeContratacin.setBounds(299, 174, 327, 20);
 	    configurarLabels(lblFechaDeContratacin);
 	    panelCredencial.add(lblFechaDeContratacin);
@@ -346,7 +412,13 @@ public class InstructorVista{
         btnVolver = new JButton("Volver");
 	    btnVolver.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		controlador.detallesInstructor();
+	    		int filaSeleccionada = datosTabla.getSelectedRow();
+	            if (filaSeleccionada != -1) {
+	                // Obtener los datos del instructor de la fila seleccionada
+	                InstructorObj instructorSeleccionado = obtenerInstructorDeFila(filaSeleccionada);
+	                // Llamar al método editarInstructor() con el instructor seleccionado como argumento
+	                controlador.detallesInstructor(instructorSeleccionado);
+	            }
 	    	}
 	    });
 	    btnVolver.setFocusable(false);
@@ -444,7 +516,18 @@ public class InstructorVista{
 	    JSpinner.DateEditor dateEditorFechaIn = new JSpinner.DateEditor(spinnerFechaIn, "dd/MM/yyyy");
 	    spinnerFechaIn.setEditor(dateEditorFechaIn);
 	    spinnerFechaIn.setBounds(360, 250, 200, 30);
+	 // convertir spinner a texto con su formato
+        modeloFechaIn = (SpinnerDateModel) spinnerFechaIn.getModel();
+        Date fechaSeleccionadaIn = modeloFechaIn.getDate();
+        SimpleDateFormat formatoFechaIn = new SimpleDateFormat("dd/MM/yyyy");
+        fechaInicial1 = formatoFechaIn.format(fechaSeleccionadaIn);
+        
 	    panelCrear.add(spinnerFechaIn);
+	    
+	    JLabel lblFoto = new JLabel("",0);
+	    lblFoto.setIcon(new ImageIcon(InstructorVista.class.getResource("/img/usuarioGym 1.png")));
+	    lblFoto.setBounds(642, 33, 217, 221);
+	    panelCrear.add(lblFoto);
 
 	    JButton btnFoto = new JButton("Subir foto");
 	    btnFoto.setForeground(new Color(255, 255, 255));
@@ -453,10 +536,12 @@ public class InstructorVista{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				subirFoto();
-				 if (selectedFile != null) {
-	                    lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
-	                    panel.revalidate(); panel.repaint();
-	              }
+				if (selectedFile != null) {
+					lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
+					panel.revalidate();
+					panel.repaint();
+					path = selectedFile.getAbsolutePath();
+				}
 			}
 	    });
 	    btnFoto.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
@@ -464,12 +549,7 @@ public class InstructorVista{
 	    btnFoto.setBounds(652, 270, 207, 40);
 	    panelCrear.add(btnFoto);
 	    
-	    lblFoto = new JLabel("");
-	    lblFoto.setIcon(new ImageIcon(InstructorVista.class.getResource("/img/usuarioGym 1.png")));
-	    lblFoto.setBounds(642, 33, 217, 221);
-	    panelCrear.add(lblFoto);
-	    
-	    JComboBox comboEspecialidad = new JComboBox();
+	    comboEspecialidad = new JComboBox();
 	    comboEspecialidad.setModel(new DefaultComboBoxModel(new String[] {"Levantamiento de pesas", "Aeróbic","Gimnasia de mantenimiento", "Circuito de entrenamiento"}));
 	    comboEspecialidad.setBounds(70, 153, 200, 30);
 	    panelCrear.add(comboEspecialidad);
@@ -482,8 +562,7 @@ public class InstructorVista{
 	    btnPagar = new JButton("Añadir");
 	    btnPagar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		  controlador.instructor(); //vuelve al panel de instructores registrados
-	    		 JOptionPane.showMessageDialog(null, "¡Nuevo instructor agregado con exito!", " ", JOptionPane.INFORMATION_MESSAGE);
+	    		validarCamposCrear(); 
 	    	}
 	    });
 		btnPagar.setForeground(new Color(255, 255, 255));
@@ -495,7 +574,7 @@ public class InstructorVista{
 	    return panel;
 	}
 	
-	public JPanel editarInstructor() {
+	public JPanel editarInstructor(InstructorObj instructor) {
 		JPanel panel = getMenu();
 		JLabel lblTitutlo = new JLabel("Editar instructor");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
@@ -524,7 +603,7 @@ public class InstructorVista{
 	    lblNombres.setBounds(70, 33, 200, 20);
 	    panelCrear.add(lblNombres);
 	    
-	    textNombre = new JTextField();
+	    textNombre = new JTextField(instructor.getNombre());
 	    textNombre.setBounds(70, 73, 200, 30);
 	    validacionTexto(textNombre);
 	    panelCrear.add(textNombre);
@@ -535,13 +614,13 @@ public class InstructorVista{
 	    lblApellidos.setBounds(360, 33, 200, 20);
 	    panelCrear.add(lblApellidos);
 	    
-	    textApellidos = new JTextField();
+	    textApellidos = new JTextField(instructor.getApellido());
 	    textApellidos.setColumns(10);
 	    validacionTexto(textApellidos);
 	    textApellidos.setBounds(360, 73, 200, 30);
 	    panelCrear.add(textApellidos);
 	    
-	    textEmail = new JTextField();
+	    textEmail = new JTextField(instructor.getCorreo());
 	    textEmail.setColumns(10);
 	    textEmail.setBounds(70, 255, 200, 30);
 	    panelCrear.add(textEmail);
@@ -549,6 +628,7 @@ public class InstructorVista{
 	    textTel = new JTextField();
 	    textTel.setColumns(10);
 	    validacionTel(textTel);
+	    textTel.setText(String.valueOf(instructor.getTelefono()));
 	    textTel.setBounds(360, 149, 200, 30);
 	    panelCrear.add(textTel);
 	        
@@ -557,23 +637,46 @@ public class InstructorVista{
 	    lblFechaInicial.setBounds(360, 215, 200, 20);
 	    panelCrear.add(lblFechaInicial);
 
-	    JSpinner spinnerFechaIn = new JSpinner(new SpinnerDateModel());
-	    JSpinner.DateEditor dateEditorFechaIn = new JSpinner.DateEditor(spinnerFechaIn, "dd/MM/yyyy");
-	    spinnerFechaIn.setEditor(dateEditorFechaIn);
-	    spinnerFechaIn.setBounds(360, 250, 200, 30);
-	    panelCrear.add(spinnerFechaIn);
-
+	    String fechaContratacion = instructor.getFechaContratacion();
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		Date fecha = null;
+		try {
+			fecha = dateFormat.parse(fechaContratacion);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		// Crear el modelo de fecha del spinner con la fecha de nacimiento obtenida
+		SpinnerDateModel model = new SpinnerDateModel(fecha, null, null, java.util.Calendar.DAY_OF_MONTH);
+		// Crear el spinner con el modelo
+		JSpinner spinnerFechaC = new JSpinner(model);
+		JSpinner.DateEditor dateEditorFechaC = new JSpinner.DateEditor(spinnerFechaC, "dd/MM/yyyy");
+		spinnerFechaC.setEditor(dateEditorFechaC);
+		spinnerFechaC.setPreferredSize(new Dimension(200, 30));
+	    spinnerFechaC.setBounds(360, 250, 200, 30);
+	    panelCrear.add(spinnerFechaC);
+	    
+	    SpinnerDateModel modeloFechaCon = (SpinnerDateModel) spinnerFechaC.getModel();
+		Calendar calendar = Calendar.getInstance();
+        calendar.set(1900, Calendar.JANUARY, 1); //  Fechs inicial: Enero 1, 1900
+        Date startDate = calendar.getTime();
+        
+        calendar.set(2024, Calendar.DECEMBER, 31); // Fecha final: Diciembre 31, 2024
+        Date endDate = calendar.getTime();
+        
+        modeloFechaCon.setStart(startDate);
+        modeloFechaCon.setEnd(endDate);
 	    JButton btnFoto = new JButton("Subir foto");
 	    btnFoto.setForeground(new Color(255, 255, 255));
 	    btnFoto.setFocusable(false);
+	    path = "Predeterminado";
 	    btnFoto.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				subirFoto();
-				 if (selectedFile != null) {
-	                    lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
-	                    panel.revalidate(); panel.repaint();
-	              }
+		        if (selectedFile != null && lblFoto != null) {
+		            lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
+		            path = selectedFile.getAbsolutePath();
+		        }
 			}
 	    });
 	    btnFoto.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
@@ -581,14 +684,24 @@ public class InstructorVista{
 	    btnFoto.setBounds(652, 270, 207, 40);
 	    panelCrear.add(btnFoto);
 	    
-	    lblFoto = new JLabel("");
-	    lblFoto.setIcon(new ImageIcon(InstructorVista.class.getResource("/img/usuarioGym 1.png")));
+	    lblFoto = new JLabel("",0);
+	 //   lblFoto.setIcon(new ImageIcon(instructor.getImagen()));
 	    lblFoto.setBounds(642, 33, 217, 221);
 	    panelCrear.add(lblFoto);
+	    if (instructor.getImagen() != null) {
+	        ImageIcon imageIcon = new ImageIcon(instructor.getImagen());
+	        lblFoto = new JLabel(imageIcon);
+	        lblFoto.setBounds(642, 33, 217, 221); 
+	    } else {
+	        // Manejar el caso en el que la imagen sea nula
+	        System.out.println("La imagen del instructor es nula.");
+	    }
 	    
-	    JComboBox comboEspecialidad = new JComboBox();
+	    comboEspecialidad = new JComboBox();
 	    comboEspecialidad.setModel(new DefaultComboBoxModel(new String[] {"Levantamiento de pesas", "Aeróbic","Gimnasia de mantenimiento", "Circuito de entrenamiento"}));
 	    comboEspecialidad.setBounds(70, 153, 200, 30);
+	    comboEspecialidad.setSelectedItem(instructor.getEspecialidad());
+		
 	    panelCrear.add(comboEspecialidad);
 	    
 	    lblEspec = new JLabel("Especialidad:");
@@ -600,7 +713,25 @@ public class InstructorVista{
 	    btnGuardar.setForeground(new Color(255, 255, 255));
 	    btnGuardar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		JOptionPane.showMessageDialog(null, "¡Cambios de instructor realizados con éxito!", "Edición exitosa", JOptionPane.INFORMATION_MESSAGE);
+	    		instructor.setNombre(textNombre.getText());
+	    		instructor.setApellido(textApellidos.getText());
+	    		instructor.setCorreo(textEmail.getText());
+	    		instructor.setTelefono(textTel.getText());
+	    		instructor.setEspecialidad((String) comboEspecialidad.getSelectedItem());
+	    		// Obtener y asignar las nuevas fechas seleccionadas
+		        Date fechaNac = (Date) spinnerFechaC.getValue();
+		        instructor.setFechaContratacion(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
+		
+		        if (!path.equals("Predeterminado")) {
+		            BufferedImage imagen;
+		            try {
+		                imagen = ImageIO.read(new File(path));
+		                instructor.setImagen(imagen);
+		            } catch (IOException exception) {
+		                JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
+		            }
+		        }
+		        InstructorModelo.obtenerInstancia().editarInstructor(instructor);
 	    		controlador.instructor();
 	    	}
 	    });
@@ -636,7 +767,8 @@ public class InstructorVista{
         } else {
             JOptionPane.showMessageDialog(null, "Agrega una imagen valida");
         }
-      
+        System.out.println("Ruta del archivo seleccionado: " + selectedFile.getAbsolutePath());
+
 	}
 	
 	public void configurarLabelsIzq(JLabel lbl) { // Configurar Labels a la izquierda  
@@ -683,7 +815,7 @@ public class InstructorVista{
             @Override
             public void keyTyped(KeyEvent e) {
                 char l = e.getKeyChar();
-                if (!Character.isLetter(l)) {
+                if (!Character.isLetter(l) && l != 32) {
                     e.consume();
                 }
             }
@@ -717,6 +849,44 @@ public class InstructorVista{
 		        }
 		    }
 		});
+	}
+	
+	private boolean validarCamposCrear() {
+		int ID = 0;
+		String nombre = textNombre.getText().trim();
+		String apellido = textApellidos.getText().trim();
+		String correo = textEmail.getText().trim();
+		String telefono = textTel.getText().trim();
+		String fecha = fechaInicial1;
+		String especialidad = (String) comboEspecialidad.getSelectedItem();
+
+
+		if (nombre.isEmpty() || apellido.isEmpty() || correo.isEmpty() || telefono.isEmpty() || fecha.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return false; // Detener el proceso porque algún campo está vacío
+		}
+
+		BufferedImage imagen = null; // Inicializamos la imagen como nula
+		if (path == null || path.equals("usuarioGym 1")) {
+			JOptionPane.showMessageDialog(null, "Debe seleccionar una imagen.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false; // Detener el proceso porque no se ha seleccionado una imagen
+		}
+
+		try {
+			// Intentar leer la imagen seleccionada
+			imagen = ImageIO.read(new File(path));
+		} catch (IOException exception) {
+			JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+
+
+		InstructorControlador.registrarInstructor(ID, nombre, apellido, correo, telefono, fecha, especialidad, imagen, 2);
+
+		controlador.instructor();
+		// InicioControlador.registrar(nombre, password,email);
+		return true;
 	}
 
 }

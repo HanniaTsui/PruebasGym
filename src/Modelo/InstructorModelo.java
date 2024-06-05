@@ -6,6 +6,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +18,11 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
+import javax.swing.JOptionPane;
 
+import com.code.advancedsql.query.Insert;
 import com.code.advancedsql.query.Select;
+import com.code.advancedsql.query.Update;
 
 public class InstructorModelo {
 	private static final int MAX_BLOB_SIZE = 65535;
@@ -49,22 +54,24 @@ public class InstructorModelo {
 	        	String telefono=(String)map.get("telefono");
 	        	String especialidad= (String)map.get("especialidad");
 	        	String fechaContratacion=(String)map.get("fechaContratacion");
-	        	int IDClase = (int)map.get("IDClase");
+	      //  	int IDClase = (int)map.get("IDClase");
 	        			
 	        	
 	        	BufferedImage imagen;
-	        
-				try {
-					imagen = convertByteArrayToImage((byte[])map.get("imagen"));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					throw new RuntimeException(e);
-				}
+	        	try {
+	        	    byte[] imagenBytes = (byte[]) map.get("imagen");
+	        	    imagen = convertByteArrayToImage(imagenBytes);
+	        	    System.out.println("Imagen cargada correctamente para el instructor con ID: " + ID);
+	        	} catch (IOException e) {
+	        	    e.printStackTrace();
+	        	    System.out.println("Error al cargar la imagen para el instructor con ID: " + ID);
+	        	    throw new RuntimeException(e);
+	        	}
 				
 	        	
 
 	            instructor.add(new InstructorObj(ID,  nombre,  apellido,  correo,  telefono,
-	        			 fechaContratacion,  especialidad, imagen,  IDClase));
+	        			 fechaContratacion,  especialidad, imagen,  2));
 	            
 		}
 		} catch (SQLException e) {
@@ -135,6 +142,68 @@ public class InstructorModelo {
         }
     }
 
+    public void editarInstructor(InstructorObj instructor) {
+		Update insertar =BaseDatos.optenerIstancia().getMySQL().table("instructor").update();
+		insertar.field("nombre",instructor.getNombre());
+		insertar.field("apellido",instructor.getApellido());
+		insertar.field("correo",instructor.getCorreo());
+		insertar.field("telefono",instructor.getTelefono());
+		insertar.field("fechaContratacion",instructor.getFechaContratacion());
+		insertar.field("especialidad",instructor.getEspecialidad());
+//		insertar.field("IDclase",instructor.getIDClase());
 
+		
+		try {
+			insertar.field("imagen",convertImageToBinary(instructor.getImagen()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+
+		insertar.where("ID =?", instructor.getID());
+
+		try {
+			insertar.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "No se actualizó el instructor", "ERROR", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		JOptionPane.showMessageDialog(null, "Se actualizó el instructor correctamente");
+	}
+
+    public boolean subirDatosInstructor(InstructorObj instructor) {
+		Insert insertar=BaseDatos.optenerIstancia().getMySQL().table("instructor").insert();
+		insertar.field("nombre",instructor.getNombre());
+		insertar.field("apellido",instructor.getApellido());
+		insertar.field("correo",instructor.getCorreo());
+		insertar.field("telefono",instructor.getTelefono());
+		insertar.field("fechaContratacion",instructor.getFechaContratacion());
+		insertar.field("especialidad",instructor.getEspecialidad());
+		try {
+			insertar.field("imagen",convertImageToBinary(instructor.getImagen()));
+		
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		try {
+			insertar.execute();
+			System.out.println("Inserción de instructor exitosa.");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			 JOptionPane.showMessageDialog(null, "No se pudo añadir el instructor", "ERROR", JOptionPane.WARNING_MESSAGE);
+			 return false;
+		}
+		//client.add(cliente);
+		 JOptionPane.showMessageDialog(null, "Se añadió instructor correctamente");
+		 return true;
+	}
+    
 
 }
