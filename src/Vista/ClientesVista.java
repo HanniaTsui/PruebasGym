@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -56,6 +58,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
 import Modelo.ClienteObj;
+import Modelo.PlanesModelo;
 import Modelo.ClienteModelo;
 import controlador.ClientesControlador;
 import controlador.InicioControlador;
@@ -97,6 +100,7 @@ public class ClientesVista {
 	private JLabel lblFechaFin;
 	private LocalDate fechaInicioOriginal;
 	private LocalDate fechaFinOriginal;
+	private JLabel lblPago;
 
 	/**
 	 * Create the frame.
@@ -457,10 +461,18 @@ public class ClientesVista {
 		textTel.setBounds(360, 149, 200, 30);
 		panelCrear.add(textTel);
 
-		comboMembresia = new JComboBox();
-		comboMembresia.setModel(new DefaultComboBoxModel(new String[] { "General", "Estudiante", "Familiar", "Dúo" }));
+		comboMembresia = new JComboBox<>();
 		comboMembresia.setBounds(360, 255, 200, 30);
 		panelCrear.add(comboMembresia);
+
+		// Cargar las clases desde la base de datos y añadirlas al JComboBox
+		List<String> nombresClases = PlanesModelo.obtenerNombresPlanes();
+		DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
+
+		for (String nombreClase : nombresClases) {
+		    comboBoxModel.addElement(nombreClase);
+		}
+		comboMembresia.setModel(comboBoxModel);
 
 		JLabel lblFechaInicial = new JLabel("Fecha inicial:");
 		configurarLabelsIzq(lblFechaInicial);
@@ -523,6 +535,22 @@ public class ClientesVista {
 		comboPago.setBounds(360, 435, 200, 30);
 		panelCrear.add(comboPago);
 
+
+		lblPago = new JLabel();
+		configurarLabelsIzq(lblPago);
+		lblPago.setBounds(780,338,130,20);
+		panelCrear.add(lblPago);
+		comboMembresia.addItemListener(new ItemListener() {
+		    public void itemStateChanged(ItemEvent e) {
+		        actualizarPago();
+		    }
+		});
+
+		comboTipo.addItemListener(new ItemListener() {
+		    public void itemStateChanged(ItemEvent e) {
+		        actualizarPago();
+		    }
+		});
 		JLabel lblFoto = new JLabel("",0);
 		lblFoto.setIcon(new ImageIcon(ClientesVista.class.getResource("/img/usuarioGym 1.png")));
 		lblFoto.setBounds(642, 33, 217, 221);
@@ -583,7 +611,8 @@ public class ClientesVista {
 		configurarLabelsIzq(lblTotalPago);
 		lblTotalPago.setBounds(652, 338, 130, 20);
 		panelCrear.add(lblTotalPago);
-
+		
+		
 		return panel;
 	}
 	private void calcularFechaFinal() {
@@ -1353,17 +1382,25 @@ public class ClientesVista {
 			}
 
 			private int getPrice(String planMembresia, String tipoMembresia) {
-				return switch (planMembresia) {
-				case "General" -> (tipoMembresia.equals("1 mes") ? 399
-						: (tipoMembresia.equals("3 meses") ? 1077 : (tipoMembresia.equals("6 meses") ? 2394 : 4788)));
-				case "Familiar" -> (tipoMembresia.equals("1 mes") ? 799
-						: (tipoMembresia.equals("3 meses") ? 2097 : (tipoMembresia.equals("6 meses") ? 4194 : 8388)));
-				case "Estudiante" -> (tipoMembresia.equals("1 mes") ? 599
-						: (tipoMembresia.equals("3 meses") ? 1797 : (tipoMembresia.equals("6 meses") ? 3594 : 7188)));
-				case "Duo" -> (tipoMembresia.equals("1 mes") ? 299
-						: (tipoMembresia.equals("3 meses") ? 897 : (tipoMembresia.equals("6 meses") ? 1794 : 3588)));
-				default -> 50;
-				};
+			    return switch (planMembresia) {
+			        case "General" -> (tipoMembresia.equals("1 mes") ? 399
+			                : (tipoMembresia.equals("3 meses") ? 1137
+			                : (tipoMembresia.equals("6 meses") ? 2274
+			                : (tipoMembresia.equals("1 año") ? 4608 : 50))));
+			        case "Familiar" -> (tipoMembresia.equals("1 mes") ? 500
+			                : (tipoMembresia.equals("3 meses") ? 1425
+			                : (tipoMembresia.equals("6 meses") ? 2850
+			                : (tipoMembresia.equals("1 año") ? 5775 : 50))));
+			        case "Estudiante" -> (tipoMembresia.equals("1 mes") ? 358
+			                : (tipoMembresia.equals("3 meses") ? 1020
+			                : (tipoMembresia.equals("6 meses") ? 2040
+			                : (tipoMembresia.equals("1 año") ? 4090 : 50))));
+			        case "Duo" -> (tipoMembresia.equals("1 mes") ? 599
+			                : (tipoMembresia.equals("3 meses") ? 1737
+			                : (tipoMembresia.equals("6 meses") ? 3474
+			                : (tipoMembresia.equals("1 año") ? 7068 : 50))));
+			        default -> 50;
+			    };
 			}
 
 			@Override
@@ -1420,6 +1457,51 @@ public class ClientesVista {
 		lblAsistenciasTotales.setBounds(87, 55, 237, 25);
 		panelInfo.add(lblAsistenciasTotales);
 
+	}
+	
+	private void actualizarPago() {
+	    String membresiaSeleccionada = (String) comboMembresia.getSelectedItem();
+	    String tipoSeleccionado = (String) comboTipo.getSelectedItem();
+	    
+	    if (membresiaSeleccionada != null && tipoSeleccionado != null) {
+	        if (membresiaSeleccionada.equals("Plan general") && tipoSeleccionado.equals("1 mes")) {
+	            lblPago.setText("399");
+	        } else if (membresiaSeleccionada.equals("Plan Estudiante") && tipoSeleccionado.equals("1 mes")) {
+	            lblPago.setText("358");
+	        } else if (membresiaSeleccionada.equals("Plan Familiar") && tipoSeleccionado.equals("1 mes")) {
+	            lblPago.setText("500");
+	        } else if (membresiaSeleccionada.equals("Plan dúo") && tipoSeleccionado.equals("1 mes")) {
+	            lblPago.setText("599");
+	        } else if (membresiaSeleccionada.equals("Plan general") && tipoSeleccionado.equals("3 meses")) {
+	            lblPago.setText("1137.15");
+	        } else if (membresiaSeleccionada.equals("Plan Estudiante") && tipoSeleccionado.equals("3 meses")) {
+	            lblPago.setText("1020.3");
+	        } else if (membresiaSeleccionada.equals("Plan Familiar") && tipoSeleccionado.equals("3 meses")) {
+	            lblPago.setText("1425.0");
+	        } else if (membresiaSeleccionada.equals("Plan dúo") && tipoSeleccionado.equals("3 meses")) {
+	            lblPago.setText("1737.1");
+	        } else if (membresiaSeleccionada.equals("Plan general") && tipoSeleccionado.equals("6 meses")) {
+	            lblPago.setText("2274.3");
+	        } else if (membresiaSeleccionada.equals("Plan Estudiante") && tipoSeleccionado.equals("6 meses")) {
+	            lblPago.setText("2040.6");
+	        } else if (membresiaSeleccionada.equals("Plan Familiar") && tipoSeleccionado.equals("6 meses")) {
+	            lblPago.setText("2850.0");
+	        } else if (membresiaSeleccionada.equals("Plan dúo") && tipoSeleccionado.equals("6 meses")) {
+	            lblPago.setText("3474.2");
+	        } else if (membresiaSeleccionada.equals("Plan general") && tipoSeleccionado.equals("1 año")) {
+	            lblPago.setText("4608.45");
+	        } else if (membresiaSeleccionada.equals("Plan Estudiante") && tipoSeleccionado.equals("1 año")) {
+	            lblPago.setText("2040.6");
+	        } else if (membresiaSeleccionada.equals("Plan Familiar") && tipoSeleccionado.equals("1 año")) {
+	            lblPago.setText("5775.0");
+	        } else if (membresiaSeleccionada.equals("Plan dúo") && tipoSeleccionado.equals("1 año")) {
+	            lblPago.setText("7068.2");
+	        } else {
+	            lblPago.setText("");
+	        }
+	    } else {
+	        lblPago.setText("");
+	    }
 	}
 
 	public void renovar(ClienteObj cliente) {

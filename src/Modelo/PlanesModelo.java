@@ -86,4 +86,21 @@ public class PlanesModelo {
             e.printStackTrace();
         }
     }
+    
+    public static List<String> obtenerNombresPlanes() {
+        List<String> nombrePlanes = new ArrayList<>();
+        Select nombreTabla = BaseDatos.optenerIstancia().getMySQL().table("planes").select(new String[]{"nombre"});
+        try {
+            List<Map<String, Object>> resultTableUser = nombreTabla.fetchAllAsList();
+            for (Map<String, Object> map : resultTableUser) {
+                String nombrePlan = (String) map.get("nombre");
+                nombrePlanes.add(nombrePlan);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return nombrePlanes;
+    }
+    
+    
 }
