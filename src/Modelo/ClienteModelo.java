@@ -82,11 +82,7 @@ public class ClienteModelo {
 			Delete query = BaseDatos.optenerIstancia().getMySQL().table("cliente").delete().where("ID = ?", Integer.toString(cliente.getID()));
 			int execute = query.execute();
 
-			// Imprimir la consulta y el resultado
-			System.out.println(query);
-			System.out.println(execute);
 
-			// Si la eliminación en la base de datos fue exitosa, eliminar el cliente de la lista en memoria
 			if (execute > 0) {
 				System.out.println("se elimino");
 				client.remove(cliente);

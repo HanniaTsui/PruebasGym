@@ -41,8 +41,8 @@ public class ClasesControlador {
     	FramePrincipal.obtenerInstancia().agregarPanel(vista.detallesClase(i));
     }
 
-    public void registrosClase() {
-    	FramePrincipal.obtenerInstancia().agregarPanel(vista.registrosClase());
+    public void registrosClase(ClasesObj i) {
+    	FramePrincipal.obtenerInstancia().agregarPanel(vista.registrosClase(i));
     }
 
     public void nuevaClase() {

@@ -20,7 +20,6 @@ public class ClasesModelo {
 	static List<ClasesObj> clases = new ArrayList<ClasesObj>();
 	public static List<ClasesObj> getCheck() {
 		return clases;
-		
 	}
 
 	List<ClienteObj> clientes = ClienteModelo.obtenerInstancia().getClient();
@@ -125,7 +124,32 @@ public class ClasesModelo {
 		        return false;
 		    }
 		}
-
+	 public static boolean inscribirClienteEnClase(int idCliente, int idClase) {
+	        try {
+	            Insert insertar = BaseDatos.optenerIstancia().getMySQL().table("inscripciones").insert();
+	            insertar.field("IDCliente", idCliente);
+	            insertar.field("IDClase", idClase);
+	            insertar.execute();
+	            return true;
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	            return false;
+	        }
+	    }
+	 public static List<String> obtenerNombresClases() {
+		    List<String> nombresClases = new ArrayList<>();
+		    Select nombreTabla = BaseDatos.optenerIstancia().getMySQL().table("clase").select(new String[]{"nombreClase"});
+		    try {
+		        List<Map<String, Object>> resultTableUser = nombreTabla.fetchAllAsList();
+		        for (Map<String, Object> map : resultTableUser) {
+		            String nombreClase = (String) map.get("nombreClase");
+		            nombresClases.add(nombreClase);
+		        }
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+		    return nombresClases;
+		}
   public void eliminarClases(ClasesObj cla) {
          try {
              // Eliminar el cliente de la base de datos
@@ -145,16 +169,4 @@ public class ClasesModelo {
              e.printStackTrace();
          }
      }
-  public static boolean inscribirClienteEnClase(int idCliente, int idClase) {
-	    try {
-	        Insert insertar = BaseDatos.optenerIstancia().getMySQL().table("inscripciones").insert();
-	        insertar.field("IDCliente", idCliente);
-	        insertar.field("IDClase", idClase);
-	        insertar.execute();
-	        return true;
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        return false;
-	    }
-	}
 }

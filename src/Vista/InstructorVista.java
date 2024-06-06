@@ -48,6 +48,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
+import Modelo.ClasesModelo;
 import Modelo.ClienteModelo;
 import Modelo.ClienteObj;
 import Modelo.InstructorModelo;
@@ -121,7 +122,7 @@ public class InstructorVista{
 		btnEditar.setBounds(739, 190, 120, 40);
 	    panel.add(btnEditar);
 	    
-	    String titles[]= {"ID", "Nombre", "Apellido", "Correo", "Telefono", "Fecha de contratación", "Especialidad"};
+	    String titles[]= {"ID", "Nombre", "Apellido", "Correo", "Telefono", "Fecha de contratación", "Clase"};
 	    if(modelo==null) {
 	    	 modelo = new DefaultTableModel(null, titles) {
 	             @Override
@@ -547,12 +548,21 @@ public class InstructorVista{
 	    btnFoto.setBounds(652, 270, 207, 40);
 	    panelCrear.add(btnFoto);
 	    
-	    comboEspecialidad = new JComboBox();
-	    comboEspecialidad.setModel(new DefaultComboBoxModel(new String[] {"Levantamiento de pesas", "Aeróbic","Gimnasia de mantenimiento", "Circuito de entrenamiento"}));
+	    JComboBox<String> comboEspecialidad = new JComboBox<>();
 	    comboEspecialidad.setBounds(70, 153, 200, 30);
 	    panelCrear.add(comboEspecialidad);
+
+	    // Cargar las clases desde la base de datos y añadirlas al JComboBox
+	    List<String> nombresClases = ClasesModelo.obtenerNombresClases();
+	    DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
+
+	    for (String nombreClase : nombresClases) {
+	        comboBoxModel.addElement(nombreClase);
+	    }
+
+	    comboEspecialidad.setModel(comboBoxModel);
 	    
-	    lblEspec = new JLabel("Especialidad:");
+	    lblEspec = new JLabel("Clase:");
 	    configurarLabelsIzq(lblEspec);
 	    lblEspec.setBounds(70, 119, 200, 20);
 	    panelCrear.add(lblEspec);
@@ -573,6 +583,7 @@ public class InstructorVista{
 	}
 	
 	public JPanel editarInstructor(InstructorObj instructor) {
+		int id=instructor.getID();
 		JPanel panel = getMenu();
 		JLabel lblTitutlo = new JLabel("Editar instructor");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
@@ -688,14 +699,21 @@ public class InstructorVista{
 	    panelCrear.add(lblFoto);
 	    
 	    
-	    comboEspecialidad = new JComboBox();
-	    comboEspecialidad.setModel(new DefaultComboBoxModel(new String[] {"Levantamiento de pesas", "Aeróbic","Gimnasia de mantenimiento", "Circuito de entrenamiento"}));
+	    JComboBox<String> comboEspecialidad = new JComboBox<>();
 	    comboEspecialidad.setBounds(70, 153, 200, 30);
-	    comboEspecialidad.setSelectedItem(instructor.getEspecialidad());
-		
 	    panelCrear.add(comboEspecialidad);
+
+	    // Cargar las clases desde la base de datos y añadirlas al JComboBox
+	    List<String> nombresClases = ClasesModelo.obtenerNombresClases();
+	    DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
+
+	    for (String nombreClase : nombresClases) {
+	        comboBoxModel.addElement(nombreClase);
+	    }
+
+	    comboEspecialidad.setModel(comboBoxModel);
 	    
-	    lblEspec = new JLabel("Especialidad:");
+	    lblEspec = new JLabel("Clase:");
 	    configurarLabelsIzq(lblEspec);
 	    lblEspec.setBounds(70, 119, 200, 20);
 	    panelCrear.add(lblEspec);
@@ -722,7 +740,19 @@ public class InstructorVista{
 		                JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
 		            }
 		        }
+		        for (InstructorObj instructor : instructores) {
+		        	if(instructor.getID()==id) {
+		        		instructor.setNombre(textNombre.getText());
+			    		instructor.setApellido(textApellidos.getText());
+			    		instructor.setCorreo(textEmail.getText());
+			    		instructor.setTelefono(textTel.getText());
+			    		instructor.setEspecialidad((String) comboEspecialidad.getSelectedItem());
+				        instructor.setFechaContratacion(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
+				        break;
+		        	}
+				}
 		        InstructorModelo.obtenerInstancia().editarInstructor(instructor);
+		        actualizarTabla();
 	    		controlador.instructor();
 	    	}
 	    });

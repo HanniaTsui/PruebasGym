@@ -403,6 +403,7 @@ public class ClasesVista {
 	}
 	
 	public JPanel inscribirseClase(ClasesObj clases) {
+		ClasesObj claseSeleccionada=clases;
 		JPanel panel = getMenu();
 		JLabel lblTitutlo = new JLabel("Clase de "+clases.getNombre());
 	    lblTitutlo.setForeground(new Color(0, 0, 0));
@@ -462,6 +463,7 @@ public class ClasesVista {
 		        cliente = controladorClientes.buscarClientePorID(Integer.parseInt(textID.getText()));
 		        
 		        if (cliente != null) {
+		            JOptionPane.showMessageDialog(null, "Cliente encontrado: "+cliente.getNombre()+" "+ cliente.getApellido(),null, JOptionPane.INFORMATION_MESSAGE);
 		           
 		            } else {
 		            
@@ -558,31 +560,42 @@ public class ClasesVista {
 	    
 
 	    btnPagar = new JButton("Inscribir");
-	    btnPagar.addActionListener(new ActionListener() {
+        btnPagar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (cliente != null) {
+                    // Obtener el ID de la clase
+                    int idClase = clases.getID();
+
+                    // Guardar la inscripción en la base de datos
+                    boolean exito = ClasesModelo.inscribirClienteEnClase(cliente.getID(), idClase);
+
+                    if (exito) {
+                        JOptionPane.showMessageDialog(null, "¡Cliente inscrito correctamente!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error al inscribir cliente en la clase", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Por favor, busca un cliente antes de inscribirlo", "Cliente no encontrado", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        btnPagar.setForeground(Color.white);
+        btnPagar.setFocusable(false);
+        btnPagar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+        btnPagar.setBackground(new Color(0,47,78)); 
+        btnPagar.setBounds(525, 580, 150, 40);
+        panel.add(btnPagar);
+		
+		btnRegistros = new JButton("Consultar registros");
+		btnRegistros.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		if (cliente != null) {
-	                // Obtener el ID de la clase
-	                int idClase = clases.getID();
-
-	                // Guardar la inscripción en la base de datos
-	                boolean exito = ClasesModelo.inscribirClienteEnClase(cliente.getID(), idClase);
-
-	                if (exito) {
-	                    JOptionPane.showMessageDialog(null, "¡Cliente inscrito correctamente!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-	                } else {
-	                    JOptionPane.showMessageDialog(null, "Error al inscribir cliente en la clase", "Error", JOptionPane.ERROR_MESSAGE);
-	                }
-	            } else {
-	                JOptionPane.showMessageDialog(null, "Por favor, busca un cliente antes de inscribirlo", "Cliente no encontrado", JOptionPane.ERROR_MESSAGE);
-	            }
-	        }
+				controlador.registrosClase(claseSeleccionada);
+	    	}
 	    });
-		btnPagar.setForeground(Color.white);
-		btnPagar.setFocusable(false);
-		btnPagar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		btnPagar.setBackground(new Color(0,47,78)); 
-		btnPagar.setBounds(525, 580, 150, 40);
-		panel.add(btnPagar);
+		btnRegistros.setForeground(Color.white);
+		btnRegistros.setFocusable(false);
+		btnRegistros.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+		btnRegistros.setBackground(new Color(0,47,78)); 
 		btnRegistros.setBounds(907, 114, 150, 40);
 		panel.add(btnRegistros);
 	    panelInscribirseDetallesClase(panel);
@@ -590,14 +603,14 @@ public class ClasesVista {
 		return panel;
 	}
 	
-	public JPanel registrosClase() {
+	public JPanel registrosClase(ClasesObj clases) {
 		JPanel panel = getMenu();
 
 		btnVolver=new JButton("Volver");
 	    btnVolver.setForeground(new Color(255, 255, 255));
 	    btnVolver.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-				//controlador.inscribirseClase();
+	    		controlador.inscribirseClase(clases);
 	    	}
 	    });
 	    btnVolver.setFocusable(false);
@@ -685,7 +698,7 @@ public class ClasesVista {
 	             if (op == JOptionPane.OK_OPTION) {
 	                 JOptionPane.showMessageDialog(null, "Cliente eliminado con éxito", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
 	                 //quitarComponentes(); registrosClase();
-					 controlador.registrosClase();
+					 controlador.registrosClase(clases);
 	             } 
 	             
 	    	}

@@ -107,7 +107,6 @@ public class ChecadorVista extends JFrame  {
         tablaScroll.setBounds(73, 170, 500, 470);
         panel.add(tablaScroll);
 
-        cargarDatosEnTabla();
 		
 		JLabel lblClientesActivos = new JLabel("Clientes activos: ");
 		configurarLabelsIzq(lblClientesActivos);

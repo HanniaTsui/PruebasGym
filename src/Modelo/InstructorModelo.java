@@ -210,14 +210,12 @@ public class InstructorModelo {
 		
 		try {
 			insertar.execute();
-			System.out.println("Inserción de instructor exitosa.");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			 JOptionPane.showMessageDialog(null, "No se pudo añadir el instructor", "ERROR", JOptionPane.WARNING_MESSAGE);
 			 return false;
 		}
-		//client.add(cliente);
 		 JOptionPane.showMessageDialog(null, "Se añadió instructor correctamente");
 		 return true;
 	}
