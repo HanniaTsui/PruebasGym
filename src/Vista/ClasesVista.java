@@ -425,7 +425,7 @@ public class ClasesVista {
 	    lblNewLabel_3.setBounds(172, 313, 365, 30);
 	    panel.add(lblNewLabel_3);
 	    
-	    lblNewLabel_4 = new JLabel("Días de la semana disponibles:");
+	    lblNewLabel_4 = new JLabel("Día de clase:");
 	    configurarLabelsDer(lblNewLabel_4);
 	    lblNewLabel_4.setBounds(172, 367, 365, 30);
 	    panel.add(lblNewLabel_4);
@@ -480,7 +480,8 @@ public class ClasesVista {
 	    panel.add(btnBuscar);
 	    
 	    JLabel horario = new JLabel();
-	    horario.setBounds(561,318,285,30);
+	    configurarLabelsIzq(horario);
+	    horario.setBounds(561,313,285,30);
 	    String[] horarios = {
 	    	    "06:00 - 07:00",  "07:00 - 08:00", "08:00 - 09:00",   "09:00 - 10:00",    
 	    	    "10:00 - 11:00", "11:00 - 12:00", "12:00 - 13:00",   "13:00 - 14:00", 
@@ -506,60 +507,56 @@ public class ClasesVista {
         ButtonGroup grupoDiasSemana = new ButtonGroup();
 	    
 	    JRadioButton checkLunes = new JRadioButton("Lunes");
-	    checkLunes.setOpaque(false);
-	    checkLunes.setFont(new Font("Arial Black", Font.PLAIN, 12));
-	    checkLunes.setBounds(567, 372, 93, 30);
-	    panel.add(checkLunes);
+	//    panel.add(checkLunes);
 	    grupoDiasSemana.add(checkLunes);
 	    
 	    JRadioButton checkMartes = new JRadioButton("Martes");
-	    checkMartes.setFont(new Font("Arial Black", Font.PLAIN, 12));
-	    checkMartes.setOpaque(false);
-	    checkMartes.setBounds(660, 372, 93, 30);
-	    panel.add(checkMartes);
+
 	    grupoDiasSemana.add(checkMartes);
 	    
 	    JRadioButton checkMiercoles = new JRadioButton("Miércoles");
-	    checkMiercoles.setFont(new Font("Arial Black", Font.PLAIN, 12));
-	    checkMiercoles.setOpaque(false);
-	    checkMiercoles.setBounds(753, 372, 93, 30);
-	    panel.add(checkMiercoles);
+
 	    grupoDiasSemana.add(checkMiercoles);
 	    
 	    JRadioButton checkJueves = new JRadioButton("Jueves");
-	    checkJueves.setFont(new Font("Arial Black", Font.PLAIN, 12));
-	    checkJueves.setOpaque(false);
-	    checkJueves.setBounds(567, 424, 93, 30);
-	    panel.add(checkJueves);
+
 	    grupoDiasSemana.add(checkJueves);
 	    
 	    JRadioButton checkViernes = new JRadioButton("Viernes");
-	    checkViernes.setFont(new Font("Arial Black", Font.PLAIN, 12));
-	    checkViernes.setOpaque(false);
-	    checkViernes.setBounds(660, 424, 93, 30);
-	    panel.add(checkViernes);
+
 	    grupoDiasSemana.add(checkViernes);
+	    
+	    JLabel diaSelec = new JLabel();
+	    configurarLabelsIzq(diaSelec);
+	    diaSelec.setBounds(567, 367, 93, 30);
+	    panel.add(diaSelec);
 	    
 	    int idDiaClase = clases.getIdDia();
 	    // Seleccionar el JRadioButton correspondiente según el ID del día de la clase
 	    switch (idDiaClase) {
 	     case 1:
 	    	 checkLunes.setSelected(true);
+	    	 diaSelec.setText("Lunes");
 	         break;
 	     case 2:
 	    	 checkMartes.setSelected(true);
+	    	 diaSelec.setText("Martes");
 	         break;
 	     case 3:
 	    	 checkMiercoles.setSelected(true);
+	    	 diaSelec.setText("Miércoles");
 	         break;
 	     case 4:
 	    	 checkJueves.setSelected(true);
+	    	 diaSelec.setText("Jueves");
 	         break;
 	     case 5:
 	    	 checkViernes.setSelected(true);
+	    	 diaSelec.setText("Viernes");
 	         break;
 	    }
 	    
+
 	    btnPagar = new JButton("Inscribir");
 	    btnPagar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
