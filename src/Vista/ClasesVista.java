@@ -560,11 +560,22 @@ public class ClasesVista {
 	    btnPagar = new JButton("Inscribir");
 	    btnPagar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		  //quitarComponentes();
-	    		  //clases(); //vuelve al panel de clases
-				controlador.clases();
-	    		 JOptionPane.showMessageDialog(null, "¡Cliente inscrito correctamente!", " ", JOptionPane.INFORMATION_MESSAGE);
-	    	}
+	    		if (cliente != null) {
+	                // Obtener el ID de la clase
+	                int idClase = clases.getID();
+
+	                // Guardar la inscripción en la base de datos
+	                boolean exito = ClasesModelo.inscribirClienteEnClase(cliente.getID(), idClase);
+
+	                if (exito) {
+	                    JOptionPane.showMessageDialog(null, "¡Cliente inscrito correctamente!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+	                } else {
+	                    JOptionPane.showMessageDialog(null, "Error al inscribir cliente en la clase", "Error", JOptionPane.ERROR_MESSAGE);
+	                }
+	            } else {
+	                JOptionPane.showMessageDialog(null, "Por favor, busca un cliente antes de inscribirlo", "Cliente no encontrado", JOptionPane.ERROR_MESSAGE);
+	            }
+	        }
 	    });
 		btnPagar.setForeground(Color.white);
 		btnPagar.setFocusable(false);
@@ -572,17 +583,6 @@ public class ClasesVista {
 		btnPagar.setBackground(new Color(0,47,78)); 
 		btnPagar.setBounds(525, 580, 150, 40);
 		panel.add(btnPagar);
-		
-		btnRegistros = new JButton("Consultar registros");
-		btnRegistros.addActionListener(new ActionListener() {
-	    	public void actionPerformed(ActionEvent e) {
-				controlador.registrosClase();
-	    	}
-	    });
-		btnRegistros.setForeground(Color.white);
-		btnRegistros.setFocusable(false);
-		btnRegistros.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		btnRegistros.setBackground(new Color(0,47,78)); 
 		btnRegistros.setBounds(907, 114, 150, 40);
 		panel.add(btnRegistros);
 	    panelInscribirseDetallesClase(panel);

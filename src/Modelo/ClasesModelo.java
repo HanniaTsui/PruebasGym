@@ -145,4 +145,16 @@ public class ClasesModelo {
              e.printStackTrace();
          }
      }
+  public static boolean inscribirClienteEnClase(int idCliente, int idClase) {
+	    try {
+	        Insert insertar = BaseDatos.optenerIstancia().getMySQL().table("inscripciones").insert();
+	        insertar.field("IDCliente", idCliente);
+	        insertar.field("IDClase", idClase);
+	        insertar.execute();
+	        return true;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
 }

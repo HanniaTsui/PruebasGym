@@ -7,7 +7,6 @@ public class PlanesObj {
 	private String duracion;
 	
 	public PlanesObj(int iD, String nombre, double precio, String duracion) {
-		
 		ID = iD;
 		this.nombre = nombre;
 		this.precio = precio;

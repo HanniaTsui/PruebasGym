@@ -2,42 +2,46 @@ package Modelo;
 
 public class DescuentoObj {
 	private int ID;
-	private String periodo;
-	private double porcentaje;
-	private String duracion;
-	public DescuentoObj(int iD, String periodo, double porcentaje, String duracion) {
-		
+	private int porcentaje3meses;
+	private int porcentaje6meses;
+	private int porcentaje1anio;
+
+	public DescuentoObj(int iD, int porcentaje3meses, int porcentaje6meses, int porcentaje1anio) {
 		ID = iD;
-		this.periodo = periodo;
-		this.porcentaje = porcentaje;
-		this.duracion = duracion;
+		this.porcentaje1anio = porcentaje1anio;
+		this.porcentaje3meses = porcentaje3meses;
+		this.porcentaje6meses = porcentaje6meses;
 	}
+
 	public int getID() {
 		return ID;
 	}
+
 	public void setID(int iD) {
 		ID = iD;
 	}
-	public String getPeriodo() {
-		return periodo;
-	}
-	public void setPeriodo(String periodo) {
-		this.periodo = periodo;
-	}
-	public double getPorcentaje() {
-		return porcentaje;
-	}
-	public void setPorcentaje(double porcentaje) {
-		this.porcentaje = porcentaje;
-	}
-	public String getDuracion() {
-		return duracion;
-	}
-	public void setDuracion(String duracion) {
-		this.duracion = duracion;
-	}
-	
-	
-	
 
+	public int getPorcentaje3meses() {
+		return porcentaje3meses;
+	}
+
+	public void setPorcentaje3meses(int porcentaje3meses) {
+		this.porcentaje3meses = porcentaje3meses;
+	}
+
+	public int getPorcentaje6meses() {
+		return porcentaje6meses;
+	}
+
+	public void setPorcentaje6meses(int porcentaje6meses) {
+		this.porcentaje6meses = porcentaje6meses;
+	}
+
+	public int getPorcentaje1anio() {
+		return porcentaje1anio;
+	}
+
+	public void setPorcentaje1anio(int porcentaje1anio) {
+		this.porcentaje1anio = porcentaje1anio;
+	}
 }

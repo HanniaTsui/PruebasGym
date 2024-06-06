@@ -1,5 +1,6 @@
 package controlador;
 
+import Modelo.TarifaObj;
 import Vista.FramePrincipal;
 import Vista.TarifasVista;
 
@@ -20,8 +21,8 @@ public class TarifasControlador {
     	FramePrincipal.obtenerInstancia().agregarPanel(vista.nuevaTarifa());
     }
 
-    public void editarTarifa() {
-    	FramePrincipal.obtenerInstancia().agregarPanel(vista.editarTarifa());
+    public void editarTarifa(TarifaObj tarifa) {
+    	FramePrincipal.obtenerInstancia().agregarPanel(vista.editarTarifa(tarifa));
     }
 
    

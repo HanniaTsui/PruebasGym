@@ -2,29 +2,29 @@ package Vista;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
+import java.util.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import controlador.ClientesControlador;
+import Modelo.PlanesModelo;
+import Modelo.PlanesObj;
+import Modelo.TarifaModelo;
+import Modelo.TarifaObj;
 import controlador.MenuControlador;
 import controlador.TarifasControlador;
 
@@ -40,6 +40,9 @@ public class TarifasVista {
 	 Color colorBtnEditar = new Color(89,89,89); 
 	 private JTextField textNombreTarifa, textPrecioMensual, textDesc3, textDesc6, textDesc1, textPrecio3, textPrecio6, textPrecio1;
 	 JButton btnVolver;
+	 private ArrayList<String> tiposDePlan;
+	 private Map<String, String> tarifasMap = new HashMap<>();
+
 
 	 private TarifasControlador controlador;
 
@@ -70,137 +73,84 @@ public class TarifasVista {
         btnChecador.setBackground(colorBtnGuardar);
         btnChecador.setBounds(880, 114, 200, 30);
         panel.add(btnChecador);
-        
-        ArrayList<String> tiposDePlan = new ArrayList<>();
-        tiposDePlan.add("Plan general");
-        tiposDePlan.add("Plan familiar");
-        tiposDePlan.add("Plan estudiante");
-        tiposDePlan.add("Plan dúo");
-        tiposDePlan.add("Plan visitante");
 
-        ArrayList<String> detallesDePlan = new ArrayList<>();
-        detallesDePlan.add("<br>Plan Estándar - $399/mes<br>$1,077/3Meses<br>$2,394/6Meses<br>$4788/1Año");
-        detallesDePlan.add("<br>Plan Estándar - $799/mes<br>$2,097/3Meses<br>$4,194/6Meses<br>$8,388/1Año");
-        detallesDePlan.add("<br>Plan Estándar - $599/mes<br>$1,797/3Meses<br>$3,594/6Meses<br>$7,188/1Año");
-        detallesDePlan.add("<br>Plan Estándar - $299/mes<br>$897/3Meses<br>$1,794/6Meses<br>$3,588/1Año");
-        detallesDePlan.add("<br>Plan Visitante - $50/Día");
+		TarifaModelo.cargarTarifas();
+		List<TarifaObj> tarifaObjList = TarifaModelo.getTarifa();
 
-        ArrayList<String> infoPlan = new ArrayList<>();
-        infoPlan.add("Plan general\n" +
-                "Plan Estándar - $399/mes:\n"
-                + "- Acceso ilimitado a todas las instalaciones del gimnasio.\n"
-                + "- Horario flexible: acceso al gimnasio 24/7.\n"
-                + "- Soporte continuo y atención al cliente.\n\n"
-                + "Plan Estándar - Trimestral ($1,077):\n"
-                + "- Disfruta de 3 meses de acceso ilimitado.\n"
-                + "- Ahorro frente al plan mensual individual.\n"
-                + "- ¡Perfecto para comprometerse por un periodo corto!\n\n"
-                + "Plan Estándar - 6 Meses ($2,394):\n"
-                + "- Disfruta de 6 meses de acceso ilimitado.\n"
-                + "- Mayor ahorro al elegir un plan de medio año.\n"
-                + "- ¡Mantente en forma durante medio año!\n\n"
-                + "Plan Estándar - Anual ($4,788):\n"
-                + "- Disfruta de un año completo de acceso ilimitado.\n"
-                + "- Elige el plan más largo para la experiencia completa.\n"
-                + "- ¡Aprovecha el mayor ahorro y logra tus objetivos de fitness a largo plazo!");
-        infoPlan.add("Plan Familiar\n"
-                + "Plan Familiar - $699/mes:\n"
-                + "- Acceso ilimitado a todas las instalaciones del gimnasio para 3 personas.\n"
-                + "- Horario flexible: acceso al gimnasio 24/7.\n"
-                + "- Soporte continuo y atención al cliente.\n\n"
-                + "Plan Familiar - Trimestral ($2,097):\n"
-                + "- Disfruta de 3 meses de acceso ilimitado para 3 personas.\n"
-                + "- Ahorro frente al plan mensual individual.\n"
-                + "- ¡Perfecto para familias que buscan un compromiso a corto plazo!\n\n"
-                + "Plan Familiar - 6 Meses ($4,194):\n"
-                + "- Disfruta de 6 meses de acceso ilimitado para 3 personas.\n"
-                + "- Mayor ahorro al elegir un plan de medio año.\n"
-                + "- ¡Mantente en forma con tu familia durante medio año!\n\n"
-                + "Plan Familiar - Anual ($8,388):\n"
-                + "- Disfruta de un año completo de acceso ilimitado para 3 personas.\n"
-                + "- Elige el plan más largo para disfrutar de la experiencia completa.\n"
-                + "- ¡Aprovecha el mayor ahorro y motiva a tu familia a lograr sus objetivos de fitness a largo plazo!");
-        infoPlan.add("Plan Estudiante\n" +
-                "Plan Estudiante - $299/mes:\n" +
-                "- Acceso ilimitado a todas las instalaciones del gimnasio.\n" +
-                "- Horario flexible: acceso al gimnasio 24/7.\n" +
-                "- Soporte continuo y atención al cliente.\n\n" +
-                "Plan Estudiante - Trimestral ($897):\n" +
-                "- Disfruta de 3 meses de acceso ilimitado.\n" +
-                "- Ahorro frente al plan mensual individual.\n" +
-                "- ¡Ideal para estudiantes comprometidos con sus objetivos de fitness!\n\n" +
-                "Plan Estudiante - 6 Meses ($1,794):\n" +
-                "- Disfruta de 6 meses de acceso ilimitado.\n" +
-                "- Mayor ahorro al elegir un plan de medio año.\n" +
-                "- ¡Mantente en forma durante medio año mientras estudias!\n\n" +
-                "Plan Estudiante - Anual ($3,588):\n" +
-                "- Disfruta de un año completo de acceso ilimitado.\n" +
-                "- Elige el plan más largo para la experiencia completa.\n" +
-                "- ¡Aprovecha el mayor ahorro y mantente en forma durante todo el año académico!");
-        infoPlan.add("Plan Dúo\n"
-                + "Plan Dúo - $599/mes:\n"
-                + "- Acceso ilimitado a todas las instalaciones del gimnasio para 3 personas.\n"
-                + "- Horario flexible: acceso al gimnasio 24/7.\n"
-                + "- Soporte continuo y atención al cliente.\n\n"
-                + "Plan Dúo - Trimestral ($1,797):\n"
-                + "- Disfruta de 3 meses de acceso ilimitado para 3 personas.\n"
-                + "- Ahorro frente al plan mensual individual.\n\n"
-                + "Plan Dúo - 6 Meses ($3,594):\n"
-                + "- Disfruta de 6 meses de acceso ilimitado para 3 personas.\n"
-                + "- Mayor ahorro al elegir un plan de medio año.\n"
-                + "Plan Dúo - Anual ($7,188):\n"
-                + "- Disfruta de un año completo de acceso ilimitado para 3 personas.\n"
-                + "- Elige el plan más largo para disfrutar de la experiencia completa.\n");
-        infoPlan.add("Plan Visitante\n"
-                + "Plan Visitante - $50/día:\n"
-                + "- Acceso ilimitado a todas las instalaciones del gimnasio durante un día.\n"
-                + "- Acceso a clases grupales durante el día de visita.\n"
-                + "- Soporte continuo y atención al cliente durante la estancia.\n"
-                + "- ¡Perfecto para probar nuestras instalaciones o disfrutar de un día de fitness!");
+		ArrayList<String> detallesDePlan = new ArrayList<>();
+		ArrayList<String> infoPlan = new ArrayList<>();
 
-	    for (int i = 0; i < tiposDePlan.size(); i++) {
-	    	int index = i;
-	        JPanel panelTarifa = new JPanel(new BorderLayout());
-	        JLabel info = new JLabel("<html><div style='text-align: center;'>" + tiposDePlan.get(i) + "<br>" + detallesDePlan.get(i) + "</div></html>");
-	        info.setFont(new Font("Arial Black", Font.PLAIN, 16));
-	        info.setBorder(BorderFactory.createLineBorder(Color.black, 3));
-	        info.setHorizontalAlignment(SwingConstants.CENTER);
-	        info.setVerticalAlignment(SwingConstants.CENTER);
-	        info.setOpaque(true);
-	        info.setForeground(Color.black);
-	        info.setBackground(new Color(148, 182, 223));
-	        panelTarifa.add(info, BorderLayout.CENTER);
+		for (TarifaObj tarifaObj : tarifaObjList) {
+			double tarifa3 = (tarifaObj.getPlan().getPrecio() * 3) - ((tarifaObj.getPlan().getPrecio() / 100) * tarifaObj.getDescuento().getPorcentaje3meses());
+			double tarifa6 = (tarifaObj.getPlan().getPrecio() * 6) - ((tarifaObj.getPlan().getPrecio() / 100) * tarifaObj.getDescuento().getPorcentaje6meses());
+			double tarifa1anio = (tarifaObj.getPlan().getPrecio() * 12) - ((tarifaObj.getPlan().getPrecio() / 100) * tarifaObj.getDescuento().getPorcentaje1anio());
 
-	        JButton btnDetalles = new JButton("Detalles");
-	        btnDetalles.setBackground(Color.black);
-	        btnDetalles.addActionListener(new ActionListener() {
-		    	public void actionPerformed(ActionEvent e) {
-		    		JOptionPane.showMessageDialog(null, infoPlan.get(index));
-		    	}
-		    });
-	        btnDetalles.setForeground(Color.white);
-	        btnDetalles.setFocusable(false);
-	        btnDetalles.setBorder(null);
+			detallesDePlan.add("<br>" + tarifaObj.getPlan().getNombre() +" - $" + tarifaObj.getPlan().getPrecio() +"/mes<br>" + tarifa3 +"/3Meses<br>$" + tarifa6 +"/6Meses<br>$"+ tarifa1anio+"/1Año");
 
-	        JButton btnEditar = new JButton("Editar");
-	        btnEditar.addActionListener(new ActionListener() {
-		    	public void actionPerformed(ActionEvent e) {
-					controlador.editarTarifa();
-		    	}
-		    });
-	        btnEditar.setForeground(Color.white);
-	        btnEditar.setFocusable(false);
-	        btnEditar.setBorder(null);
-	        btnEditar.setBackground(colorBtnGuardar);
+			String[] beneficios = tarifaObj.getServicios().getBeneficio().split(",");
+			String infoPlanStr = tarifaObj.getPlan().getNombre() + "\n" +
+					"Plan Estándar - $" + tarifaObj.getPlan().getPrecio() + " /mes:\n";
 
-	        JPanel panelBotones = new JPanel(new GridLayout(1, 2, 5, 5));
-	        panelBotones.add(btnDetalles);
-	        panelBotones.add(btnEditar);
-	        panelBotones.setBackground(new Color(119, 182, 255));
-	        panelTarifa.add(panelBotones, BorderLayout.SOUTH);
+			for (String beneficio: beneficios) {
+				infoPlanStr += "- " + beneficio + "\n";
+			}
 
-	        panel_1.add(panelTarifa);
-	    }
+			infoPlanStr+= "Plan Estándar - Trimestral ($"+ tarifa3 +"):\n"
+					+ tarifaObj.getServicios().getDescripcion3meses().replace(",", "\n") + "\n\n"
+					+ "Plan Estándar - 6 Meses ($"+tarifa6+"):\n"
+					+ tarifaObj.getServicios().getDescripcion6meses().replace(",", "\n") + "\n\n"
+					+ "Plan Estándar - Anual ($"+tarifa1anio+"):\n"
+					+ tarifaObj.getServicios().getDescripcion1anio().replace(",", "\n\n");
+
+			infoPlan.add(infoPlanStr);
+		}
+
+
+        for (int i = 0; i < Math.min(tarifaObjList.size(), Math.min(detallesDePlan.size(), infoPlan.size())); i++) {
+            int index = i;
+            JPanel panelTarifa = new JPanel(new BorderLayout());
+            
+            JLabel info = new JLabel("<html><div style='text-align: center;'>" + tarifaObjList.get(i).getPlan().getNombre() + "<br>" + detallesDePlan.get(i) + "</div></html>");
+            info.setFont(new Font("Arial Black", Font.PLAIN, 16));
+            info.setBorder(BorderFactory.createLineBorder(Color.black, 3));
+            info.setHorizontalAlignment(SwingConstants.CENTER);
+            info.setVerticalAlignment(SwingConstants.CENTER);
+            info.setOpaque(true);
+            info.setForeground(Color.black);
+            info.setBackground(new Color(148, 182, 223));
+            panelTarifa.add(info, BorderLayout.CENTER);
+
+            JButton btnDetalles = new JButton("Detalles");
+            btnDetalles.setBackground(Color.black);
+            btnDetalles.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    JOptionPane.showMessageDialog(null, infoPlan.get(index));
+                }
+            });
+            btnDetalles.setForeground(Color.white);
+            btnDetalles.setFocusable(false);
+            btnDetalles.setBorder(null);
+
+            JButton btnEditar = new JButton("Editar");
+			int finalI = i;
+			btnEditar.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    controlador.editarTarifa(tarifaObjList.get(finalI));
+                }
+            });
+            btnEditar.setForeground(Color.white);
+            btnEditar.setFocusable(false);
+            btnEditar.setBorder(null);
+            btnEditar.setBackground(colorBtnGuardar);
+
+            JPanel panelBotones = new JPanel(new GridLayout(1, 2, 5, 5));
+            panelBotones.add(btnDetalles);
+            panelBotones.add(btnEditar);
+            panelBotones.setBackground(new Color(119, 182, 255));
+            panelTarifa.add(panelBotones, BorderLayout.SOUTH);
+
+            panel_1.add(panelTarifa);
+        }
 
 	    JLabel lblTitutlo = new JLabel("Tarifas");
 	    lblTitutlo.setForeground(new Color(0, 0, 0));
@@ -212,10 +162,21 @@ public class TarifasVista {
 	    return panel;
 	}
 
-	public JPanel editarTarifa() {
+	private void cargarTiposDePlan() {
+        // Cargar los planes desde la base de datos
+        PlanesModelo.cargarPlan();
+        List<PlanesObj> planes = PlanesModelo.getPlanes();
+        
+        // Agregar los nombres de los planes al ArrayList tiposDePlan
+        for (PlanesObj plan : planes) {
+            tiposDePlan.add(plan.getNombre());
+        }
+    }
+
+	public JPanel editarTarifa(TarifaObj tarifa) {
 		JPanel panel = getMenu();
 
-		elementosEditarNuevaTarifas(panel);
+		elementosEditarNuevaTarifas(panel, tarifa);
 		JLabel lblTitutlo = new JLabel("Editar tarifa");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
 		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -232,6 +193,49 @@ public class TarifasVista {
 		JButton btnGuardar_1 = new JButton("Guardar");
 		btnGuardar_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (textNombreTarifa.getText().isEmpty()) {
+					System.out.println("Esta vacio");
+					return;
+				}
+				double tarifaNueva;
+				try {
+					tarifaNueva = Double.parseDouble(textPrecioMensual.getText());
+				} catch (NumberFormatException ignored) {
+					System.out.println("No es un numero");
+					return;
+				}
+
+				int descuento1;
+				try {
+					descuento1 = Integer.parseInt(textDesc1.getText());
+				} catch (NumberFormatException ignored) {
+					System.out.println("No es un numero");
+					return;
+				}
+
+				int descuento3;
+				try {
+					descuento3 = Integer.parseInt(textDesc3.getText());
+				} catch (NumberFormatException ignored) {
+					System.out.println("No es un numero");
+					return;
+				}
+
+				int descuento6;
+				try {
+					descuento6 = Integer.parseInt(textDesc6.getText());
+				} catch (NumberFormatException ignored) {
+					System.out.println("No es un numero");
+					return;
+				}
+
+				tarifa.getPlan().setNombre(textNombreTarifa.getText());
+				tarifa.getPlan().setPrecio(tarifaNueva);
+				tarifa.getDescuento().setPorcentaje1anio(descuento1);
+				tarifa.getDescuento().setPorcentaje3meses(descuento3);
+				tarifa.getDescuento().setPorcentaje6meses(descuento6);
+
+				TarifaModelo.actualizarTarifa(tarifa);
 				JOptionPane.showMessageDialog(null, "¡Nuevos cambios realizados con éxito!", "Edición exitosa", JOptionPane.INFORMATION_MESSAGE);
                 controlador.tarifas();
 			}
@@ -263,7 +267,7 @@ public class TarifasVista {
 		return panel;
 	}
 	
-	public void elementosEditarNuevaTarifas(JPanel panel) {
+	public void elementosEditarNuevaTarifas(JPanel panel, TarifaObj tarifa) {
 		btnVolver=new JButton("Volver");
 	    btnVolver.setForeground(new Color(255, 255, 255));
 	    btnVolver.addActionListener(new ActionListener() {
@@ -345,22 +349,58 @@ public class TarifasVista {
 		textDesc3 = new JTextField();
 		textDesc3.setBounds(331, 285, 70, 30);
 		validacionNumerica(textDesc3);
+		textDesc3.addActionListener(e -> {
+			if (textDesc3.getText().isEmpty()) {
+				textPrecio3.setText("");
+				return;
+			}
+
+			if (tarifa == null) return;
+			double tarifa3 = (tarifa.getPlan().getPrecio() * 3) - ((tarifa.getPlan().getPrecio() / 100) * Integer.parseInt(textDesc3.getText()));
+
+			textPrecio3.setText(String.valueOf(tarifa3));
+		});
 		panel.add(textDesc3);
 		textDesc3.setColumns(10);
 		
 		textDesc6 = new JTextField();
 		textDesc6.setColumns(10);
+		textDesc6.addActionListener(e -> {
+			if (textDesc6.getText().isEmpty()) {
+				textPrecio6.setText("");
+				return;
+			}
+
+
+			if (tarifa == null) return;
+			double tarifa3 = (tarifa.getPlan().getPrecio() * 3) - ((tarifa.getPlan().getPrecio() / 100) * Integer.parseInt(textDesc6.getText()));
+
+			textPrecio6.setText(String.valueOf(tarifa3));
+		});
 		textDesc6.setBounds(331, 335, 70, 30);
 		validacionNumerica(textDesc6);
 		panel.add(textDesc6);
 		
 		textDesc1 = new JTextField();
 		textDesc1.setColumns(10);
+		textDesc1.addActionListener(e -> {
+			if (textDesc1.getText().isEmpty()) {
+				textPrecio1.setText("");
+				return;
+			}
+
+			if (tarifa == null) return;
+
+			double tarifa3 = (tarifa.getPlan().getPrecio() * 3) - ((tarifa.getPlan().getPrecio() / 100) * Integer.parseInt(textDesc1.getText()));
+
+			textPrecio1.setText(String.valueOf(tarifa3));
+		});
 		validacionNumerica(textDesc1);
 		textDesc1.setBounds(331, 385, 70, 30);
 		panel.add(textDesc1);
 		
 		textPrecio3 = new JTextField();
+		textPrecio3.setEditable(false);
 		textPrecio3.setColumns(10);
 		textPrecio3.setBounds(490, 285, 70, 30);
 		validacionNumerica(textPrecio3);
@@ -368,20 +408,53 @@ public class TarifasVista {
 		
 		textPrecio6 = new JTextField();
 		textPrecio6.setColumns(10);
+		textPrecio6.setEditable(false);
 		textPrecio6.setBounds(490, 335, 70, 30);
 		validacionNumerica(textPrecio6);
 		panel.add(textPrecio6);
 		
 		textPrecio1 = new JTextField();
 		textPrecio1.setColumns(10);
+		textPrecio1.setEditable(false);
 		validacionNumerica(textPrecio1);
 		textPrecio1.setBounds(490, 385, 70, 30);
 		panel.add(textPrecio1);
-	
+
+		if (tarifa != null) {
+			textNombreTarifa.setText(tarifa.getPlan().getNombre());
+			textPrecioMensual.setText(String.valueOf(tarifa.getPlan().getPrecio()));
+			textDesc1.setText(String.valueOf(tarifa.getDescuento().getPorcentaje1anio()));
+			textDesc3.setText(String.valueOf(tarifa.getDescuento().getPorcentaje3meses()));
+			textDesc6.setText(String.valueOf(tarifa.getDescuento().getPorcentaje6meses()));
+
+			double tarifa3 = (tarifa.getPlan().getPrecio() * 3) - ((tarifa.getPlan().getPrecio() / 100) * tarifa.getDescuento().getPorcentaje3meses());
+			double tarifa6 = (tarifa.getPlan().getPrecio() * 6) - ((tarifa.getPlan().getPrecio() / 100) * tarifa.getDescuento().getPorcentaje6meses());
+			double tarifa1anio = (tarifa.getPlan().getPrecio() * 12) - ((tarifa.getPlan().getPrecio() / 100) * tarifa.getDescuento().getPorcentaje1anio());
+
+			textPrecio1.setText(String.valueOf(tarifa1anio));
+			textPrecio3.setText(String.valueOf(tarifa3));
+			textPrecio6.setText(String.valueOf(tarifa6));
+
+			String[] beneficios = tarifa.getServicios().getBeneficio().split(",");
+
+			for (String bene: beneficios) {
+				if (box3.getText().toUpperCase(Locale.ROOT).contains(bene.substring(0, 5).toUpperCase(Locale.ROOT))) {
+					box3.setSelected(true);
+				}
+				if (box2.getText().toUpperCase(Locale.ROOT).contains(bene.substring(0, 5).toUpperCase(Locale.ROOT))) {
+					box2.setSelected(true);
+				}
+
+				if (box1.getText().toUpperCase(Locale.ROOT).contains(bene.substring(0, 5).toUpperCase(Locale.ROOT))) {
+					box1.setSelected(true);
+				}
+			}
+		}
 	}
+
 	public JPanel nuevaTarifa() {
 		JPanel panel = getMenu();
-		elementosEditarNuevaTarifas(panel);
+		elementosEditarNuevaTarifas(panel, null);
 		JLabel lblTitutlo = new JLabel("Nueva tarifa");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
 		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
