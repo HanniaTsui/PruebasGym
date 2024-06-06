@@ -1,5 +1,7 @@
 package Modelo;
 
+import com.code.advancedsql.query.Delete;
+import com.code.advancedsql.query.Insert;
 import com.code.advancedsql.query.Select;
 import com.code.advancedsql.query.Update;
 
@@ -20,6 +22,34 @@ public class PlanesModelo {
 
     public static PlanesModelo obtenerInstancia() {
         return instance;
+    }
+
+    public static void subirPlan(PlanesObj plan) {
+        Insert nombreTabla = BaseDatos.optenerIstancia().getMySQL().table("planes").insert();
+
+        nombreTabla.field("ID", plan.getID());
+        nombreTabla.field("nombre", plan.getNombre());
+        nombreTabla.field("precio", BigDecimal.valueOf(plan.getPrecio()));
+        nombreTabla.field("duracion", plan.getDuracion());
+
+        try {
+            nombreTabla.execute();
+            System.out.println("Se Subio");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void eliminarPlan(PlanesObj plan) {
+        Delete nombreTabla = BaseDatos.optenerIstancia().getMySQL().table("planes").delete();
+
+        nombreTabla.where("ID =?", plan.getID());
+        try {
+            nombreTabla.execute();
+            System.out.println("Se elimino");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void actualizarPlan(PlanesObj plan) {

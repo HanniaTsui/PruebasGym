@@ -1,5 +1,7 @@
 package Modelo;
 
+import com.code.advancedsql.query.Delete;
+import com.code.advancedsql.query.Insert;
 import com.code.advancedsql.query.Select;
 import com.code.advancedsql.query.Update;
 
@@ -19,6 +21,35 @@ public class DescuentoModelo {
 
     public static DescuentoModelo obtenerInstancia() {
         return instance;
+    }
+
+    public static void subirDescuento(DescuentoObj descuento) {
+        Insert nombreTabla = BaseDatos.optenerIstancia().getMySQL().table("descuento").insert();
+
+        nombreTabla.field("ID", descuento.getID());
+        nombreTabla.field("porcentaje3Meses", descuento.getPorcentaje3meses());
+        nombreTabla.field("porcentaje6Meses", descuento.getPorcentaje6meses());
+        nombreTabla.field("porcentaje1Anio", descuento.getPorcentaje1anio());
+
+        try {
+            nombreTabla.execute();
+            System.out.println("Se subio");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void eliminarDescuento(DescuentoObj descuento) {
+        Delete nombreTabla = BaseDatos.optenerIstancia().getMySQL().table("descuento").delete();
+
+        nombreTabla.where("ID =?", descuento.getID());
+
+        try {
+            nombreTabla.execute();
+            System.out.println("Se Elimino");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void actualizarDescuento(DescuentoObj descuento) {

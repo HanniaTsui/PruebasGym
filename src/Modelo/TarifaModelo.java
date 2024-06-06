@@ -1,5 +1,7 @@
 package Modelo;
 
+import com.code.advancedsql.query.Delete;
+import com.code.advancedsql.query.Insert;
 import com.code.advancedsql.query.Select;
 import com.code.advancedsql.query.Update;
 
@@ -27,6 +29,44 @@ public class TarifaModelo {
         ServicioModelo.actualizarServicio(tarifaActualizada.getServicios());
         PlanesModelo.actualizarPlan(tarifaActualizada.getPlan());
         DescuentoModelo.actualizarDescuento(tarifaActualizada.getDescuento());
+    }
+
+    public static void removerTarifa(TarifaObj tarifa) {
+        Delete nombreTabla = BaseDatos.optenerIstancia().getMySQL().table("planServicio").delete();
+
+        nombreTabla.where("IDPlan =? AND IDServicio =? AND IDDescuento =?", tarifa.getPlan().getID(), tarifa.getServicios().getID(), tarifa.getDescuento().getID());
+        //nombreTabla.where("IDServicio =?", tarifa.getServicios().getID());
+        //nombreTabla.where("IDDescuento =?", tarifa.getDescuento().getID());
+
+        try {
+            nombreTabla.execute();
+            System.out.println("Se elimino");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        ServicioModelo.eliminarServicio(tarifa.getServicios());
+        PlanesModelo.eliminarPlan(tarifa.getPlan());
+        DescuentoModelo.eliminarDescuento(tarifa.getDescuento());
+    }
+
+    public static void subirTarifa(TarifaObj tarifa) {
+        ServicioModelo.subirServicio(tarifa.getServicios());
+        PlanesModelo.subirPlan(tarifa.getPlan());
+        DescuentoModelo.subirDescuento(tarifa.getDescuento());
+
+        Insert nombreTabla = BaseDatos.optenerIstancia().getMySQL().table("planServicio").insert();
+
+        nombreTabla.field("IDPlan", tarifa.getPlan().getID());
+        nombreTabla.field("IDDescuento", tarifa.getDescuento().getID());
+        nombreTabla.field("IDServicio", tarifa.getServicios().getID());
+
+        try {
+            nombreTabla.execute();
+            System.out.println("Se subio Tarifa");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void cargarTarifas() {

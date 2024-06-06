@@ -1,5 +1,7 @@
 package Modelo;
 
+import com.code.advancedsql.query.Delete;
+import com.code.advancedsql.query.Insert;
 import com.code.advancedsql.query.Select;
 import com.code.advancedsql.query.Update;
 
@@ -19,6 +21,35 @@ public class ServicioModelo {
 
     public static ServicioModelo obtenerInstancia() {
         return instance;
+    }
+
+    public static void subirServicio(ServicioObj servicio) {
+        Insert nombreTabla = BaseDatos.optenerIstancia().getMySQL().table("servicio").insert();
+
+        nombreTabla.field("ID", servicio.getID());
+        nombreTabla.field("descripcio3meses", servicio.getDescripcion3meses());
+        nombreTabla.field("descripcio6meses", servicio.getDescripcion6meses());
+        nombreTabla.field("descripcio1anio", servicio.getDescripcion1anio());
+        nombreTabla.field("beneficio", servicio.getBeneficio());
+
+        try {
+            nombreTabla.execute();
+            System.out.println("Se subio");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void eliminarServicio(ServicioObj servicio) {
+        Delete nombreTabla = BaseDatos.optenerIstancia().getMySQL().table("servicio").delete();
+
+        nombreTabla.where("ID =?", servicio.getID());
+        try {
+            nombreTabla.execute();
+            System.out.println("Se eliminoo");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void actualizarServicio(ServicioObj servicio) {

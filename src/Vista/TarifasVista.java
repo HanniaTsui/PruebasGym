@@ -4,27 +4,13 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.util.*;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 
-import Modelo.PlanesModelo;
-import Modelo.PlanesObj;
-import Modelo.TarifaModelo;
-import Modelo.TarifaObj;
+import Modelo.*;
 import controlador.MenuControlador;
 import controlador.TarifasControlador;
 
@@ -42,6 +28,9 @@ public class TarifasVista {
 	 JButton btnVolver;
 	 private ArrayList<String> tiposDePlan;
 	 private Map<String, String> tarifasMap = new HashMap<>();
+	JCheckBox box1;
+	JCheckBox box3;
+	JCheckBox box2;
 
 
 	 private TarifasControlador controlador;
@@ -100,7 +89,7 @@ public class TarifasVista {
 					+ "Plan Estándar - 6 Meses ($"+tarifa6+"):\n"
 					+ tarifaObj.getServicios().getDescripcion6meses().replace(",", "\n") + "\n\n"
 					+ "Plan Estándar - Anual ($"+tarifa1anio+"):\n"
-					+ tarifaObj.getServicios().getDescripcion1anio().replace(",", "\n\n");
+					+ tarifaObj.getServicios().getDescripcion1anio().replace(",", "\n");
 
 			infoPlan.add(infoPlanStr);
 		}
@@ -109,6 +98,18 @@ public class TarifasVista {
         for (int i = 0; i < Math.min(tarifaObjList.size(), Math.min(detallesDePlan.size(), infoPlan.size())); i++) {
             int index = i;
             JPanel panelTarifa = new JPanel(new BorderLayout());
+
+			JPopupMenu popupMenu = new JPopupMenu();
+			JMenuItem deleteItem = new JMenuItem("Eliminar");
+
+			int finalI1 = i;
+			deleteItem.addActionListener(e -> {
+				TarifaModelo.removerTarifa(tarifaObjList.get(finalI1));
+				JOptionPane.showMessageDialog(null, "Se elimino correctamente");
+				controlador.tarifas();
+			});
+
+			popupMenu.add(deleteItem);
             
             JLabel info = new JLabel("<html><div style='text-align: center;'>" + tarifaObjList.get(i).getPlan().getNombre() + "<br>" + detallesDePlan.get(i) + "</div></html>");
             info.setFont(new Font("Arial Black", Font.PLAIN, 16));
@@ -122,6 +123,21 @@ public class TarifasVista {
 
             JButton btnDetalles = new JButton("Detalles");
             btnDetalles.setBackground(Color.black);
+			btnDetalles.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					if (e.isPopupTrigger()) {
+						popupMenu.show(e.getComponent(), e.getX(), e.getY());
+					}
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					if (e.isPopupTrigger()) {
+						popupMenu.show(e.getComponent(), e.getX(), e.getY());
+					}
+				}
+			});
             btnDetalles.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     JOptionPane.showMessageDialog(null, infoPlan.get(index));
@@ -161,17 +177,6 @@ public class TarifasVista {
 	    
 	    return panel;
 	}
-
-	private void cargarTiposDePlan() {
-        // Cargar los planes desde la base de datos
-        PlanesModelo.cargarPlan();
-        List<PlanesObj> planes = PlanesModelo.getPlanes();
-        
-        // Agregar los nombres de los planes al ArrayList tiposDePlan
-        for (PlanesObj plan : planes) {
-            tiposDePlan.add(plan.getNombre());
-        }
-    }
 
 	public JPanel editarTarifa(TarifaObj tarifa) {
 		JPanel panel = getMenu();
@@ -229,11 +234,26 @@ public class TarifasVista {
 					return;
 				}
 
+				String beneficios = "";
+
+				if (box1.isSelected()) {
+					beneficios += box1.getText() + ", ";
+				}
+
+				if (box2.isSelected()) {
+					beneficios += box2.getText() + ", ";
+				}
+
+				if (box3.isSelected()) {
+					beneficios += box3.getText() + ", ";
+				}
+
 				tarifa.getPlan().setNombre(textNombreTarifa.getText());
 				tarifa.getPlan().setPrecio(tarifaNueva);
 				tarifa.getDescuento().setPorcentaje1anio(descuento1);
 				tarifa.getDescuento().setPorcentaje3meses(descuento3);
 				tarifa.getDescuento().setPorcentaje6meses(descuento6);
+				tarifa.getServicios().setBeneficio(beneficios);
 
 				TarifaModelo.actualizarTarifa(tarifa);
 				JOptionPane.showMessageDialog(null, "¡Nuevos cambios realizados con éxito!", "Edición exitosa", JOptionPane.INFORMATION_MESSAGE);
@@ -314,21 +334,21 @@ public class TarifasVista {
 		lblTotal_1_1.setBounds(423, 384, 50, 30); configurarLabelsIzq(lblTotal_1_1);
 		panel.add(lblTotal_1_1);
 		
-		JCheckBox box1 = new JCheckBox("Acceso ilimitado a las instalaciones del gimnasio.");
+		box1 = new JCheckBox("Acceso ilimitado a las instalaciones del gimnasio.");
 		box1.setFont(new Font("Arial Black", Font.PLAIN, 14));
 		box1.setOpaque(false);
 		box1.setFocusable(false);
 		box1.setBounds(109, 445, 513, 20);
 		panel.add(box1);
 		
-		JCheckBox box2 = new JCheckBox("Horario flexible, acceso al gimnasio 24/7.");
+		box2 = new JCheckBox("Horario flexible, acceso al gimnasio 24/7.");
 		box2.setFont(new Font("Arial Black", Font.PLAIN, 14));
 		box2.setOpaque(false);
 		box2.setFocusable(false);
 		box2.setBounds(109, 485, 513, 20);
 		panel.add(box2);
 		
-		JCheckBox box3 = new JCheckBox("Entrenador personal.");
+		box3 = new JCheckBox("Entrenador personal.");
 		box3.setFont(new Font("Arial Black", Font.PLAIN, 14));
 		box3.setOpaque(false);
 		box3.setFocusable(false);
@@ -355,10 +375,13 @@ public class TarifasVista {
 				return;
 			}
 
-			if (tarifa == null) return;
-			double tarifa3 = (tarifa.getPlan().getPrecio() * 3) - ((tarifa.getPlan().getPrecio() / 100) * Integer.parseInt(textDesc3.getText()));
+			try {
+				double precio = Double.parseDouble(textPrecioMensual.getText());
+				double precioNuevo = (precio * 3) - ((precio / 100) * Integer.parseInt(textDesc3.getText()));
 
-			textPrecio3.setText(String.valueOf(tarifa3));
+				textPrecio3.setText(String.valueOf(precioNuevo));
+			} catch (NumberFormatException numberFormatException) {
+			}
 		});
 		panel.add(textDesc3);
 		textDesc3.setColumns(10);
@@ -372,10 +395,13 @@ public class TarifasVista {
 			}
 
 
-			if (tarifa == null) return;
-			double tarifa3 = (tarifa.getPlan().getPrecio() * 3) - ((tarifa.getPlan().getPrecio() / 100) * Integer.parseInt(textDesc6.getText()));
+			try {
+				double precio = Double.parseDouble(textPrecioMensual.getText());
+				double precioNuevo = (precio * 6) - ((precio / 100) * Integer.parseInt(textDesc6.getText()));
 
-			textPrecio6.setText(String.valueOf(tarifa3));
+				textPrecio6.setText(String.valueOf(precioNuevo));
+			} catch (NumberFormatException numberFormatException) {
+			}
 		});
 		textDesc6.setBounds(331, 335, 70, 30);
 		validacionNumerica(textDesc6);
@@ -389,11 +415,13 @@ public class TarifasVista {
 				return;
 			}
 
-			if (tarifa == null) return;
+			try {
+				double precio = Double.parseDouble(textPrecioMensual.getText());
+				double precioNuevo = (precio * 12) - ((precio / 100) * Integer.parseInt(textDesc1.getText()));
 
-			double tarifa3 = (tarifa.getPlan().getPrecio() * 3) - ((tarifa.getPlan().getPrecio() / 100) * Integer.parseInt(textDesc1.getText()));
-
-			textPrecio1.setText(String.valueOf(tarifa3));
+				textPrecio1.setText(String.valueOf(precioNuevo));
+			} catch (NumberFormatException numberFormatException) {
+			}
 		});
 		validacionNumerica(textDesc1);
 		textDesc1.setBounds(331, 385, 70, 30);
@@ -438,6 +466,10 @@ public class TarifasVista {
 			String[] beneficios = tarifa.getServicios().getBeneficio().split(",");
 
 			for (String bene: beneficios) {
+				if (bene.length() < 5) {
+					continue;
+				}
+
 				if (box3.getText().toUpperCase(Locale.ROOT).contains(bene.substring(0, 5).toUpperCase(Locale.ROOT))) {
 					box3.setSelected(true);
 				}
@@ -463,12 +495,6 @@ public class TarifasVista {
 		panel.add(lblTitutlo);
 		
 		JButton btnGuardar_1 = new JButton("Guardar");
-		btnGuardar_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "¡Nueva tarifa agregada correctamente!", "Añadido exitoso", JOptionPane.INFORMATION_MESSAGE);
-				controlador.tarifas();
-			}
-		});
 		btnGuardar_1.setForeground(Color.WHITE);
 		btnGuardar_1.setFocusable(false);
 		btnGuardar_1.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
@@ -531,6 +557,97 @@ public class TarifasVista {
 		info1anio.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		info1anio.setBounds(761, 385, 330, 80);
 		panel.add(info1anio);
+
+		btnGuardar_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (textNombreTarifa.getText().isEmpty()) {
+					System.out.println("Esta vacio");
+					return;
+				}
+
+				if (info1anio.getText().isEmpty()) {
+					System.out.println("Esta vacio");
+					return;
+				}
+
+				if (infor3Meses.getText().isEmpty()) {
+					System.out.println("Esta vacio");
+					return;
+				}
+
+				if (infor6Meses.getText().isEmpty()) {
+					System.out.println("Esta vacio");
+					return;
+				}
+
+				double tarifaNueva;
+				try {
+					tarifaNueva = Double.parseDouble(textPrecioMensual.getText());
+				} catch (NumberFormatException ignored) {
+					System.out.println("No es un numero");
+					return;
+				}
+
+				int descuento1;
+				try {
+					descuento1 = Integer.parseInt(textDesc1.getText());
+				} catch (NumberFormatException ignored) {
+					System.out.println("No es un numero");
+					return;
+				}
+
+				int descuento3;
+				try {
+					descuento3 = Integer.parseInt(textDesc3.getText());
+				} catch (NumberFormatException ignored) {
+					System.out.println("No es un numero");
+					return;
+				}
+
+				int descuento6;
+				try {
+					descuento6 = Integer.parseInt(textDesc6.getText());
+				} catch (NumberFormatException ignored) {
+					System.out.println("No es un numero");
+					return;
+				}
+
+				String beneficios = "";
+
+				if (box1.isSelected()) {
+					beneficios += box1.getText() + ", ";
+				}
+
+				if (box2.isSelected()) {
+					beneficios += box2.getText() + ", ";
+				}
+
+				if (box3.isSelected()) {
+					beneficios += box3.getText() + ", ";
+				}
+
+				int idPlanes = 1;
+				int idServicio = 1;
+				int idDescuento = 1;
+
+				if (!PlanesModelo.getPlanes().isEmpty()) {
+					idPlanes = PlanesModelo.getPlanes().getLast().getID() + 1;
+				}
+
+				if (!ServicioModelo.getServicioObjList().isEmpty()) {
+					idServicio = ServicioModelo.getServicioObjList().getLast().getID() + 1;
+				}
+
+				if (!DescuentoModelo.getDescuentoObjcList().isEmpty()) {
+					idDescuento = DescuentoModelo.getDescuentoObjcList().getLast().getID() + 1;
+				}
+
+				TarifaModelo.subirTarifa(new TarifaObj(new PlanesObj(idPlanes, textNombreTarifa.getText(), tarifaNueva, "3 Meses"), new ServicioObj(idServicio, infor3Meses.getText(), infor6Meses.getText(), info1anio.getText(), beneficios), new DescuentoObj(idDescuento, descuento3, descuento6, descuento1)));
+				JOptionPane.showMessageDialog(null, "¡Nueva tarifa agregada correctamente!", "Añadido exitoso", JOptionPane.INFORMATION_MESSAGE);
+				controlador.tarifas();
+			}
+		});
+
 		return panel;
 	}
 	
