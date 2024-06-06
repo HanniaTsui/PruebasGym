@@ -367,6 +367,7 @@ public class ClasesVista {
 	    		int ID = 0;
 	    		String nombre = textNombre.getText().trim();
 	    		String horario = (String)comboBox.getSelectedItem();
+	    		textNombre.setBorder(null);
 	    		int diaSeleccionado = 1;
 	            if (checkLunes.isSelected()) {
 	                diaSeleccionado = 1;
@@ -382,6 +383,7 @@ public class ClasesVista {
 	            int idHorario = ClasesControlador.obtenerIdHorario(horario); // Método para obtener el ID del horario
 
 	            if (nombre.isEmpty()) {
+	            	 textNombre.setBorder(new LineBorder(Color.RED, 2));
 	            	JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.", "Error",
 	    					JOptionPane.ERROR_MESSAGE);
 	            }else {
@@ -840,6 +842,8 @@ public class ClasesVista {
 	    	public void actionPerformed(ActionEvent e) {
 				//controlador.clases();
 	    		clases.setNombre(textNombre.getText());
+	    		String nombre = textNombre.getText().trim();
+	    		textNombre.setBorder(null);
 	    		int diaSeleccionado = 1;
 	            if (checkLunes.isSelected()) {
 	                diaSeleccionado = 1;
@@ -856,8 +860,15 @@ public class ClasesVista {
 	            clases.setIdDia(diaSeleccionado);
 	            int indiceHorarioSeleccionado = comboBox.getSelectedIndex();
 	            clases.setIdHorario(indiceHorarioSeleccionado+1);
-	    		ClasesModelo.obtenerInstancia().editarClase(clases);
-	    		controlador.clases();
+	            
+	            if (nombre.isEmpty()) {
+	            	 textNombre.setBorder(new LineBorder(Color.RED, 2));
+	            	JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.", "Error",
+	    					JOptionPane.ERROR_MESSAGE);
+	            }else {
+		    		ClasesModelo.obtenerInstancia().editarClase(clases);
+		    		controlador.clases();
+	            }
 	    		 
 	    	}
 	    });

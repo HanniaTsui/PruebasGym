@@ -67,9 +67,8 @@ import controlador.MenuControlador;
 public class ClientesVista {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane, panel, panelInfo, panelCrear, panelMenuVertical, panelCredencial, p2, panelSup;
-	private final JPanel panelNegro = new JPanel();
-	private JButton btnBuscar, btnElim, btnReporte, btnGuardar, btnCancelar, btnPagar, btnEditar;
+	private JPanel contentPane, panelInfo, panelCrear, panelMenuVertical, panelCredencial;
+	private JButton btnBuscar, btnElim, btnReporte, btnGuardar, btnCancelar, btnPagar;
 	JLabel lblTitulo, lblGym, lblPersona, lblCodigo, lblFecha, lblTlefono, lblCorreoElectrnico, lblFechaDeRegistro,
 			lblMembresia, lblPeterParker, lblNewLabel;
 	private JButton btnDetalles, btnCrear;
@@ -146,7 +145,7 @@ public class ClientesVista {
 		}
 
 		JComboBox<String> btnFiltro = new JComboBox<>();
-		btnFiltro.setModel(new DefaultComboBoxModel<>(new String[] { "Filtrar", "Todos", "Activos", "No activos" }));
+		btnFiltro.setModel(new DefaultComboBoxModel<>(new String[] {"Todos", "Activos", "No activos" }));
 		btnFiltro.setForeground(new Color(0, 0, 0));
 		btnFiltro.setBounds(943, 120, 187, 30);
 		btnFiltro.addActionListener(new ActionListener() {
@@ -521,7 +520,7 @@ public class ClientesVista {
         labelFechaFin.setText(fechaInicialFormateada);
 
         comboTipo = new JComboBox();
-        comboTipo.setModel(new DefaultComboBoxModel(new String[] { "  ", "1 mes", "3 meses", "6 meses", "1 año" }));
+        comboTipo.setModel(new DefaultComboBoxModel(new String[] { "", "1 mes", "3 meses", "6 meses", "1 año" }));
         comboTipo.setBounds(360, 350, 200, 30);
         comboTipo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -531,7 +530,7 @@ public class ClientesVista {
         panelCrear.add(comboTipo);
 
 		comboPago = new JComboBox();
-		comboPago.setModel(new DefaultComboBoxModel(new String[] { "  ", "Efectivo", "Tarjeta de credito", "Cheque" }));
+		comboPago.setModel(new DefaultComboBoxModel(new String[] { "", "Efectivo", "Tarjeta de credito", "Cheque" }));
 		comboPago.setBounds(360, 435, 200, 30);
 		panelCrear.add(comboPago);
 
@@ -658,15 +657,58 @@ public class ClientesVista {
 		String planMembresia = (String) comboTipo.getSelectedItem();
 		String fechaFinal = labelFechaFin.getText();
 		String fechaNacimiento = fechaNacimiento1;
+		
+		textNombre.setBorder(new JTextField().getBorder());
+        textEmail.setBorder(new JTextField().getBorder());
+        textApellidos.setBorder(new JTextField().getBorder());
+        textTel.setBorder(new JTextField().getBorder());
+        comboPago.setBorder(new JTextField().getBorder());
+        comboTipo.setBorder(new JTextField().getBorder());
+        comboMembresia.setBorder(new JTextField().getBorder());
+		boolean todosLlenos = true;
+		if (nombre.isEmpty()) {
+	        textNombre.setBorder(new LineBorder(Color.RED, 1));
+	        todosLlenos = false;
+	    } 
+	    if (apellido.isEmpty()) {
+	        textApellidos.setBorder(new LineBorder(Color.RED, 1));
+	        todosLlenos = false;
+	    } 
 
-		if (nombre.isEmpty() || apellido.isEmpty() || correo.isEmpty() || telefono.isEmpty() || fechaInicial.isEmpty()
-				|| fechaFinal.isEmpty() || tipoMembresia.isEmpty() || planMembresia.isEmpty()
-				|| fechaNacimiento.isEmpty()) {
-			JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return false; // Detener el proceso porque algún campo está vacío
-		}
+	    if (correo.isEmpty() || !correo.contains("@")) {
+	        textEmail.setBorder(new LineBorder(Color.RED, 1));
+	        todosLlenos = false;
+	    } 
 
+	    if (telefono.isEmpty()) {
+	        textTel.setBorder(new LineBorder(Color.RED, 1));
+	        todosLlenos = false;
+	    } else 
+	    // Validación de combos
+	    if (tipoMembresia == null || tipoMembresia.isEmpty()) {
+	        comboMembresia.setBorder(new LineBorder(Color.RED, 1));
+	        todosLlenos = false;
+	    } 
+	    if (planMembresia == null || planMembresia.isEmpty()) {
+	        comboTipo.setBorder(new LineBorder(Color.RED, 1));
+	        todosLlenos = false;
+	    } 
+
+	    if (comboPago.getSelectedItem() == null || comboPago.getSelectedItem().toString().trim().isEmpty()) {
+	        comboPago.setBorder(new LineBorder(Color.RED, 1));
+	        todosLlenos = false;
+	    } 
+
+	    if (!todosLlenos) {
+	        JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
+	        return false; 
+	    }
+	    
+	    if (telefono.length() != 10) {
+		    JOptionPane.showMessageDialog(null, "El teléfono debe tener exactamente 10 caracteres.", "Error", JOptionPane.ERROR_MESSAGE);
+		    textTel.setBorder(BorderFactory.createLineBorder(Color.RED)); // Marcar el campo en rojo
+		    return false;
+	    }
 		BufferedImage imagen = null; // Inicializamos la imagen como nula
 		if (path == null || path.equals("usuarioGym 1")) {
 			JOptionPane.showMessageDialog(null, "Debe seleccionar una imagen.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -691,6 +733,7 @@ public class ClientesVista {
 		// InicioControlador.registrar(nombre, password,email);
 		return true;
 	}
+
 
 	public JPanel panelBuscarEditar() { // Panel para buscar clientes en editar
 	    JPanel panel = getMenu();
@@ -869,12 +912,17 @@ public class ClientesVista {
 		textTel.setText(String.valueOf(cliente.getTelefono()));
 		panelCrear.add(textTel);
 
-		JComboBox comboMembresia = new JComboBox();
-		comboMembresia
-				.setModel(new DefaultComboBoxModel(new String[] { "  ", "General", "Estudiante", "Familiar", "Dúo" }));
-		comboMembresia.setSelectedItem(cliente.getTipoMembresia());
+		comboMembresia = new JComboBox<>();
 		comboMembresia.setBounds(360, 255, 200, 30);
 		panelCrear.add(comboMembresia);
+		// Cargar las clases desde la base de datos y añadirlas al JComboBox
+		List<String> nombresClases = PlanesModelo.obtenerNombresPlanes();
+		DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
+
+		for (String nombreClase : nombresClases) {
+		    comboBoxModel.addElement(nombreClase);
+		}
+		comboMembresia.setModel(comboBoxModel);
 
 		JLabel lblFechaInicial = new JLabel("Fecha inicial:");
 		configurarLabelsIzq(lblFechaInicial);
@@ -949,7 +997,7 @@ public class ClientesVista {
 
 
         comboTipo = new JComboBox();
-        comboTipo.setModel(new DefaultComboBoxModel(new String[] { "  ", "1 mes", "3 meses", "6 meses", "1 año" }));
+        comboTipo.setModel(new DefaultComboBoxModel(new String[] { "", "1 mes", "3 meses", "6 meses", "1 año" }));
         comboTipo.setSelectedItem(cliente.getPlanMembresia());
         comboTipo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -961,7 +1009,7 @@ public class ClientesVista {
         panelCrear.add(comboTipo);
 
 		comboPago = new JComboBox();
-		comboPago.setModel(new DefaultComboBoxModel(new String[] { "  ", "Efectivo", "Tarjeta de credito", "Cheque" }));
+		comboPago.setModel(new DefaultComboBoxModel(new String[] { "", "Efectivo", "Tarjeta de credito", "Cheque" }));
 		comboPago.setSelectedItem(cliente.getMetodoPago());
 		comboPago.setBounds(360, 435, 200, 30);
 		panelCrear.add(comboPago);
@@ -1009,44 +1057,41 @@ public class ClientesVista {
 		btnGuardar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 		btnGuardar.setBackground(new Color(0, 45, 78));
-		btnGuardar.addActionListener(e -> {
-			cliente.setNombre(textNombre.getText());
-	        cliente.setApellido(textApellidos.getText());
-	        cliente.setCorreo(textEmail.getText());
-	        cliente.setTelefono(textTel.getText());
-	        cliente.setMetodoPago((String) comboPago.getSelectedItem());
-	        cliente.setPlanMembresia((String) comboTipo.getSelectedItem());
-	        cliente.setTipoMembresia((String) comboMembresia.getSelectedItem());
-	
-	        // Obtener y asignar las nuevas fechas seleccionadas
-	        Date fechaNac = (Date) spinnerFechaNacimiento.getValue();
-	        cliente.setFechaNacimiento(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
-	
-	        Date fechaIni = (Date) spinnerFechaIn.getValue();
-	        cliente.setFechaInicial(new SimpleDateFormat("dd/MM/yyyy").format(fechaIni));
-	
-	        String fechaFinS = labelFechaFin.getText();
-	        // Parsear la fecha final de nuevo a un objeto Date
-	        Date fechaFin = null;
-	        try {
-	            fechaFin = new SimpleDateFormat("dd/MM/yyyy").parse(fechaFinS);
-	        } catch (ParseException ex) {
-	            ex.printStackTrace();
-	        }
-	        cliente.setFechaFinal(new SimpleDateFormat("dd/MM/yyyy").format(fechaFin));
-	
-	        if (!path.equals("Predeterminado")) {
-	            BufferedImage imagen;
-	            try {
-	                imagen = ImageIO.read(new File(path));
-	                cliente.setImagen(imagen);
-	            } catch (IOException exception) {
-	                JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
-	            }
-	        }
-	
-	        ClienteModelo.obtenerInstancia().editarCliente(cliente);
-		});
+		btnGuardar.addActionListener(e -> { //Agregar validaciones de campos vacios
+                cliente.setNombre(textNombre.getText());
+                cliente.setApellido(textApellidos.getText());
+                cliente.setCorreo(textEmail.getText());
+                cliente.setTelefono(textTel.getText());
+                cliente.setMetodoPago((String) comboPago.getSelectedItem());
+                cliente.setPlanMembresia((String) comboTipo.getSelectedItem());
+                cliente.setTipoMembresia((String) comboMembresia.getSelectedItem());
+
+                Date fechaNac = (Date) spinnerFechaNacimiento.getValue();
+                cliente.setFechaNacimiento(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
+
+                Date fechaIni = (Date) spinnerFechaIn.getValue();
+                cliente.setFechaInicial(new SimpleDateFormat("dd/MM/yyyy").format(fechaIni));
+
+                String fechaFinS = labelFechaFin.getText();
+                Date fechaFin = null;
+                try {
+                    fechaFin = new SimpleDateFormat("dd/MM/yyyy").parse(fechaFinS);
+                } catch (ParseException ex) {
+                    ex.printStackTrace();
+                }
+                cliente.setFechaFinal(new SimpleDateFormat("dd/MM/yyyy").format(fechaFin));
+
+                if (!path.equals("Predeterminado")) {
+                    BufferedImage imagen;
+                    try {
+                        imagen = ImageIO.read(new File(path));
+                        cliente.setImagen(imagen);
+                    } catch (IOException exception) {
+                        JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+                ClienteModelo.obtenerInstancia().editarCliente(cliente);        
+        });
 		btnGuardar.setBounds(462, 490, 120, 40);
 		panelCrear.add(btnGuardar);
 
@@ -1952,4 +1997,5 @@ public class ClientesVista {
 		});
 	}
 
+	
 }

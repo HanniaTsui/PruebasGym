@@ -9,6 +9,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -100,7 +102,7 @@ public class MenuPrincipalVista {
 		lblGym_1.setBounds(254, 323, 86, 50);
 		panel.add(lblGym_1);
 		
-		JLabel lblLogo = new JLabel("");
+		JLabel lblLogo = new JLabel("",0);
 		lblLogo.setIcon(new ImageIcon(MenuPrincipalVista.class.getResource("/img/logoMenu.png")));
 		lblLogo.setBounds(116, 106, 233, 208);
 		panel.add(lblLogo);
@@ -117,6 +119,33 @@ public class MenuPrincipalVista {
 		    lblColores[i].setHorizontalAlignment(SwingConstants.CENTER);
 		    lblColores[i].setBounds(boundsX[i], boundsY[i], 266, 230);
 		    lblColores[i].setIcon(new ImageIcon(MenuPrincipalVista.class.getResource(imagenes[i])));
+		    panel.add(lblColores[i]);		
+		    int index = i; // Índice de la etiqueta actual
+		    lblColores[i].addMouseListener(new MouseAdapter() {
+		        @Override
+		        public void mouseClicked(MouseEvent e) {
+		            switch (index) {
+		                case 0:
+		                    controlador.clientes();
+		                    break;
+		                case 1:
+		                    controlador.tarifas();
+		                    break;
+		                case 2:
+		                    controlador.instructor();
+		                    break;
+		                case 3:
+		                    controlador.clases();
+		                    break;
+		                case 4:
+		                    controlador.checador();
+		                    break;
+		                default:
+		                    break;
+		            }
+		        }
+		    });
+		    
 		    panel.add(lblColores[i]);
 		}
 

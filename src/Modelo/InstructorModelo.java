@@ -73,7 +73,7 @@ public class InstructorModelo {
 	        	String telefono=(String)map.get("telefono");
 	        	String especialidad= (String)map.get("especialidad");
 	        	String fechaContratacion=(String)map.get("fechaContratacion");
-	      //  	int IDClase = (int)map.get("IDClase");
+	   //     	ClasesObj IDClase = (ClasesObj)map.get("IDClase");
 	        			
 	        	
 	        	BufferedImage imagen;
@@ -167,7 +167,7 @@ public class InstructorModelo {
 		insertar.field("telefono",instructor.getTelefono());
 		insertar.field("fechaContratacion",instructor.getFechaContratacion());
 		insertar.field("especialidad",instructor.getEspecialidad());
-//		insertar.field("IDclase",instructor.getIDClase());
+	//	insertar.field("IDclase",instructor.getIDClase());
 
 		
 		try {
@@ -199,6 +199,7 @@ public class InstructorModelo {
 		insertar.field("telefono",instructor.getTelefono());
 		insertar.field("fechaContratacion",instructor.getFechaContratacion());
 		insertar.field("especialidad",instructor.getEspecialidad());
+
 		try {
 			insertar.field("imagen",convertImageToBinary(instructor.getImagen()));
 		
@@ -365,9 +366,6 @@ public class InstructorModelo {
 			Delete query = BaseDatos.optenerIstancia().getMySQL().table("instructor").delete().where("ID = ?", Integer.toString(ins.getID()));
 			int execute = query.execute();
 
-			// Imprimir la consulta y el resultado
-			System.out.println(query);
-			System.out.println(execute);
 
 			// Si la eliminación en la base de datos fue exitosa, eliminar el cliente de la lista en memoria
 			if (execute > 0) {

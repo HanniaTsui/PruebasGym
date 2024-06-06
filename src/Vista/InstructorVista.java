@@ -49,6 +49,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
 import Modelo.ClasesModelo;
+import Modelo.ClasesObj;
 import Modelo.ClienteModelo;
 import Modelo.ClienteObj;
 import Modelo.InstructorModelo;
@@ -272,7 +273,9 @@ public class InstructorVista{
 	    		int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar este instructor?", "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
 	             if (op == JOptionPane.OK_OPTION) {
 	                 JOptionPane.showMessageDialog(null, "Instructor eliminado con éxito", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
-	                 controlador.instructor();
+	                 InstructorModelo.obtenerInstancia().eliminarInstructor(instructor);
+	                 actualizarTabla();
+	 	    		 controlador.instructor();
 	             }
 	    	}
 	    });
@@ -548,7 +551,7 @@ public class InstructorVista{
 	    btnFoto.setBounds(652, 270, 207, 40);
 	    panelCrear.add(btnFoto);
 	    
-	    JComboBox<String> comboEspecialidad = new JComboBox<>();
+	    comboEspecialidad = new JComboBox<>();
 	    comboEspecialidad.setBounds(70, 153, 200, 30);
 	    panelCrear.add(comboEspecialidad);
 
@@ -570,7 +573,9 @@ public class InstructorVista{
 	    btnPagar = new JButton("Añadir");
 	    btnPagar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		validarCamposCrear(); 
+	    		if (validarCamposVacios()) { // Sobre campos vacios
+	    			validarCamposCrear(); 
+	    		}
 	    	}
 	    });
 		btnPagar.setForeground(new Color(255, 255, 255));
@@ -581,6 +586,42 @@ public class InstructorVista{
 	    panelCrear.add(btnPagar); 
 	    return panel;
 	}
+	
+	private boolean validarCamposVacios() { //BORDES ROJOS
+	    boolean camposCompletos = true;
+	    textNombre.setBorder(new JTextField().getBorder());
+        textEmail.setBorder(new JTextField().getBorder());
+        textApellidos.setBorder(new JTextField().getBorder());
+        textTel.setBorder(new JTextField().getBorder());
+	    // Verificar si algún campo está vacío
+	    if (textNombre.getText().trim().isEmpty() || textApellidos.getText().trim().isEmpty() ||
+	            textEmail.getText().trim().isEmpty() || textTel.getText().trim().isEmpty() ||
+	             comboEspecialidad.getSelectedItem().toString().isEmpty()) {
+
+        // Cambiar el borde de los campos vacíos a rojo
+        if (textNombre.getText().trim().isEmpty()) {
+            textNombre.setBorder(new LineBorder(Color.RED, 2));
+        }
+        if (textApellidos.getText().trim().isEmpty()) {
+            textApellidos.setBorder(new LineBorder(Color.RED, 2));
+        }
+        if (textEmail.getText().trim().isEmpty()) {
+            textEmail.setBorder(new LineBorder(Color.RED, 2));
+        }
+        if (textTel.getText().trim().isEmpty()) {
+            textTel.setBorder(new LineBorder(Color.RED, 2));
+        }
+        
+        // Mostrar mensaje de alerta
+        if (!camposCompletos) {
+	        JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
+	        return false; 
+	    }
+	    }
+
+	    return true;
+	}
+
 	
 	public JPanel editarInstructor(InstructorObj instructor) {
 		int id=instructor.getID();
@@ -881,19 +922,22 @@ public class InstructorVista{
 		String fecha = fechaInicial1;
 		String especialidad = (String) comboEspecialidad.getSelectedItem();
 
-
-		if (nombre.isEmpty() || apellido.isEmpty() || correo.isEmpty() || telefono.isEmpty() || fecha.isEmpty()) {
-			JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return false; // Detener el proceso porque algún campo está vacío
-		}
-
 		BufferedImage imagen = null; // Inicializamos la imagen como nula
 		if (path == null || path.equals("usuarioGym 1")) {
 			JOptionPane.showMessageDialog(null, "Debe seleccionar una imagen.", "Error", JOptionPane.ERROR_MESSAGE);
-			return false; // Detener el proceso porque no se ha seleccionado una imagen
+			return false; 
 		}
-
+		if (!esEmailValido(correo)) {
+	    	JOptionPane.showMessageDialog(null, "Correo electrónico no válido", "Error", JOptionPane.WARNING_MESSAGE);
+	    	return false;
+	    }
+		if (telefono.length() != 10) {
+		    JOptionPane.showMessageDialog(null, "El teléfono debe tener exactamente 10 caracteres.", "Error", JOptionPane.ERROR_MESSAGE);
+		    textTel.setBorder(BorderFactory.createLineBorder(Color.RED)); // Marcar el campo en rojo
+		    return false;
+		} else {
+		    textTel.setBorder(null);
+		}
 		try {
 			// Intentar leer la imagen seleccionada
 			imagen = ImageIO.read(new File(path));
@@ -902,12 +946,17 @@ public class InstructorVista{
 			return false;
 		}
 
-
 		InstructorControlador.registrarInstructor(ID, nombre, apellido, correo, telefono, fecha, especialidad, imagen, 2);
-
+		
 		controlador.instructor();
-		// InicioControlador.registrar(nombre, password,email);
 		return true;
+	}
+	
+	private boolean esEmailValido(String email) {
+		if (!email.contains("@")) {
+	        return false;
+	    }
+        return true;
 	}
 
 }

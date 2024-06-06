@@ -26,7 +26,7 @@ public class InstructorObj {
 		this.fechaContratacion = fechaContratacion;
 		this.especialidad = especialidad;
 		this.imagen = imagen;
-		IDClase = iDClase;
+		this.IDClase = iDClase;
 	}
 
 

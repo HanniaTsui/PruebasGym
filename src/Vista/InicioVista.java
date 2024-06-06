@@ -334,6 +334,9 @@ public class InicioVista {
 	}
 	
 	private boolean esEmailValido(String email) {
+		if (!email.contains("@")) {
+	        return false;
+	    }
 		String[] dominios = {".com", ".mx"};
         for (String dominio : dominios) {
             if (email.endsWith(dominio)) {

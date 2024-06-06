@@ -189,11 +189,16 @@ public class TarifasVista {
 		lblTitutlo.setBounds(427, 114, 346, 33);
 		panel.add(lblTitutlo);
 		
-		JPanel panelAzul = new JPanel();
+		
+		
+		JLabel panelAzul = new JLabel();
 		panelAzul.setBackground(new Color(148, 182, 223));
+		panelAzul.setOpaque(true);
+		panelAzul.setIcon(new ImageIcon(TarifasVista.class.getResource("/img/logoTarifasPanelAzul.png")));
 		panelAzul.setBounds(650, 185, 441, 448);
 		panel.add(panelAzul);
-		panelAzul.setLayout(null);
+		
+
 
 		JButton btnGuardar_1 = new JButton("Guardar");
 		btnGuardar_1.addActionListener(new ActionListener() {
@@ -531,6 +536,8 @@ public class TarifasVista {
 		infor3Meses.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		infor3Meses.setBounds(761, 185, 330, 80);
 		panel.add(infor3Meses);
+		infor3Meses.setLineWrap(true);
+		infor3Meses.setWrapStyleWord(true);
 		
 		JLabel lblMesesInfo_3 = new JLabel("6 meses info:");
 		lblMesesInfo_3.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -544,6 +551,8 @@ public class TarifasVista {
 		infor6Meses.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		infor6Meses.setBounds(761, 285, 330, 80);
 		panel.add(infor6Meses);
+		infor6Meses.setLineWrap(true);
+		infor6Meses.setWrapStyleWord(true);
 		
 		JLabel lblAoInfo = new JLabel("1 año info:");
 		lblAoInfo.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -557,6 +566,8 @@ public class TarifasVista {
 		info1anio.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		info1anio.setBounds(761, 385, 330, 80);
 		panel.add(info1anio);
+		info1anio.setLineWrap(true);
+		info1anio.setWrapStyleWord(true);
 
 		btnGuardar_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
