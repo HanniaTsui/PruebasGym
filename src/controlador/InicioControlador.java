@@ -12,8 +12,7 @@ public class InicioControlador {
 
     public InicioControlador() {
         this.vista = new InicioVista(this);
-
-    }
+    } 
 
     public void inicio() {
     	FramePrincipal.obtenerInstancia().agregarPanel(vista.iniciar());

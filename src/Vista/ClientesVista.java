@@ -103,7 +103,7 @@ public class ClientesVista {
 	 */
 	public ClientesVista(ClientesControlador controlador) {
 		this.controlador = controlador;
-
+ 
 	}
 
 	public JPanel clientes() {

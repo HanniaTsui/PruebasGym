@@ -20,7 +20,7 @@ public class Main {
             }
         });
         //System.out.println("Java version: " + System.getProperty("java.version"));
-    
+     
     }
 
     private static void setLookAndFeel() {

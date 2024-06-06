@@ -2,7 +2,6 @@ package Vista;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -10,19 +9,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -30,15 +24,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
+import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
 import Modelo.ClasesModelo;
 import Modelo.ClasesObj;
+import Modelo.ClienteModelo;
 import Modelo.ClienteObj;
-import Modelo.DiaObj;
-import Modelo.HorarioObj;
 import controlador.ClasesControlador;
 import controlador.ClientesControlador;
 import controlador.MenuControlador;
@@ -64,7 +57,9 @@ public class ClasesVista {
 	private ClientesControlador controladorClientes;
 	private JTextField textID;
 	private JTextField textNombre;
-
+	private static JPanel panel_1;
+	static boolean cargarDatos=false;
+    static List<ClasesObj> clases;
 	/**
 	 * Create the frame.
 	 */
@@ -74,41 +69,107 @@ public class ClasesVista {
 		
 	}
 
+	private void cargarClasesEnSegundoPlano(JPanel panel_1) {
+        SwingWorker<List<ClasesObj>, Void> worker = new SwingWorker<List<ClasesObj>, Void>() {
+            @Override
+            protected List<ClasesObj> doInBackground() throws Exception {
+            	ClienteModelo.cargarCliente();
+                return ClasesModelo.cargarClases(); 
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    clases = get();
+                    actualizarPanelConClases(clases, panel_1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Error al cargar las clases", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        };
+
+        worker.execute(); 
+    }
 	
-	
-	public JPanel clases() {
-
-        List<ClasesObj> clases = ClasesModelo.cargarClases();
-		JPanel panel = getMenu();
-
-		JPanel panel_1 = new JPanel();
-	    panel_1.setBounds(36, 170, 1126, 477);
-	    panel.add(panel_1);
-	    panel_1.setLayout(new GridLayout(0, 3, 15, 15));
-
-	    JButton btnChecador = new JButton("Nueva clase");
-        btnChecador.setForeground(Color.WHITE);
-        btnChecador.setFocusable(false);
-        btnChecador.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				controlador.nuevaClase();
-			}
-        });
-        btnChecador.setBackground(new Color(0,33,81));
-        btnChecador.setBounds(890, 112, 200, 30);
-        panel.add(btnChecador);
-        
-        
-
+	private void actualizarPanelConClases(List<ClasesObj> clases, JPanel panel_1) {
+        panel_1.removeAll(); // Limpia el panel antes de agregar nuevas clases
         for (ClasesObj clase : clases) {
-            HorarioObj horario = ClasesModelo.obtenerHorarioPorId(clase.getIdHorario());
-            DiaObj dia = ClasesModelo.obtenerDiaPorId(clase.getIdDia());
-
+        	String horarioText;
+            String diaText;
+            
+            // Obtener el horario según el ID de la clase
+            switch (clase.getIdHorario()) {
+            case 1:
+                horarioText = "06:00 - 07:00";
+                break;
+            case 2:
+                horarioText = "07:00 - 08:00";
+                break;
+            case 3:
+                horarioText = "08:00 - 09:00";
+                break;
+            case 4:
+                horarioText = "09:00 - 10:00";
+                break;  
+            case 5:
+                horarioText = "10:00 - 11:00";
+                break; 
+            case 6:
+                horarioText = "11:00 - 12:00";
+                break;  
+            case 7:
+                horarioText = "12:00 - 13:00";
+                break; 
+            case 8:
+                horarioText = "13:00 - 14:00";
+                break;
+            case 9:
+                horarioText = "14:00 - 15:00";
+                break;
+            case 10:
+                horarioText = "15:00 - 16:00";
+                break;
+            case 11:
+                horarioText = "16:00 - 17:00";
+                break;
+            case 12:
+                horarioText = "17:00 - 18:00";
+                break;
+            case 13:
+                horarioText = "18:00 - 19:00";
+                break;
+            case 14:
+                horarioText = "19:00 - 20:00";
+                break;
+            default:
+                horarioText = "";
+                break;
+            }
+            switch (clase.getIdDia()) {
+            case 1:
+                diaText = "Lunes";
+                break;
+            case 2:
+                diaText = "Martes";
+                break;
+            case 3:
+                diaText = "Miércoles";
+                break;
+            case 4:
+                diaText = "Jueves";
+                break;
+            case 5:
+                diaText = "Viernes";
+                break;
+            default:
+                diaText = "";
+                break;
+        }
             JPanel panelTarifa = new JPanel(new BorderLayout());
             JLabel info = new JLabel("<html><div style='text-align: center;'>" + clase.getNombre() + 
-                                     "<br>Día: " + (dia != null ? dia.getNombreDia() : "N/A") + 
-                                     "<br>Horario: " + (horario != null ? horario.getHorarioTiempo() : "N/A") + 
+                                     "<br>Día: " + diaText + 
+                                     "<br>Horario: " + horarioText + 
                                      "</div></html>");
             info.setFont(new Font("Arial Black", Font.PLAIN, 16));
             info.setBorder(BorderFactory.createLineBorder(Color.black, 3));
@@ -123,10 +184,8 @@ public class ClasesVista {
             btnDetalles.setBackground(Color.black);
             btnDetalles.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                	clasesA= null;
-    	            clasesA = controlador.buscarClase((clase.getID()));
-
-                   controlador.detallesClase(clase);
+                    ClasesObj claseA = controlador.buscarClase(clase.getID());
+                    controlador.detallesClase(clase);
                 }
             });
             btnDetalles.setForeground(Color.white);
@@ -138,9 +197,8 @@ public class ClasesVista {
             btnEditar.setFocusable(false);
             btnEditar.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                	clasesA= null;
-    	            clasesA = controlador.buscarClase((clase.getID()));
-    	            controlador.inscribirseClase(clase);
+                    ClasesObj claseA = controlador.buscarClase(clase.getID());
+                    controlador.inscribirseClase(clase);
                 }
             });
             btnEditar.setBorder(null);
@@ -154,16 +212,47 @@ public class ClasesVista {
 
             panel_1.add(panelTarifa);
         }
+        panel_1.revalidate(); 
+        panel_1.repaint(); 
+    }
+	
+	public JPanel clases() {
+        JPanel panel = getMenu();
 
-	    JLabel lblTitutlo = new JLabel("Clases");
-	    lblTitutlo.setForeground(new Color(0, 0, 0));
-	    lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
-	    lblTitutlo.setBounds(427, 114, 346, 33);
-	    panel.add(lblTitutlo);
+        panel_1 = new JPanel();
+        panel_1.setBounds(36, 170, 1126, 477);
+        panel.add(panel_1);
+        panel_1.setLayout(new GridLayout(0, 3, 15, 15));
 
-		return panel;
-	}
+        if(!cargarDatos) {
+	        cargarClasesEnSegundoPlano(panel_1);
+	        cargarDatos=true;
+        }else {
+        	actualizarPanelConClases(clases, panel_1);
+        }
+        JButton btnChecador = new JButton("Nueva clase");
+        btnChecador.setForeground(Color.WHITE);
+        btnChecador.setFocusable(false);
+        btnChecador.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controlador.nuevaClase();
+            }
+        });
+        btnChecador.setBackground(new Color(0, 33, 81));
+        btnChecador.setBounds(890, 112, 200, 30);
+        panel.add(btnChecador);
+
+        JLabel lblTitulo = new JLabel("Clases");
+        lblTitulo.setForeground(new Color(0, 0, 0));
+        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+        lblTitulo.setFont(new Font("Arial Black", Font.PLAIN, 25));
+        lblTitulo.setBounds(427, 114, 346, 33);
+        panel.add(lblTitulo);
+
+
+        return panel;
+    }
 	
 	public JPanel nuevaClase() {
 		JPanel panel = getMenu();
@@ -196,12 +285,12 @@ public class ClasesVista {
 	    lblNewLabel_4.setBounds(109, 459, 365, 30);
 	    panel.add(lblNewLabel_4);
 	    
-	    JTextField textID = new JTextField("");
-	    textID.setColumns(10);
-	    textID.setForeground(Color.black);
-	    textID.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-	    textID.setBounds(498, 315, 333, 30);
-	    panel.add(textID);
+	    textNombre = new JTextField("");
+	    textNombre.setColumns(10);
+	    textNombre.setForeground(Color.black);
+	    textNombre.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
+	    textNombre.setBounds(498, 315, 333, 30);
+	    panel.add(textNombre);
 	    
 	    String[] horarios = {
 	            "06:00 - 07:00",  "07:00 - 08:00","08:00 - 09:00",   "09:00 - 10:00",    "10:00 - 11:00",    "11:00 - 12:00",   "12:00 - 13:00",
@@ -269,8 +358,29 @@ public class ClasesVista {
 	    btnPagar = new JButton("Crear nueva clase");
 	    btnPagar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		  controlador.clases();
-	    		 JOptionPane.showMessageDialog(null, "¡Clase nueva agregada con éxito!", " ", JOptionPane.INFORMATION_MESSAGE);
+	    		int ID = 0;
+	    		String nombre = textNombre.getText().trim();
+	    		String horario = (String)comboBox.getSelectedItem();
+	    		int diaSeleccionado = 0;
+	            if (checkLunes.isSelected()) {
+	                diaSeleccionado = 1;
+	            } else if (checkMartes.isSelected()) {
+	                diaSeleccionado = 2;
+	            } else if (checkMiercoles.isSelected()) {
+	                diaSeleccionado = 3;
+	            } else if (checkJueves.isSelected()) {
+	                diaSeleccionado = 4;
+	            } else if (checkViernes.isSelected()) {
+	                diaSeleccionado = 5;
+	            }
+	            if (nombre.isEmpty()) {
+	            	JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.", "Error",
+	    					JOptionPane.ERROR_MESSAGE);
+	            }
+	            int idHorario = ClasesControlador.obtenerIdHorario(horario); // Método para obtener el ID del horario
+
+	    		ClasesControlador.registrarClaseNueva(ID, nombre, idHorario, diaSeleccionado);
+	    		controlador.clases();	 
 	    	}
 	    });
 		btnPagar.setForeground(new Color(255, 255, 255));
@@ -744,8 +854,8 @@ public class ClasesVista {
 	            }
 	            
 	            clases.setIdDia(diaSeleccionado);
-	  //          int indiceHorarioSeleccionado = comboBox.getSelectedIndex();
-	  //          clases.setIdHorario(indiceHorarioSeleccionado);
+	            int indiceHorarioSeleccionado = comboBox.getSelectedIndex();
+	            clases.setIdHorario(indiceHorarioSeleccionado+1);
 	    		ClasesModelo.obtenerInstancia().editarClase(clases);
 	    		controlador.clases();
 	    		 
@@ -763,10 +873,12 @@ public class ClasesVista {
 	    	public void actionPerformed(ActionEvent e) {
 	    		int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar esta clase?", "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
 	             if (op == JOptionPane.OK_OPTION) {
+	            	 if (clases != null) {
+							ClasesModelo.obtenerInstancia().eliminarClases(clases);
+						}
 	                 JOptionPane.showMessageDialog(null, "¡Clase eliminada con éxito!", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
 					 controlador.clases();
-	             }
-	    		 
+	             }	 
 	    	}
 	    });
 		btnRegistros.setForeground(new Color(255,255,255));

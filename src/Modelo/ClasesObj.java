@@ -7,7 +7,7 @@ public class ClasesObj {
     private int idHorario;
     private int idDia;
 
-    public ClasesObj(int iD, String nombre, int idHorario, int idDia) {
+    public ClasesObj(int iD, String nombre, int idDia, int idHorario) {
 
         ID = iD;
         this.nombre = nombre;

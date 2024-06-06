@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
+
+import com.code.advancedsql.query.Delete;
 import com.code.advancedsql.query.Insert;
 import com.code.advancedsql.query.Select;
 import com.code.advancedsql.query.Update;
@@ -49,35 +51,18 @@ public class ClasesModelo {
 		}
         return clases;
 	}
-	
-	public static HorarioObj obtenerHorarioPorId(int idHorario) {
-		Select nombreTabla=BaseDatos.optenerIstancia().getMySQL().table("horario").select();
-		nombreTabla.where("ID = ?", idHorario);
-		try {
+	public static int obtenerHorarioPorId(String idHorario) {
+        Select nombreTabla=BaseDatos.optenerIstancia().getMySQL().table("horario").select();
+        nombreTabla.where("horarioTiempo = ?", idHorario);
+        try {
             List<Map<String, Object>> resultTableUser = nombreTabla.fetchAllAsList();
             if (!resultTableUser.isEmpty()) {
                 Map<String, Object> map = resultTableUser.get(0);
-                return new HorarioObj((int) map.get("ID"), (String) map.get("horarioTiempo"));
-            }
+                return (int) map.get("ID");}
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
-    }
-	
-	public static DiaObj obtenerDiaPorId(int idDia) {
-		Select nombreTabla=BaseDatos.optenerIstancia().getMySQL().table("dia").select();
-		nombreTabla.where("ID = ?", idDia);
-		try {
-            List<Map<String, Object>> resultTableUser = nombreTabla.fetchAllAsList();
-            if (!resultTableUser.isEmpty()) {
-                Map<String, Object> map = resultTableUser.get(0);
-                return new DiaObj((int) map.get("ID"), (String) map.get("nombreDia"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return 0;
     }
 	
 	 public void editarClase(ClasesObj clase) {
@@ -99,5 +84,41 @@ public class ClasesModelo {
 			}
 			JOptionPane.showMessageDialog(null, "Se actualizó la clase correctamente");
 		}
+	 public boolean subirDatosClases(ClasesObj clase) {
+         Insert insertar=BaseDatos.optenerIstancia().getMySQL().table("clase").insert();
+         insertar.field("ID",clase.getID());
+         insertar.field("nombreClase",clase.getNombre());
+         insertar.field("IDDia", clase.getIdDia());
+         insertar.field("IDHorario", clase.getIdHorario());;
+         try {
+             insertar.execute();
+         } catch (SQLException e) {
+             // TODO Auto-generated catch block
+             e.printStackTrace();
+              JOptionPane.showMessageDialog(null, "No se pudo añadir la clase", "ERROR", JOptionPane.WARNING_MESSAGE);
+              return false;
+         }
+          JOptionPane.showMessageDialog(null, "Se añadió la clase correctamente");
+          return true;
+     }
 
+  public void eliminarClases(ClasesObj cla) {
+         try {
+             // Eliminar el cliente de la base de datos
+             Delete query = BaseDatos.optenerIstancia().getMySQL().table("clase").delete().where("ID = ?", Integer.toString(cla.getID()));
+             int execute = query.execute();
+
+             // Imprimir la consulta y el resultado
+             System.out.println(query);
+             System.out.println(execute);
+
+             // Si la eliminación en la base de datos fue exitosa, eliminar el cliente de la lista en memoria
+             if (execute > 0) {
+                 System.out.println("se elimino");
+                 clases.remove(cla);
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+     }
 }
