@@ -211,6 +211,7 @@ public class ClasesVista {
             panelTarifa.add(panelBotones, BorderLayout.SOUTH);
 
             panel_1.add(panelTarifa);
+            
         }
         panel_1.revalidate(); 
         panel_1.repaint(); 
@@ -220,9 +221,15 @@ public class ClasesVista {
         JPanel panel = getMenu();
 
         panel_1 = new JPanel();
-        panel_1.setBounds(36, 170, 1126, 477);
-        panel.add(panel_1);
+   //     panel_1.setBounds(36, 170, 1126, 477);
+   //     panel.add(panel_1);
         panel_1.setLayout(new GridLayout(0, 3, 15, 15));
+        
+        JScrollPane scrollPane = new JScrollPane(panel_1);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setBounds(36, 170, 1126, 477);
+        panel.add(scrollPane);
 
         if(!cargarDatos) {
 	        cargarClasesEnSegundoPlano(panel_1);
@@ -249,7 +256,6 @@ public class ClasesVista {
         lblTitulo.setFont(new Font("Arial Black", Font.PLAIN, 25));
         lblTitulo.setBounds(427, 114, 346, 33);
         panel.add(lblTitulo);
-
 
         return panel;
     }
@@ -361,7 +367,7 @@ public class ClasesVista {
 	    		int ID = 0;
 	    		String nombre = textNombre.getText().trim();
 	    		String horario = (String)comboBox.getSelectedItem();
-	    		int diaSeleccionado = 0;
+	    		int diaSeleccionado = 1;
 	            if (checkLunes.isSelected()) {
 	                diaSeleccionado = 1;
 	            } else if (checkMartes.isSelected()) {
@@ -373,14 +379,15 @@ public class ClasesVista {
 	            } else if (checkViernes.isSelected()) {
 	                diaSeleccionado = 5;
 	            }
+	            int idHorario = ClasesControlador.obtenerIdHorario(horario); // Método para obtener el ID del horario
+
 	            if (nombre.isEmpty()) {
 	            	JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.", "Error",
 	    					JOptionPane.ERROR_MESSAGE);
+	            }else {
+	    		ClasesControlador.registrarClaseNueva(ID, nombre, diaSeleccionado, idHorario);
+	    		controlador.clases();
 	            }
-	            int idHorario = ClasesControlador.obtenerIdHorario(horario); // Método para obtener el ID del horario
-
-	    		ClasesControlador.registrarClaseNueva(ID, nombre, idHorario, diaSeleccionado);
-	    		controlador.clases();	 
 	    	}
 	    });
 		btnPagar.setForeground(new Color(255, 255, 255));
@@ -389,24 +396,7 @@ public class ClasesVista {
 		btnPagar.setBackground(new Color(0,47,78)); 
 		btnPagar.setBounds(525, 580, 150, 40);
 		panel.add(btnPagar);
-		
-		btnRegistros = new JButton("Eliminar");
-		btnRegistros.addActionListener(new ActionListener() {
-	    	public void actionPerformed(ActionEvent e) {
-	    		int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar esta clase?", "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
-	             if (op == JOptionPane.OK_OPTION) {
-	                 JOptionPane.showMessageDialog(null, "¡Clase eliminada con éxito!", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
-	             	//quitarComponentes(); nuevaClase();
-					 controlador.nuevaClase();
-	             }
-	    	}
-	    });
-		btnRegistros.setForeground(Color.white);
-		btnRegistros.setFocusable(false);
-		btnRegistros.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
-		btnRegistros.setBackground(colorBtnEliminar); 
-		btnRegistros.setBounds(937, 114, 120, 40);
-		panel.add(btnRegistros);
+	
 	    panelInscribirseDetallesClase(panel);
 
 		return panel;
@@ -773,7 +763,7 @@ public class ClasesVista {
 	            "06:00 - 07:00",  "07:00 - 08:00","08:00 - 09:00",   "09:00 - 10:00",    "10:00 - 11:00",    "11:00 - 12:00",   "12:00 - 13:00",
 	            "13:00 - 14:00", "14:00 - 15:00",   "15:00 - 16:00",   "16:00 - 17:00",   "17:00 - 18:00",  "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00",  "21:00 - 22:00"   };
 	    JComboBox<String> comboBox = new JComboBox<>(horarios);
-	    comboBox.setSelectedItem(clases.getIdHorario());
+	    comboBox.setSelectedIndex(clases.getIdHorario()-1);
         comboBox.setBounds(498, 459, 333, 30);
 	    panel.add(comboBox);
 	    

@@ -85,7 +85,17 @@ public class ClasesModelo {
 			JOptionPane.showMessageDialog(null, "Se actualizó la clase correctamente");
 		}
 	 public boolean subirDatosClases(ClasesObj clase) {
-         Insert insertar=BaseDatos.optenerIstancia().getMySQL().table("clase").insert();
+		 boolean idDiaValido = verificarExistenciaIDDia(clase.getIdDia());
+		 System.out.println(clase.getID());
+		    // Si el IDDia no es válido, mostrar un mensaje de error y retornar false
+		    if (!idDiaValido) {
+		    	
+		        JOptionPane.showMessageDialog(null, "El ID de día proporcionado no es válido", "ERROR", JOptionPane.WARNING_MESSAGE);
+		        return false;
+		    }
+
+		 
+		 Insert insertar=BaseDatos.optenerIstancia().getMySQL().table("clase").insert();
          insertar.field("ID",clase.getID());
          insertar.field("nombreClase",clase.getNombre());
          insertar.field("IDDia", clase.getIdDia());
@@ -101,6 +111,20 @@ public class ClasesModelo {
           JOptionPane.showMessageDialog(null, "Se añadió la clase correctamente");
           return true;
      }
+	 
+	 private boolean verificarExistenciaIDDia(int idDia) {
+		    // Realizar una consulta para verificar si el IDDia existe en la tabla dia
+		    Select select = BaseDatos.optenerIstancia().getMySQL().table("dia").select().where("ID = ?", idDia);
+
+		    try {
+		        List<Map<String, Object>> result = select.fetchAllAsList();
+		        // Si la consulta devuelve al menos una fila, el IDDia es válido
+		        return !result.isEmpty();
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		        return false;
+		    }
+		}
 
   public void eliminarClases(ClasesObj cla) {
          try {
