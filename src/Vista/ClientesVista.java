@@ -59,6 +59,8 @@ import javax.swing.text.PlainDocument;
 
 import Modelo.ClienteObj;
 import Modelo.PlanesModelo;
+import Modelo.RegistroPagoModelo;
+import Modelo.RegistroPagoObj;
 import Modelo.ClienteModelo;
 import controlador.ClientesControlador;
 import controlador.InicioControlador;
@@ -1447,69 +1449,76 @@ public class ClientesVista {
 		///////
 	}
 
-	public void detallesHistorialPago(ClienteObj cliente) { // HistorialPago clientes
-		panelDetalles(cliente);
-		lblMembresia = new JLabel("Suscripción: " + cliente.getPlanMembresia());
-		configurarLabelsIzq(lblMembresia);
-		lblMembresia.setBounds(87, 55, 200, 20);
-		panelInfo.add(lblMembresia);
+	public void detallesHistorialPago(ClienteObj cliente) { 
+	    // Panel de detalles del cliente
+	    panelDetalles(cliente);
+	    lblMembresia = new JLabel("Suscripción: " + cliente.getPlanMembresia());
+	    configurarLabelsIzq(lblMembresia);
+	    lblMembresia.setBounds(87, 55, 200, 20);
+	    panelInfo.add(lblMembresia);
 
-		String titles[] = { "Membresía", "Fecha inicial", "Vencimiento", "Total" };
-		DefaultTableModel modelo = new DefaultTableModel(null, titles) {
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false; // La tabla no se edita
-			}
+	    String titles[] = { "Membresía", "Fecha inicial", "Vencimiento", "Total" };
+	    DefaultTableModel modelo = new DefaultTableModel(null, titles) {
+	        @Override
+	        public boolean isCellEditable(int row, int column) {
+	            return false; // La tabla no se edita
+	        }
 
-			@Override
-			public Class<?> getColumnClass(int col) {
-				return col == 3 ? Integer.class : String.class;
-			}
+	        @Override
+	        public Class<?> getColumnClass(int col) {
+	            return col == 3 ? Integer.class : String.class;
+	        }
 
-			private int getPrice(String planMembresia, String tipoMembresia) {
-			    return switch (planMembresia) {
-			        case "General" -> (tipoMembresia.equals("1 mes") ? 399
-			                : (tipoMembresia.equals("3 meses") ? 1137
-			                : (tipoMembresia.equals("6 meses") ? 2274
-			                : (tipoMembresia.equals("1 año") ? 4608 : 50))));
-			        case "Familiar" -> (tipoMembresia.equals("1 mes") ? 500
-			                : (tipoMembresia.equals("3 meses") ? 1425
-			                : (tipoMembresia.equals("6 meses") ? 2850
-			                : (tipoMembresia.equals("1 año") ? 5775 : 50))));
-			        case "Estudiante" -> (tipoMembresia.equals("1 mes") ? 358
-			                : (tipoMembresia.equals("3 meses") ? 1020
-			                : (tipoMembresia.equals("6 meses") ? 2040
-			                : (tipoMembresia.equals("1 año") ? 4090 : 50))));
-			        case "Duo" -> (tipoMembresia.equals("1 mes") ? 599
-			                : (tipoMembresia.equals("3 meses") ? 1737
-			                : (tipoMembresia.equals("6 meses") ? 3474
-			                : (tipoMembresia.equals("1 año") ? 7068 : 50))));
-			        default -> 50;
-			    };
-			}
+	        private int getPrice(String planMembresia, String tipoMembresia) {
+	            return switch (planMembresia) {
+	                case "General" -> (tipoMembresia.equals("1 mes") ? 399
+	                        : (tipoMembresia.equals("3 meses") ? 1137
+	                        : (tipoMembresia.equals("6 meses") ? 2274
+	                        : (tipoMembresia.equals("1 año") ? 4608 : 50))));
+	                case "Familiar" -> (tipoMembresia.equals("1 mes") ? 500
+	                        : (tipoMembresia.equals("3 meses") ? 1425
+	                        : (tipoMembresia.equals("6 meses") ? 2850
+	                        : (tipoMembresia.equals("1 año") ? 5775 : 50))));
+	                case "Estudiante" -> (tipoMembresia.equals("1 mes") ? 358
+	                        : (tipoMembresia.equals("3 meses") ? 1020
+	                        : (tipoMembresia.equals("6 meses") ? 2040
+	                        : (tipoMembresia.equals("1 año") ? 4090 : 50))));
+	                case "Duo" -> (tipoMembresia.equals("1 mes") ? 599
+	                        : (tipoMembresia.equals("3 meses") ? 1737
+	                        : (tipoMembresia.equals("6 meses") ? 3474
+	                        : (tipoMembresia.equals("1 año") ? 7068 : 50))));
+	                default -> 50;
+	            };
+	        }
 
-			@Override
-			public Object getValueAt(int fila, int col) {
-				return switch (col) {
-				case 0 -> cliente.getTipoMembresia();
-				case 1 -> cliente.getFechaInicial();
-				case 2 -> cliente.getFechaFinal();
-				case 3 -> getPrice(cliente.getTipoMembresia(), cliente.getPlanMembresia());
-				default -> null;
-				};
-			}
+	        @Override
+	        public Object getValueAt(int fila, int col) {
+	            RegistroPagoObj pago = RegistroPagoModelo.obtenerInstancia().getPagos().get(fila);
+	            return switch (col) {
+	                case 0 -> cliente.getTipoMembresia();
+	                case 1 -> cliente.getFechaInicial();
+	                case 2 -> cliente.getFechaFinal();
+	                case 3 -> getPrice(cliente.getTipoMembresia(), cliente.getPlanMembresia());
+	                default -> null;
+	            };
+	        }
 
-		};
-		JTable datosTabla = new JTable(modelo);
-		datosTabla.setColumnSelectionAllowed(false);
-		Vector<ClienteObj> clientes = new Vector<>();
-		clientes.add(cliente);
-		modelo.addRow(clientes);
-		JScrollPane tablaScroll = new JScrollPane(datosTabla);
-		tablaScroll.setBounds(87, 95, 730, 200);
-		panelInfo.add(tablaScroll);
+	    };
+	    JTable datosTabla = new JTable(modelo);
+	    datosTabla.setColumnSelectionAllowed(false);
+
+	    // Cargar los pagos desde la base de datos
+	    RegistroPagoModelo.cargarPagosPorCliente(cliente.getID());
+	    List<RegistroPagoObj> pagos = RegistroPagoModelo.getPagos();
+	    for (RegistroPagoObj pago : pagos) {
+	        Object[] rowData = { cliente.getTipoMembresia(), pago.getFechaPago(), cliente.getFechaFinal(), pago.getMonto() };
+	        modelo.addRow(rowData);
+	    }
+
+	    JScrollPane tablaScroll = new JScrollPane(datosTabla);
+	    tablaScroll.setBounds(87, 95, 730, 200);
+	    panelInfo.add(tablaScroll);
 	}
-
 	public void detallesHistorialAsistencia(ClienteObj cliente) { // HistorialAsistencia clientes
 		panelDetalles(cliente);
 		String titulo[] = { "Fecha", "Hora de entrada", "Hora de salida" };
