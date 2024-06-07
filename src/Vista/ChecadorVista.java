@@ -53,14 +53,15 @@ public class ChecadorVista extends JFrame  {
 	JTable datosTabla;
 	private ChecadorControlador controlador;
 	private ClientesControlador controladorV;
-	static List<ChecadorObj> check;
 	static List<ChecadorObj> registros;
-	
+	static boolean datosCargados=false;
 	ClienteObj cliente;
+	private String fechaFormateada; 
+	DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+    String fechaActual = formatoFecha.format(new Date()); 
 	public ChecadorVista(ChecadorControlador controlador) {
         this.controlador = controlador;
         this.controladorV = new ClientesControlador(); 
-        cargarClientesSegundoPlano();
     }
 
 	public JPanel checador() {
@@ -86,10 +87,8 @@ public class ChecadorVista extends JFrame  {
 	    btnVolver.setBounds(73, 114, 120, 40);
 	    panel.add(btnVolver);
 	    
-	    Date fechaActual = new Date();   // Formatear la fecha actual
-        DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
-        String fechaFormateada = formatoFecha.format(fechaActual);
-        JLabel labelFecha = new JLabel("Fecha: " + fechaFormateada); // Crear un JLabel para mostrar la fecha
+	    
+        JLabel labelFecha = new JLabel("Fecha: " + fechaActual); // Crear un JLabel para mostrar la fecha
         labelFecha.setSize(150, 20);
         labelFecha.setLocation(258, 134);
         
@@ -156,10 +155,16 @@ public class ChecadorVista extends JFrame  {
 	        	
 	            int idCliente = Integer.parseInt(textID.getText());
 	            ClienteObj cliente = controladorV.buscarClientePorID(idCliente);
+
+	            String estadoActual = ClienteModelo.obtenerInstancia().estado(cliente.getFechaFinal()) ? "Activo" : "No activo";
+	            if(estadoActual.equals("No activo")) {
+	            	JOptionPane.showMessageDialog(null, "Su suscripción ha expirado. Por favor, renuévela para continuar accediendo.");
+	            	return;
+	            }
 	            if (cliente != null) {
 	            	String nombreCliente = cliente.getNombre(); 
   	                String horaActual = new SimpleDateFormat("HH:mm:ss").format(new Date());
-	               ChecadorObj checador= controlador.registrarChecada(idCliente, nombreCliente, horaActual);
+	               ChecadorObj checador= controlador.registrarChecada(idCliente, nombreCliente, horaActual,fechaActual);
 	               //cargar imagen 
 	               BufferedImage imagenCliente = cliente.getImagen();
                    if (imagenCliente != null) {
@@ -244,7 +249,12 @@ public class ChecadorVista extends JFrame  {
 	    lblUserCheck.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblUserCheck.setBounds(0, 125, 125, 13);
 	    panel_1.add(lblUserCheck);
-
+	    if (!datosCargados) {
+			cargarDatosEnSegundoPlano();
+			datosCargados = true;
+		} else {
+			cargarDatosEnTabla();
+		}
 		return panel;
 	}
 
@@ -272,22 +282,33 @@ public class ChecadorVista extends JFrame  {
     	btn.setFocusable(false);
     	btn.setBackground(new Color(217, 217, 217)); 
     }
-	private void cargarClientesSegundoPlano() {
-		SwingWorker<List<ClienteObj>, Void> worker = new SwingWorker<>() {
+	
+	private void cargarDatosEnSegundoPlano() {
+		SwingWorker<List<ChecadorObj>, Void> worker = new SwingWorker<>() {
 			@Override
-			protected List<ClienteObj> doInBackground() {
+			protected List<ChecadorObj> doInBackground() {
+				ChecadorModelo.cargarChecador();
 				ClienteModelo.cargarCliente();
-				cargarDatosEnTabla();
-				return ClienteModelo.getClient();
+				return ChecadorModelo.obtenerInstancia().getRegistros();
 			}
 
+			@Override
+			protected void done() {
+				try {
+					registros = get();
+					cargarDatosEnTabla();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		};
 		worker.execute();
 	}
 	  private void cargarDatosEnTabla() {
 	        modelo = (DefaultTableModel) datosTabla.getModel();
-	        List<ChecadorObj> registros = ChecadorModelo.obtenerInstancia().getRegistros();
+	        registros = ChecadorModelo.obtenerInstancia().getRegistros();
 	        for (ChecadorObj registro : registros) {
+	        	if(registro.getFecha().equals(fechaActual)) {
 	            Object[] rowData = {
 	                registro.getIdCliente(),
 	                registro.getNombreCliente(),
@@ -296,7 +317,7 @@ public class ChecadorVista extends JFrame  {
 	                registro.getHoraSalida()
 	            };
 	            modelo.addRow(rowData);
-
+	        	}
                 actualizarTabla(registro);
 	        }
 	    }

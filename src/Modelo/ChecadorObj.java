@@ -6,13 +6,14 @@ public class ChecadorObj {
     private String estadoCliente;
     private String horaEntrada;
     private String horaSalida;
-
-    public ChecadorObj(int idCliente, String nombreCliente, String estadoCliente, String horaEntrada, String horaSalida) {
+    private String fecha;
+    public ChecadorObj(int idCliente, String nombreCliente, String estadoCliente, String horaEntrada, String horaSalida,String fecha) {
         this.idCliente = idCliente;
         this.nombreCliente = nombreCliente;
         this.estadoCliente = estadoCliente;
         this.horaEntrada = horaEntrada;
         this.horaSalida = horaSalida;
+        this.fecha=fecha;
     }
 
 
@@ -57,4 +58,11 @@ public class ChecadorObj {
     public void setHoraSalida(String horaSalida) {
         this.horaSalida = horaSalida;
     }
+
+
+	public String getFecha() {
+		return fecha;
+	}
+
+    
 }

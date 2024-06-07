@@ -26,10 +26,10 @@ public class ChecadorControlador {
         FramePrincipal.obtenerInstancia().agregarPanel(vista.checador());
     }
 
-    public ChecadorObj registrarChecada(int idCliente, String nombre, String horaActual) {
+    public ChecadorObj registrarChecada(int idCliente, String nombre, String horaActual,String fecha) {
         ClienteObj cliente = clientesControlador.buscarClientePorID(idCliente); // Usa el método buscarClientePorID del controlador de clientes
         if (cliente != null) {
-            ChecadorObj checador = modelo.registrarChecada(idCliente, nombre, horaActual);
+            ChecadorObj checador = modelo.registrarChecada(idCliente, nombre, horaActual,fecha);
             vista.actualizarTabla(checador);
             return checador;
         } else {

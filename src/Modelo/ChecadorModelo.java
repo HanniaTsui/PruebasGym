@@ -2,7 +2,11 @@ package Modelo;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,15 +19,8 @@ import com.code.advancedsql.query.Select;
 
 public class ChecadorModelo {
     public static ChecadorModelo instance = new ChecadorModelo();
-    
- //   static List<ChecadorObj> check = new ArrayList<ChecadorObj>();
-    private static List<ChecadorObj> registros = new ArrayList<>();
-    
-/*    public static List<ChecadorObj> getCheck() {
-        return check;
-    }*/
-
-    List<ClienteObj> clientes = ClienteModelo.obtenerInstancia().getClient();
+    public static List<ChecadorObj> registros = new ArrayList<>();
+    static List<ClienteObj> clientes = ClienteModelo.obtenerInstancia().getClient();
     
     public static ChecadorModelo obtenerInstancia() {
         return instance;
@@ -37,11 +34,16 @@ public class ChecadorModelo {
             for (Map<String, Object> map : resultTableUser) {
                 int IDCliente = (int) map.get("IDCliente");
                 String nombreCliente = (String) map.get("nombreCliente");
-                String horaEntrada = (String) map.get("horaEntrada");
-                String horaSalida = (String) map.get("horaSalida");
+                
+                Time horaEntradaTime = (Time) map.get("horaEntrada");
+                Time horaSalidaTime = (Time) map.get("horaSalida");
+                String horaEntrada = horaEntradaTime != null ? horaEntradaTime.toString() : null;
+                String horaSalida = horaSalidaTime != null ? horaSalidaTime.toString() : null;
+                Date fechaFormato=(Date) map.get("fecha");
                 String estadoCliente = (String) map.get("estadoCliente");
-
-                registros.add(new ChecadorObj(IDCliente, nombreCliente, estadoCliente, horaEntrada, horaSalida));
+                DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+                String fecha = formatoFecha.format(fechaFormato);
+                registros.add(new ChecadorObj(IDCliente, nombreCliente, estadoCliente, horaEntrada, horaSalida,fecha));
                 System.out.println(IDCliente);
             }
             System.out.println("Registros cargados: " + registros.size()); // Mensaje de depuración
@@ -50,49 +52,39 @@ public class ChecadorModelo {
         }
     }
     
-    public ChecadorObj registrarChecada(int idCliente, String nombreCliente, String horaActual) {
-        // Buscar si el cliente ya tiene un registro de entrada
-        ChecadorObj registroExistente = buscarRegistroEntrada(idCliente);
-        String fechaFinal=null;
-        if (registroExistente == null) {
-            for (ClienteObj cliente : clientes) {
-                if(idCliente==cliente.getID()) {
-                    fechaFinal=cliente.getFechaFinal();
-                    break;
-                }
-            }
-            String estadoActual = ClienteModelo.obtenerInstancia().estado(fechaFinal) ? "Activo" : "No activo";
-            // Si no hay registro de entrada, crear uno nuevo con la hora de entrada proporcionada
-            ChecadorObj checadorObj= new ChecadorObj(idCliente, nombreCliente, estadoActual, horaActual, null);
-            registros.add(checadorObj);
-            return checadorObj;
-        } else {
-            // Si ya hay un registro de entrada, actualizar la hora de salida
-            registroExistente.setHoraSalida(horaActual);
-            subirDatosChecador(registroExistente);
-            return registroExistente;
-        }
-    }
-    
-    private ChecadorObj buscarRegistroEntrada(int idCliente) {
+    public ChecadorObj registrarChecada(int idCliente, String nombreCliente, String horaActual,String fechaActual) {
         for (ChecadorObj registro : registros) {
-            if (registro.getIdCliente() == idCliente && registro.getHoraSalida() == null) {
-                // Si el cliente tiene un registro de entrada sin hora de salida, retornarlo
+            if (registro.getIdCliente() == idCliente && registro.getHoraSalida() == null ) {
+                registro.setHoraSalida(horaActual);
+                subirDatosChecador(registro);
                 return registro;
             }
         }
-        return null; // Si no se encuentra ningún registro de entrada para el cliente, retornar null
+
+        String fechaFinal = null;
+        for (ClienteObj cliente : clientes) {
+            if (idCliente == cliente.getID()) {
+                fechaFinal = cliente.getFechaFinal();
+                break;
+            }
+        }
+
+        String estadoActual = ClienteModelo.obtenerInstancia().estado(fechaFinal) ? "Activo" : "No activo";
+        ChecadorObj nuevoRegistro = new ChecadorObj(idCliente, nombreCliente, estadoActual, horaActual, null,fechaActual);
+        registros.add(nuevoRegistro);
+        return nuevoRegistro;
+        
     }
-    
     public boolean subirDatosChecador(ChecadorObj checador) {
-        Insert insertar=BaseDatos.optenerIstancia().getMySQL().table("checador").insert();
-        insertar.field("IDCliente",checador.getIdCliente());
-        insertar.field("nombreCliente",checador.getNombreCliente());
-        insertar.field("estadoCliente",checador.getEstadoCliente());
-        insertar.field("horaEntrada",checador.getHoraEntrada());
-        insertar.field("horaSalida",checador.getHoraSalida());
+        Insert insertar = BaseDatos.optenerIstancia().getMySQL().table("checador").insert();
+        insertar.field("IDCliente", checador.getIdCliente());
+        insertar.field("nombreCliente", checador.getNombreCliente());
+        insertar.field("estadoCliente", checador.getEstadoCliente());
+        insertar.field("horaEntrada", checador.getHoraEntrada());
+        insertar.field("horaSalida", checador.getHoraSalida());
         try {
             insertar.execute();
+            registros.add(checador);
         } catch (SQLException e) {
             e.printStackTrace(); 
             return false;
@@ -100,9 +92,7 @@ public class ChecadorModelo {
         return true;
     }
     
-    public static List<ChecadorObj> getRegistros() {
+    public List<ChecadorObj> getRegistros() {
         return registros;
     }
-    
-   
 }
