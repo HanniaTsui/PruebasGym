@@ -59,8 +59,7 @@ import javax.swing.text.PlainDocument;
 
 import Modelo.ClienteObj;
 import Modelo.PlanesModelo;
-import Modelo.RegistroPagoModelo;
-import Modelo.RegistroPagoObj;
+import Modelo.ChecadorModelo;
 import Modelo.ClienteModelo;
 import controlador.ClientesControlador;
 import controlador.InicioControlador;
@@ -654,9 +653,6 @@ public class ClientesVista {
         textEmail.setBorder(new JTextField().getBorder());
         textApellidos.setBorder(new JTextField().getBorder());
         textTel.setBorder(new JTextField().getBorder());
-        comboPago.setBorder(new JTextField().getBorder());
-        comboTipo.setBorder(new JTextField().getBorder());
-        comboMembresia.setBorder(new JTextField().getBorder());
         boolean camposVacios = false;
 
         if (textNombre.getText().isEmpty()) {
@@ -722,8 +718,12 @@ public class ClientesVista {
             }
         }
 		
-        ClienteModelo.obtenerInstancia().editarCliente(cliente);  
+         
         JOptionPane.showMessageDialog(null, "¡Nuevos cambios realizados con éxito!", "Edición exitosa", JOptionPane.INFORMATION_MESSAGE);
+        if (panelCrear.isVisible()) {
+            panelCrear.setVisible(false);
+        }
+        ClienteModelo.obtenerInstancia().editarCliente(cliente); 
 	}
 	private boolean validarCamposCrear() {
 		int ID = 0;
@@ -741,9 +741,9 @@ public class ClientesVista {
         textEmail.setBorder(new JTextField().getBorder());
         textApellidos.setBorder(new JTextField().getBorder());
         textTel.setBorder(new JTextField().getBorder());
-        comboPago.setBorder(new JTextField().getBorder());
-        comboTipo.setBorder(new JTextField().getBorder());
-        comboMembresia.setBorder(new JTextField().getBorder());
+ //       comboPago.setBorder(new JTextField().getBorder());
+//        comboTipo.setBorder(new JTextField().getBorder());
+//        comboMembresia.setBorder(new JTextField().getBorder());
 		boolean todosLlenos = true;
 		if (nombre.isEmpty()) {
 	        textNombre.setBorder(new LineBorder(Color.RED, 1));
@@ -887,7 +887,7 @@ public class ClientesVista {
 	}
 
 	public JPanel editarCliente(ClienteObj cliente) {
-		JPanel panelCrear = new JPanel();
+		panelCrear = new JPanel();
 		panelCrear.setBackground(new Color(217, 217, 217));
 		panelCrear.setLayout(null);
 		panelCrear.setVisible(false);
@@ -1129,9 +1129,9 @@ public class ClientesVista {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				validarCamposEditar();
-				if (panelCrear != null) {
+		/*		if (panelCrear != null) {
 	                panelCrear.setVisible(false);
-	            }
+				}*/
             }
         });
 		btnGuardar.setBounds(462, 490, 120, 40);
@@ -1269,9 +1269,14 @@ public class ClientesVista {
 		btnReporte = new JButton("Renovar suscripción");
 		btnReporte.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (cliente != null)
-					renovar(cliente);
-
+				if (cliente != null) {
+		            if (cliente.getEstado().equals("No activo")) {
+		                renovar(cliente);
+		            } else {
+		                JOptionPane.showMessageDialog(null, "El cliente ya está activo y no puede renovar su suscripción en este momento.", "Cliente activo", JOptionPane.WARNING_MESSAGE);
+		                cliente=null;
+		            }
+		        }
 			}
 		});
 		btnReporte.setForeground(Color.white);
@@ -1449,76 +1454,69 @@ public class ClientesVista {
 		///////
 	}
 
-	public void detallesHistorialPago(ClienteObj cliente) { 
-	    // Panel de detalles del cliente
-	    panelDetalles(cliente);
-	    lblMembresia = new JLabel("Suscripción: " + cliente.getPlanMembresia());
-	    configurarLabelsIzq(lblMembresia);
-	    lblMembresia.setBounds(87, 55, 200, 20);
-	    panelInfo.add(lblMembresia);
+	public void detallesHistorialPago(ClienteObj cliente) { // HistorialPago clientes
+		panelDetalles(cliente);
+		lblMembresia = new JLabel("Suscripción: " + cliente.getPlanMembresia());
+		configurarLabelsIzq(lblMembresia);
+		lblMembresia.setBounds(87, 55, 200, 20);
+		panelInfo.add(lblMembresia);
 
-	    String titles[] = { "Membresía", "Fecha inicial", "Vencimiento", "Total" };
-	    DefaultTableModel modelo = new DefaultTableModel(null, titles) {
-	        @Override
-	        public boolean isCellEditable(int row, int column) {
-	            return false; // La tabla no se edita
-	        }
+		String titles[] = { "Membresía", "Fecha inicial", "Vencimiento", "Total" };
+		DefaultTableModel modelo = new DefaultTableModel(null, titles) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false; // La tabla no se edita
+			}
 
-	        @Override
-	        public Class<?> getColumnClass(int col) {
-	            return col == 3 ? Integer.class : String.class;
-	        }
+			@Override
+			public Class<?> getColumnClass(int col) {
+				return col == 3 ? Integer.class : String.class;
+			}
 
-	        private int getPrice(String planMembresia, String tipoMembresia) {
-	            return switch (planMembresia) {
-	                case "General" -> (tipoMembresia.equals("1 mes") ? 399
-	                        : (tipoMembresia.equals("3 meses") ? 1137
-	                        : (tipoMembresia.equals("6 meses") ? 2274
-	                        : (tipoMembresia.equals("1 año") ? 4608 : 50))));
-	                case "Familiar" -> (tipoMembresia.equals("1 mes") ? 500
-	                        : (tipoMembresia.equals("3 meses") ? 1425
-	                        : (tipoMembresia.equals("6 meses") ? 2850
-	                        : (tipoMembresia.equals("1 año") ? 5775 : 50))));
-	                case "Estudiante" -> (tipoMembresia.equals("1 mes") ? 358
-	                        : (tipoMembresia.equals("3 meses") ? 1020
-	                        : (tipoMembresia.equals("6 meses") ? 2040
-	                        : (tipoMembresia.equals("1 año") ? 4090 : 50))));
-	                case "Duo" -> (tipoMembresia.equals("1 mes") ? 599
-	                        : (tipoMembresia.equals("3 meses") ? 1737
-	                        : (tipoMembresia.equals("6 meses") ? 3474
-	                        : (tipoMembresia.equals("1 año") ? 7068 : 50))));
-	                default -> 50;
-	            };
-	        }
+			private int getPrice(String planMembresia, String tipoMembresia) {
+			    return switch (planMembresia) {
+			        case "General" -> (tipoMembresia.equals("1 mes") ? 399
+			                : (tipoMembresia.equals("3 meses") ? 1137
+			                : (tipoMembresia.equals("6 meses") ? 2274
+			                : (tipoMembresia.equals("1 año") ? 4608 : 50))));
+			        case "Familiar" -> (tipoMembresia.equals("1 mes") ? 500
+			                : (tipoMembresia.equals("3 meses") ? 1425
+			                : (tipoMembresia.equals("6 meses") ? 2850
+			                : (tipoMembresia.equals("1 año") ? 5775 : 50))));
+			        case "Estudiante" -> (tipoMembresia.equals("1 mes") ? 358
+			                : (tipoMembresia.equals("3 meses") ? 1020
+			                : (tipoMembresia.equals("6 meses") ? 2040
+			                : (tipoMembresia.equals("1 año") ? 4090 : 50))));
+			        case "Duo" -> (tipoMembresia.equals("1 mes") ? 599
+			                : (tipoMembresia.equals("3 meses") ? 1737
+			                : (tipoMembresia.equals("6 meses") ? 3474
+			                : (tipoMembresia.equals("1 año") ? 7068 : 50))));
+			        default -> 50;
+			    };
+			}
 
-	        @Override
-	        public Object getValueAt(int fila, int col) {
-	            RegistroPagoObj pago = RegistroPagoModelo.obtenerInstancia().getPagos().get(fila);
-	            return switch (col) {
-	                case 0 -> cliente.getTipoMembresia();
-	                case 1 -> cliente.getFechaInicial();
-	                case 2 -> cliente.getFechaFinal();
-	                case 3 -> getPrice(cliente.getTipoMembresia(), cliente.getPlanMembresia());
-	                default -> null;
-	            };
-	        }
+			@Override
+			public Object getValueAt(int fila, int col) {
+				return switch (col) {
+				case 0 -> cliente.getTipoMembresia();
+				case 1 -> cliente.getFechaInicial();
+				case 2 -> cliente.getFechaFinal();
+				case 3 -> getPrice(cliente.getTipoMembresia(), cliente.getPlanMembresia());
+				default -> null;
+				};
+			}
 
-	    };
-	    JTable datosTabla = new JTable(modelo);
-	    datosTabla.setColumnSelectionAllowed(false);
-
-	    // Cargar los pagos desde la base de datos
-	    RegistroPagoModelo.cargarPagosPorCliente(cliente.getID());
-	    List<RegistroPagoObj> pagos = RegistroPagoModelo.getPagos();
-	    for (RegistroPagoObj pago : pagos) {
-	        Object[] rowData = { cliente.getTipoMembresia(), pago.getFechaPago(), cliente.getFechaFinal(), pago.getMonto() };
-	        modelo.addRow(rowData);
-	    }
-
-	    JScrollPane tablaScroll = new JScrollPane(datosTabla);
-	    tablaScroll.setBounds(87, 95, 730, 200);
-	    panelInfo.add(tablaScroll);
+		};
+		JTable datosTabla = new JTable(modelo);
+		datosTabla.setColumnSelectionAllowed(false);
+		Vector<ClienteObj> clientes = new Vector<>();
+		clientes.add(cliente);
+		modelo.addRow(clientes);
+		JScrollPane tablaScroll = new JScrollPane(datosTabla);
+		tablaScroll.setBounds(87, 95, 730, 200);
+		panelInfo.add(tablaScroll);
 	}
+
 	public void detallesHistorialAsistencia(ClienteObj cliente) { // HistorialAsistencia clientes
 		panelDetalles(cliente);
 		String titulo[] = { "Fecha", "Hora de entrada", "Hora de salida" };
@@ -1540,13 +1538,17 @@ public class ClientesVista {
 			comboMes.addItem(month);
 		}
 		comboMes.setBounds(600, 60, 215, 25);
+		JLabel lblAsistenciasTotales = new JLabel("Asistencias totales:");
 		comboMes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// cargarAsistencias((String) monthComboBox.getSelectedItem());
+				int mes = comboMes.getSelectedIndex() + 1;
+                ChecadorModelo.cargarAsistencias(cliente.getID(), mes, modelo2);
+                int totalAsistencias = ChecadorModelo.cargarAsistencias(cliente.getID(), mes, modelo2);
+                lblAsistenciasTotales.setText("Asistencias totales: " + totalAsistencias);
 			}
 		});
 		panelInfo.add(comboMes);
-		JLabel lblAsistenciasTotales = new JLabel("Asistencias totales:");
+		
 		configurarLabelsIzq(lblAsistenciasTotales);
 		lblAsistenciasTotales.setBounds(87, 55, 237, 25);
 		panelInfo.add(lblAsistenciasTotales);
@@ -1623,12 +1625,19 @@ public class ClientesVista {
 		newHorario.setBounds(70, 165, 200, 20);
 		panelEditar.add(newHorario);
 		configurarLabelsIzq(newHorario);
-		
-		comboMembresia = new JComboBox();
-		comboMembresia.setModel(new DefaultComboBoxModel(new String[] { "General", "Estudiante", "Familiar", "Dúo" }));
+
+		comboMembresia = new JComboBox<>();
+		// Cargar las clases desde la base de datos y añadirlas al JComboBox
+		List<String> nombresClases = PlanesModelo.obtenerNombresPlanes();
+		DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
 		comboMembresia.setBounds(70, 205, 170, 30);
 		comboMembresia.setSelectedItem(cliente.getPlanMembresia());
 		panelEditar.add(comboMembresia);
+
+		for (String nombreClase : nombresClases) {
+		    comboBoxModel.addElement(nombreClase);
+		}
+		comboMembresia.setModel(comboBoxModel);
 		
 		comboTipo = new JComboBox();
         comboTipo.setModel(new DefaultComboBoxModel(new String[] {  "1 mes", "3 meses", "6 meses", "1 año" }));
@@ -1666,7 +1675,7 @@ public class ClientesVista {
 				lblPlan.setText(cliente.getPlanMembresia());
 			    lblTip.setText(cliente.getTipoMembresia());;
                 controlador.actualizarCliente(cliente);
-				// ticket();
+              //  ticket();
 			}
 		});
 		JButton btnCancelar = new JButton("Cancelar");
@@ -1767,9 +1776,9 @@ public class ClientesVista {
 		ticket.getContentPane().add(panelEditar);
 
 		JLabel lblNewLabel = new JLabel(
-				"<html>Larry's Gym<br>5.0 / Fitness Club<br> Cliente: <br>Vendedor: <br>Tipo de membresía:"
+				"<html>Larry's Gym<br>5.0 / Fitness Club<br> Cliente: "+cliente.getNombre() + " "+ cliente.getApellido()+ " <br>Tipo de membresía:"
 						+ cliente.getTipoMembresia()
-						+ " <br>Valor de la membresía: 400 <br><br><br>Fecha inicial: <br>Fecha de vencimiento: <br><br><br>Monto total     MXN   <br>Pago realizado en <br>Cambio</html>");
+						+ " <br>Valor de la membresía: 400 <br><br><br>Fecha inicial: " + cliente.getFechaInicial()+"<br>Fecha de vencimiento: "+ cliente.getFechaFinal()+"<br><br><br>Monto total     MXN   <br>Pago realizado en "+ cliente.getMetodoPago()+"<br>Cambio</html>");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblNewLabel.setBounds(50, -30, 300, 450);
 		panelEditar.add(lblNewLabel);

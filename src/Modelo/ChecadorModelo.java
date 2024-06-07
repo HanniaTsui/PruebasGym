@@ -10,8 +10,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 import com.code.advancedsql.query.Delete;
 import com.code.advancedsql.query.Insert;
@@ -26,7 +28,7 @@ public class ChecadorModelo {
         return instance;
     }
     
-    public static void cargarChecador() {
+  /*  public static void cargarChecador() {
         registros.clear(); // Limpiar la lista antes de cargar los registros
         Select nombreTabla = BaseDatos.optenerIstancia().getMySQL().table("checador").select();
         try {
@@ -37,6 +39,7 @@ public class ChecadorModelo {
                 
                 Time horaEntradaTime = (Time) map.get("horaEntrada");
                 Time horaSalidaTime = (Time) map.get("horaSalida");
+                
                 String horaEntrada = horaEntradaTime != null ? horaEntradaTime.toString() : null;
                 String horaSalida = horaSalidaTime != null ? horaSalidaTime.toString() : null;
                 Date fechaFormato=(Date) map.get("fecha");
@@ -50,8 +53,40 @@ public class ChecadorModelo {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
+    }*/
     
+    public static void cargarChecador() {
+        registros.clear(); // Limpiar la lista antes de cargar los registros
+        Select nombreTabla = BaseDatos.optenerIstancia().getMySQL().table("checador").select();
+        try {
+            List<Map<String, Object>> resultTableUser = nombreTabla.fetchAllAsList();
+            
+            // Creamos un SimpleDateFormat con la zona horaria correcta
+            SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+            
+            for (Map<String, Object> map : resultTableUser) {
+                int IDCliente = (int) map.get("IDCliente");
+                String nombreCliente = (String) map.get("nombreCliente");
+                Time horaEntradaTime = (Time) map.get("horaEntrada");
+                Time horaSalidaTime = (Time) map.get("horaSalida");
+                Date fechaFormato = (Date) map.get("fecha");
+                String estadoCliente = (String) map.get("estadoCliente");
+
+                // Convertimos explícitamente la hora a la zona horaria local
+                String horaEntrada = horaEntradaTime != null ? dateFormat.format(horaEntradaTime) : null;
+                String horaSalida = horaSalidaTime != null ? dateFormat.format(horaSalidaTime) : null;
+                DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+                String fecha = formatoFecha.format(fechaFormato);
+                
+                registros.add(new ChecadorObj(IDCliente, nombreCliente, estadoCliente, horaEntrada, horaSalida, fecha));
+                System.out.println(IDCliente);
+            }
+            System.out.println("Registros cargados: " + registros.size()); // Mensaje de depuración
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     public ChecadorObj registrarChecada(int idCliente, String nombreCliente, String horaActual,String fechaActual) {
         for (ChecadorObj registro : registros) {
             if (registro.getIdCliente() == idCliente && registro.getHoraSalida() == null ) {
@@ -95,4 +130,37 @@ public class ChecadorModelo {
     public List<ChecadorObj> getRegistros() {
         return registros;
     }
+    
+    public static int cargarAsistencias(int clienteId, int mes, DefaultTableModel modelo) {
+        List<Map<String, Object>> resultTableUser = null;
+        try {
+            Select nombreTabla = BaseDatos.optenerIstancia().getMySQL().table("checador").select();
+            nombreTabla.where("IDCliente = ? AND MONTH(fecha) = ?", clienteId, mes); // Ajuste aquí
+            resultTableUser = nombreTabla.fetchAllAsList();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if (resultTableUser != null) {
+            modelo.setRowCount(0); // Limpiar la tabla antes de cargar los registros
+            SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT")); 
+
+            DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+
+            for (Map<String, Object> map : resultTableUser) {
+                Date fechaFormato = (Date) map.get("fecha");
+                String fecha = formatoFecha.format(fechaFormato);
+
+                Time horaEntradaTime = (Time) map.get("horaEntrada");
+                Time horaSalidaTime = (Time) map.get("horaSalida");
+                String horaEntrada = horaEntradaTime != null ? dateFormat.format(horaEntradaTime) : null;
+                String horaSalida = horaSalidaTime != null ? dateFormat.format(horaSalidaTime) : null;
+                
+                modelo.addRow(new Object[]{fecha, horaEntrada, horaSalida});
+            }
+            return resultTableUser.size();
+        }
+        return 0;
+    }
+
 }
