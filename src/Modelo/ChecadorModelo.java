@@ -16,12 +16,12 @@ import com.code.advancedsql.query.Select;
 public class ChecadorModelo {
     public static ChecadorModelo instance = new ChecadorModelo();
     
-    static List<ChecadorObj> check = new ArrayList<ChecadorObj>();
+ //   static List<ChecadorObj> check = new ArrayList<ChecadorObj>();
     private static List<ChecadorObj> registros = new ArrayList<>();
     
-    public static List<ChecadorObj> getCheck() {
+/*    public static List<ChecadorObj> getCheck() {
         return check;
-    }
+    }*/
 
     List<ClienteObj> clientes = ClienteModelo.obtenerInstancia().getClient();
     
@@ -100,7 +100,7 @@ public class ChecadorModelo {
         return true;
     }
     
-    public List<ChecadorObj> getRegistros() {
+    public static List<ChecadorObj> getRegistros() {
         return registros;
     }
     

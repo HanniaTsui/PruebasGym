@@ -282,7 +282,6 @@ public class ClienteModelo {
 			JOptionPane.showMessageDialog(null, "No se actualizó el cliente", "ERROR", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		JOptionPane.showMessageDialog(null, "Se actualizó el cliente correctamente");
 	}
 
 	public boolean subirDatosCliente(ClienteObj cliente) {

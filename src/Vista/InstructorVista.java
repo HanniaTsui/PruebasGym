@@ -79,12 +79,16 @@ public class InstructorVista{
 	 private static boolean datosCargados = false;
 	 static List<InstructorObj> instructores;
 	 private JButton btnEditar;
+	 InstructorObj instructor=null;
 	 private JButton btnDetalles;
 	 private JTable datosTabla;
 	 String path;
 	 private JComboBox comboEspecialidad;
 	 private SpinnerDateModel modeloFechaIn;
 	 private String fechaInicial1;
+	private JSpinner spinnerFechaC;
+	private int id;
+	private boolean camposVacios;
 	/**
 	 * Create the frame.
 	 */
@@ -624,7 +628,7 @@ public class InstructorVista{
 
 	
 	public JPanel editarInstructor(InstructorObj instructor) {
-		int id=instructor.getID();
+		id=instructor.getID();
 		JPanel panel = getMenu();
 		JLabel lblTitutlo = new JLabel("Editar instructor");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
@@ -698,7 +702,7 @@ public class InstructorVista{
 		// Crear el modelo de fecha del spinner con la fecha de nacimiento obtenida
 		SpinnerDateModel model = new SpinnerDateModel(fecha, null, null, java.util.Calendar.DAY_OF_MONTH);
 		// Crear el spinner con el modelo
-		JSpinner spinnerFechaC = new JSpinner(model);
+		spinnerFechaC = new JSpinner(model);
 		JSpinner.DateEditor dateEditorFechaC = new JSpinner.DateEditor(spinnerFechaC, "dd/MM/yyyy");
 		spinnerFechaC.setEditor(dateEditorFechaC);
 		spinnerFechaC.setPreferredSize(new Dimension(200, 30));
@@ -763,37 +767,41 @@ public class InstructorVista{
 	    btnGuardar.setForeground(new Color(255, 255, 255));
 	    btnGuardar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
+	    		validarCamposEditar();
+	    		if (camposVacios) {
+	                return;
+	            }
 	    		instructor.setNombre(textNombre.getText());
 	    		instructor.setApellido(textApellidos.getText());
 	    		instructor.setCorreo(textEmail.getText());
 	    		instructor.setTelefono(textTel.getText());
 	    		instructor.setEspecialidad((String) comboEspecialidad.getSelectedItem());
 	    		// Obtener y asignar las nuevas fechas seleccionadas
-		        Date fechaNac = (Date) spinnerFechaC.getValue();
-		        instructor.setFechaContratacion(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
-		
-		        if (!path.equals("Predeterminado")) {
-		            BufferedImage imagen;
-		            try {
-		                imagen = ImageIO.read(new File(path));
-		                instructor.setImagen(imagen);
-		            } catch (IOException exception) {
-		                JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
-		            }
-		        }
-		        for (InstructorObj instructor : instructores) {
-		        	if(instructor.getID()==id) {
-		        		instructor.setNombre(textNombre.getText());
-			    		instructor.setApellido(textApellidos.getText());
-			    		instructor.setCorreo(textEmail.getText());
-			    		instructor.setTelefono(textTel.getText());
-			    		instructor.setEspecialidad((String) comboEspecialidad.getSelectedItem());
-				        instructor.setFechaContratacion(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
-				        break;
-		        	}
-				}
-		        InstructorModelo.obtenerInstancia().editarInstructor(instructor);
-		        actualizarTabla();
+	            Date fechaNac = (Date) spinnerFechaC.getValue();
+	            instructor.setFechaContratacion(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
+
+	            if (!path.equals("Predeterminado")) {
+	                BufferedImage imagen;
+	                try {
+	                    imagen = ImageIO.read(new File(path));
+	                    instructor.setImagen(imagen);
+	                } catch (IOException exception) {
+	                    JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
+	                }
+	            }
+	            for (InstructorObj instructor : instructores) {
+	            	if(instructor.getID()==id) {
+	            		instructor.setNombre(textNombre.getText());
+	    	    		instructor.setApellido(textApellidos.getText());
+	    	    		instructor.setCorreo(textEmail.getText());
+	    	    		instructor.setTelefono(textTel.getText());
+	    	    		instructor.setEspecialidad((String) comboEspecialidad.getSelectedItem());
+	    		        instructor.setFechaContratacion(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
+	    		        break;
+	            	}
+	    		}
+	            InstructorModelo.obtenerInstancia().editarInstructor(instructor);
+	            actualizarTabla();
 	    		controlador.instructor();
 	    	}
 	    });
@@ -808,6 +816,7 @@ public class InstructorVista{
 	    btnCancelar.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		controlador.instructor();
+	    		
 	    	}
 	    });
 	    btnCancelar.setFocusable(false);
@@ -816,6 +825,49 @@ public class InstructorVista{
 	    btnCancelar.setBounds(466, 380, 120, 40);
 	    panelCrear.add(btnCancelar);
 		return panel;
+	}
+	
+	public void validarCamposEditar() {
+		camposVacios = false;
+	    textNombre.setBorder(new JTextField().getBorder());
+        textEmail.setBorder(new JTextField().getBorder());
+        textApellidos.setBorder(new JTextField().getBorder());
+        textTel.setBorder(new JTextField().getBorder());
+	    // Verificar si algún campo está vacío
+        if (textNombre.getText().isEmpty()) {
+        	textNombre.setBorder(BorderFactory.createLineBorder(Color.RED));
+            camposVacios = true;
+        } 
+        if (textEmail.getText().isEmpty()) {
+        	textEmail.setBorder(BorderFactory.createLineBorder(Color.RED));
+            camposVacios = true;
+        } 
+        if (textApellidos.getText().isEmpty()) {
+        	textApellidos.setBorder(BorderFactory.createLineBorder(Color.RED));
+            camposVacios = true;
+        } 
+        if (textTel.getText().isEmpty() ) {
+        	textTel.setBorder(BorderFactory.createLineBorder(Color.RED));
+            camposVacios = true;
+        } 
+        if(textTel.getText().length() !=10 ) {
+        	JOptionPane.showMessageDialog(null, "El teléfono debe tener exactamente 10 caracteres.", "Error", JOptionPane.ERROR_MESSAGE);
+		    textTel.setBorder(BorderFactory.createLineBorder(Color.RED)); // Marcar el campo en rojo
+		    return;
+        }
+        if(!textEmail.getText().contains("@")) {
+        	textEmail.setBorder(new LineBorder(Color.RED));
+        	JOptionPane.showMessageDialog(null, "La dirección de correo electrónico debe contener el carácter '@'.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        // Mostrar mensaje de alerta
+        if (camposVacios) {
+            JOptionPane.showMessageDialog(null, "Por favor, complete todos los campos obligatorios.", "Campos vacíos", JOptionPane.WARNING_MESSAGE);
+            return; // Detener el proceso si algún campo está vacío
+        }
+	    
+		
+	
 	}
 	
 	public void subirFoto() {
@@ -829,7 +881,6 @@ public class InstructorVista{
         } else {
             JOptionPane.showMessageDialog(null, "Agrega una imagen valida");
         }
-        System.out.println("Ruta del archivo seleccionado: " + selectedFile.getAbsolutePath());
 
 	}
 	

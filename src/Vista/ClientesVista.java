@@ -100,6 +100,8 @@ public class ClientesVista {
 	private LocalDate fechaInicioOriginal;
 	private LocalDate fechaFinOriginal;
 	private JLabel lblPago;
+	private JSpinner spinnerFechaNacimiento;
+	private JSpinner spinnerFechaIn;
 
 	/**
 	 * Create the frame.
@@ -357,7 +359,6 @@ public class ClientesVista {
 		p2.setBackground(new Color(255, 255, 255));
 		p2.setPreferredSize(new Dimension(p2.getWidth(), 750));
 		p2.setLayout(null);
-
 		return p2;
 	}
 
@@ -646,6 +647,82 @@ public class ClientesVista {
             labelFechaFin.setText(fechaFinalFormateada);
         }
     }
+	public void validarCamposEditar() {
+		textNombre.setBorder(new JTextField().getBorder());
+        textEmail.setBorder(new JTextField().getBorder());
+        textApellidos.setBorder(new JTextField().getBorder());
+        textTel.setBorder(new JTextField().getBorder());
+        comboPago.setBorder(new JTextField().getBorder());
+        comboTipo.setBorder(new JTextField().getBorder());
+        comboMembresia.setBorder(new JTextField().getBorder());
+        boolean camposVacios = false;
+
+        if (textNombre.getText().isEmpty()) {
+        	textNombre.setBorder(BorderFactory.createLineBorder(Color.RED));
+            camposVacios = true;
+        } 
+        if (textEmail.getText().isEmpty()) {
+        	textEmail.setBorder(BorderFactory.createLineBorder(Color.RED));
+            camposVacios = true;
+        } 
+        if (textApellidos.getText().isEmpty()) {
+        	textApellidos.setBorder(BorderFactory.createLineBorder(Color.RED));
+            camposVacios = true;
+        } 
+        if (textTel.getText().isEmpty() ) {
+        	textTel.setBorder(BorderFactory.createLineBorder(Color.RED));
+            camposVacios = true;
+        } 
+        if(textTel.getText().length() !=10 ) {
+        	JOptionPane.showMessageDialog(null, "El teléfono debe tener exactamente 10 caracteres.", "Error", JOptionPane.ERROR_MESSAGE);
+		    textTel.setBorder(BorderFactory.createLineBorder(Color.RED)); // Marcar el campo en rojo
+		    return;
+        }
+        if(!textEmail.getText().contains("@")) {
+        	textEmail.setBorder(new LineBorder(Color.RED));
+        	JOptionPane.showMessageDialog(null, "La dirección de correo electrónico debe contener el carácter '@'.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (camposVacios) {
+            JOptionPane.showMessageDialog(null, "Por favor, complete todos los campos obligatorios.", "Campos vacíos", JOptionPane.WARNING_MESSAGE);
+            return; // Detener el proceso si algún campo está vacío
+        }
+        cliente.setNombre(textNombre.getText());
+        cliente.setApellido(textApellidos.getText());
+        cliente.setCorreo(textEmail.getText());
+        cliente.setTelefono(textTel.getText());
+        cliente.setMetodoPago((String) comboPago.getSelectedItem());
+        cliente.setPlanMembresia((String) comboTipo.getSelectedItem());
+        cliente.setTipoMembresia((String) comboMembresia.getSelectedItem());
+
+        Date fechaNac = (Date) spinnerFechaNacimiento.getValue();
+        cliente.setFechaNacimiento(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
+
+        Date fechaIni = (Date) spinnerFechaIn.getValue();
+        cliente.setFechaInicial(new SimpleDateFormat("dd/MM/yyyy").format(fechaIni));
+
+        String fechaFinS = labelFechaFin.getText();
+        Date fechaFin = null;
+        try {
+            fechaFin = new SimpleDateFormat("dd/MM/yyyy").parse(fechaFinS);
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+        cliente.setFechaFinal(new SimpleDateFormat("dd/MM/yyyy").format(fechaFin));
+
+        if (!path.equals("Predeterminado")) {
+            BufferedImage imagen;
+            try {
+                imagen = ImageIO.read(new File(path));
+                cliente.setImagen(imagen);
+            } catch (IOException exception) {
+                JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+		
+        ClienteModelo.obtenerInstancia().editarCliente(cliente);  
+        JOptionPane.showMessageDialog(null, "¡Nuevos cambios realizados con éxito!", "Edición exitosa", JOptionPane.INFORMATION_MESSAGE);
+	}
 	private boolean validarCamposCrear() {
 		int ID = 0;
 		String nombre = textNombre.getText().trim();
@@ -804,20 +881,6 @@ public class ClientesVista {
 	    btnBuscar.setBounds(609, 102, 50, 50);
 	    p2.add(btnBuscar);
 
-	    btnGuardar = new JButton("Guardar");
-	    btnGuardar.setForeground(new Color(255, 255, 255));
-	    btnGuardar.addActionListener(new ActionListener() {
-	        public void actionPerformed(ActionEvent e) {
-	            if (panelEditar != null) {
-	                panelEditar.setVisible(false);
-	                panelEditar = null;
-	            }
-	        }
-	    });
-	    btnGuardar.setBackground(new Color(0, 0, 0)); // Establecer color de fondo
-	    btnGuardar.setBounds(359, 600, 150, 40); // Ajustar posición y tamaño
-	    // p2.add(btnGuardar);
-
 	    return panel;
 	}
 
@@ -887,7 +950,7 @@ public class ClientesVista {
 		// Crear el modelo de fecha del spinner con la fecha de nacimiento obtenida
 		SpinnerDateModel model = new SpinnerDateModel(fechaNacimiento, null, null, java.util.Calendar.DAY_OF_MONTH);
 		// Crear el spinner con el modelo
-		JSpinner spinnerFechaNacimiento = new JSpinner(model);
+		spinnerFechaNacimiento = new JSpinner(model);
 		JSpinner.DateEditor dateEditorFechaNac = new JSpinner.DateEditor(spinnerFechaNacimiento, "dd/MM/yyyy");
 		spinnerFechaNacimiento.setEditor(dateEditorFechaNac);
 		spinnerFechaNacimiento.setPreferredSize(new Dimension(200, 30));
@@ -956,7 +1019,7 @@ public class ClientesVista {
 		// Crear el modelo de fecha del spinner con la fecha de nacimiento obtenida
 		SpinnerDateModel modelA = new SpinnerDateModel(fechaInicial, null, null, java.util.Calendar.DAY_OF_MONTH);
 		// Crear el spinner con el modelo
-		JSpinner spinnerFechaIn = new JSpinner(modelA);
+		spinnerFechaIn = new JSpinner(modelA);
         JSpinner.DateEditor dateEditorFechaIn = new JSpinner.DateEditor(spinnerFechaIn, "dd/MM/yyyy");
         spinnerFechaIn.setEditor(dateEditorFechaIn);
         spinnerFechaIn.setBounds(70, 350, 200, 30);
@@ -1053,44 +1116,21 @@ public class ClientesVista {
 		btnCancelar.setBounds(302, 490, 120, 40);
 		panelCrear.add(btnCancelar);
 
+		btnGuardar = new JButton("Guardar");
 		btnGuardar.setFocusable(false);
+		btnGuardar.setForeground(Color.white);
 		btnGuardar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 		btnGuardar.setBackground(new Color(0, 45, 78));
-		btnGuardar.addActionListener(e -> { //Agregar validaciones de campos vacios
-                cliente.setNombre(textNombre.getText());
-                cliente.setApellido(textApellidos.getText());
-                cliente.setCorreo(textEmail.getText());
-                cliente.setTelefono(textTel.getText());
-                cliente.setMetodoPago((String) comboPago.getSelectedItem());
-                cliente.setPlanMembresia((String) comboTipo.getSelectedItem());
-                cliente.setTipoMembresia((String) comboMembresia.getSelectedItem());
-
-                Date fechaNac = (Date) spinnerFechaNacimiento.getValue();
-                cliente.setFechaNacimiento(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
-
-                Date fechaIni = (Date) spinnerFechaIn.getValue();
-                cliente.setFechaInicial(new SimpleDateFormat("dd/MM/yyyy").format(fechaIni));
-
-                String fechaFinS = labelFechaFin.getText();
-                Date fechaFin = null;
-                try {
-                    fechaFin = new SimpleDateFormat("dd/MM/yyyy").parse(fechaFinS);
-                } catch (ParseException ex) {
-                    ex.printStackTrace();
-                }
-                cliente.setFechaFinal(new SimpleDateFormat("dd/MM/yyyy").format(fechaFin));
-
-                if (!path.equals("Predeterminado")) {
-                    BufferedImage imagen;
-                    try {
-                        imagen = ImageIO.read(new File(path));
-                        cliente.setImagen(imagen);
-                    } catch (IOException exception) {
-                        JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-                ClienteModelo.obtenerInstancia().editarCliente(cliente);        
+		btnGuardar.addActionListener(new ActionListener() { //Agregar validaciones de campos vacios
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				validarCamposEditar();
+				if (panelCrear != null) {
+	                panelCrear.setVisible(false);
+	            }
+            }
         });
 		btnGuardar.setBounds(462, 490, 120, 40);
 		panelCrear.add(btnGuardar);
@@ -1958,6 +1998,7 @@ public class ClientesVista {
 				}
 			}
 		});
+		
 	}
 
 	public void validacionNumerica(JTextField text) {

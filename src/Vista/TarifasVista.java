@@ -8,6 +8,7 @@ import java.awt.event.*;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
 import Modelo.*;
@@ -34,6 +35,9 @@ public class TarifasVista {
 
 
 	 private TarifasControlador controlador;
+	private JTextArea infor3Meses;
+	private JTextArea infor6Meses;
+	private JTextArea info1anio;
 
 	/**
 	 * Create the frame.
@@ -203,6 +207,7 @@ public class TarifasVista {
 		JButton btnGuardar_1 = new JButton("Guardar");
 		btnGuardar_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				camposVacios();
 				if (textNombreTarifa.getText().isEmpty()) {
 					System.out.println("Esta vacio");
 					return;
@@ -260,6 +265,8 @@ public class TarifasVista {
 				tarifa.getDescuento().setPorcentaje6meses(descuento6);
 				tarifa.getServicios().setBeneficio(beneficios);
 
+
+				
 				TarifaModelo.actualizarTarifa(tarifa);
 				JOptionPane.showMessageDialog(null, "¡Nuevos cambios realizados con éxito!", "Edición exitosa", JOptionPane.INFORMATION_MESSAGE);
                 controlador.tarifas();
@@ -292,6 +299,38 @@ public class TarifasVista {
 		return panel;
 	}
 	
+	public void camposVacios() {
+		textNombreTarifa.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		textPrecioMensual.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		textDesc1.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		textDesc3.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		textDesc6.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		boolean camposVacios = false;
+		if (textNombreTarifa.getText().isEmpty()) {
+			textNombreTarifa.setBorder(new LineBorder(Color.RED, 1));
+			camposVacios=true;
+		}
+		if (textPrecioMensual.getText().isEmpty()) {
+            textPrecioMensual.setBorder(BorderFactory.createLineBorder(Color.RED));
+            camposVacios = true;
+        } 
+        if (textDesc1.getText().isEmpty()) {
+            textDesc1.setBorder(BorderFactory.createLineBorder(Color.RED));
+            camposVacios = true;
+        } 
+        if (textDesc3.getText().isEmpty()) {
+            textDesc3.setBorder(BorderFactory.createLineBorder(Color.RED));
+            camposVacios = true;
+        }
+        if (textDesc6.getText().isEmpty()) {
+            textDesc6.setBorder(BorderFactory.createLineBorder(Color.RED));
+            camposVacios = true;
+        }
+        if (camposVacios) {
+            JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.", "Error", JOptionPane.WARNING_MESSAGE);
+            return; // 
+        }
+	}
 	public void elementosEditarNuevaTarifas(JPanel panel, TarifaObj tarifa) {
 		btnVolver=new JButton("Volver");
 	    btnVolver.setForeground(new Color(255, 255, 255));
@@ -531,7 +570,7 @@ public class TarifasVista {
 		lblMesesInfo.setBounds(550, 185, 189, 30);
 		panel.add(lblMesesInfo);
 		
-		JTextArea infor3Meses = new JTextArea();
+		infor3Meses = new JTextArea();
 		infor3Meses.setBorder(new LineBorder(new Color(0, 0, 0)));
 		infor3Meses.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		infor3Meses.setBounds(761, 185, 330, 80);
@@ -546,7 +585,7 @@ public class TarifasVista {
 		lblMesesInfo_3.setBounds(550, 285, 189, 30);
 		panel.add(lblMesesInfo_3);
 		
-		JTextArea infor6Meses = new JTextArea();
+		infor6Meses = new JTextArea();
 		infor6Meses.setBorder(new LineBorder(new Color(0, 0, 0)));
 		infor6Meses.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		infor6Meses.setBounds(761, 285, 330, 80);
@@ -561,7 +600,7 @@ public class TarifasVista {
 		lblAoInfo.setBounds(550, 385, 189, 30);
 		panel.add(lblAoInfo);
 		
-		JTextArea info1anio = new JTextArea();
+		info1anio = new JTextArea();
 		info1anio.setBorder(new LineBorder(new Color(0, 0, 0)));
 		info1anio.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		info1anio.setBounds(761, 385, 330, 80);
@@ -571,25 +610,47 @@ public class TarifasVista {
 
 		btnGuardar_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				textNombreTarifa.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+				info1anio.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+				infor3Meses.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+				infor6Meses.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+				textPrecioMensual.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+				textDesc1.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+				textDesc3.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+				textDesc6.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+				boolean camposVacios = false;
 				if (textNombreTarifa.getText().isEmpty()) {
-					System.out.println("Esta vacio");
-					return;
+					textNombreTarifa.setBorder(new LineBorder(Color.RED, 1));
+					camposVacios=true;
 				}
-
 				if (info1anio.getText().isEmpty()) {
-					System.out.println("Esta vacio");
-					return;
+					info1anio.setBorder(new LineBorder(Color.RED, 1));
+					camposVacios=true;
 				}
-
 				if (infor3Meses.getText().isEmpty()) {
-					System.out.println("Esta vacio");
-					return;
+					infor3Meses.setBorder(new LineBorder(Color.RED, 1));
+					camposVacios=true;
 				}
-
 				if (infor6Meses.getText().isEmpty()) {
-					System.out.println("Esta vacio");
-					return;
+					infor6Meses.setBorder(new LineBorder(Color.RED, 1));
+					camposVacios=true;
 				}
+				if (textPrecioMensual.getText().isEmpty()) {
+		            textPrecioMensual.setBorder(BorderFactory.createLineBorder(Color.RED));
+		            camposVacios = true;
+		        } 
+		        if (textDesc1.getText().isEmpty()) {
+		            textDesc1.setBorder(BorderFactory.createLineBorder(Color.RED));
+		            camposVacios = true;
+		        } 
+		        if (textDesc3.getText().isEmpty()) {
+		            textDesc3.setBorder(BorderFactory.createLineBorder(Color.RED));
+		            camposVacios = true;
+		        }
+		        if (textDesc6.getText().isEmpty()) {
+		            textDesc6.setBorder(BorderFactory.createLineBorder(Color.RED));
+		            camposVacios = true;
+		        } 
 
 				double tarifaNueva;
 				try {
@@ -652,6 +713,11 @@ public class TarifasVista {
 				if (!DescuentoModelo.getDescuentoObjcList().isEmpty()) {
 					idDescuento = DescuentoModelo.getDescuentoObjcList().getLast().getID() + 1;
 				}
+				
+				if (camposVacios) {
+		            JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.", "Error", JOptionPane.WARNING_MESSAGE);
+		            return; // 
+		        }
 
 				TarifaModelo.subirTarifa(new TarifaObj(new PlanesObj(idPlanes, textNombreTarifa.getText(), tarifaNueva, "3 Meses"), new ServicioObj(idServicio, infor3Meses.getText(), infor6Meses.getText(), info1anio.getText(), beneficios), new DescuentoObj(idDescuento, descuento3, descuento6, descuento1)));
 				JOptionPane.showMessageDialog(null, "¡Nueva tarifa agregada correctamente!", "Añadido exitoso", JOptionPane.INFORMATION_MESSAGE);

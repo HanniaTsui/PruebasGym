@@ -647,51 +647,6 @@ public class ClasesVista {
 		tablaScroll.setBounds(74,90,800,300);
 		panelCrear.add(tablaScroll);
 		
-		btnEdit = new JButton("Editar");
-		btnEdit.setBorder(new LineBorder(new Color(0, 0, 0)));
-		btnEdit.setBackground(colorBtnGuardar);
-		btnEdit.setForeground(Color.white);
-		btnEdit.setFocusable(false);
-		btnEdit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Crear una nueva ventana para editar la clase 
-                JFrame editarHorario = new JFrame("Editar horario");
-                editarHorario.setSize(475, 300);
-                editarHorario.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                editarHorario.setVisible(true);
-                JPanel panelEditar = new JPanel(); panelEditar.setLayout(null);
-                panelEditar.setBounds(0,0,475,300); editarHorario.getContentPane().add(panelEditar);
-                JLabel titulo = new JLabel("Editar horario"); titulo.setBounds(0, 10, 475, 20); panelEditar.add(titulo); configurarLabels(titulo);
-                JLabel id = new JLabel("ID"); id.setBounds(0, 50, 475, 20); panelEditar.add(id); configurarLabels(id);
-                JLabel newHorario = new JLabel ("Nuevo Horario:"); newHorario.setBounds(100,90,300,20); panelEditar.add(newHorario); configurarLabelsIzq(newHorario);
-                String[] horarios = {
-        	            "06:00 - 07:00",  "07:00 - 08:00","08:00 - 09:00",   "09:00 - 10:00",    "10:00 - 11:00",    "11:00 - 12:00",   "12:00 - 13:00",
-        	            "13:00 - 14:00", "14:00 - 15:00",   "15:00 - 16:00",   "16:00 - 17:00",   "17:00 - 18:00",  "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00",  "21:00 - 22:00"   };
-        	    JComboBox<String> comboBox = new JComboBox<>(horarios);
-                comboBox.setBounds(240, 90, 100, 30);
-        	    panelEditar.add(comboBox);
-        	    JButton btnG = new JButton("Guardar cambios"); btnG.setFocusable(false); panelEditar.add(btnG); btnG.setBounds(72,160,150,30); 
-        	    btnG.addActionListener(new ActionListener () {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						JOptionPane.showMessageDialog(null, "¡Cambios guardados con éxito!", "", JOptionPane.INFORMATION_MESSAGE);
-						editarHorario.dispose();
-					}
-        	    });
-        	    JButton btnCancelar = new JButton("Cancelar"); btnCancelar.setFocusable(false); panelEditar.add(btnCancelar); btnCancelar.setBounds(252,160,150,30); 
-        	    btnCancelar.addActionListener(new ActionListener () {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						editarHorario.dispose();
-					}
-        	    });
-        	    editarHorario.setLocationRelativeTo(null);              
-            }
-        });
-		btnEdit.setBounds(630, 20, 111, 30);
-		panelCrear.add(btnEdit);
-		
 		btnEliminar_2 = new JButton("Eliminar");
 		btnEliminar_2.setBorder(new LineBorder(new Color(0, 0, 0)));
 		btnEliminar_2.addActionListener(new ActionListener() {
