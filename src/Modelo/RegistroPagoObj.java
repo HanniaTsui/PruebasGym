@@ -1,49 +1,49 @@
 package Modelo;
 
 public class RegistroPagoObj {
-    private int ID;
-    private int IDCliente;
-    private String fechaPago;
-    private double monto;
-    private String metodoPago;
-    public RegistroPagoObj(int iD, int iDCliente,String fechaPago ,double monto, String metodoPago) {
+    private final int ID;
+    private final int IDCliente;
+    private final String fechaPago;
+    private final double monto;
+    private final String metodoPago;
+    private final String fechaFinal;
+    private final String tipoMembresia;
 
-        ID = iD;
-        IDCliente = iDCliente;
+    public RegistroPagoObj(int iD, int IDCliente, String fechaPago, String fechaFinal, String tipoMembresia, double monto, String metodoPago) {
+        this.ID = iD;
+        this.IDCliente = IDCliente;
         this.fechaPago = fechaPago;
         this.monto = monto;
         this.metodoPago = metodoPago;
+        this.fechaFinal = fechaFinal;
+        this.tipoMembresia = tipoMembresia;
     }
-    public int getID() {
-        return ID;
+
+    public String getTipoMembresia() {
+        return tipoMembresia;
     }
-    public void setID(int iD) {
-        ID = iD;
+
+    public String getFechaFinal() {
+        return fechaFinal;
     }
-    public int getIDCliente() {
-        return IDCliente;
-    }
-    public void setIDCliente(int iDCliente) {
-        IDCliente = iDCliente;
-    }
-    public double getMonto() {
-        return monto;
-    }
-    public void setMonto(double monto) {
-        this.monto = monto;
-    }
+
     public String getMetodoPago() {
         return metodoPago;
     }
-    public void setMetodoPago(String metodoPago) {
-        this.metodoPago = metodoPago;
+
+    public double getMonto() {
+        return monto;
     }
+
     public String getFechaPago() {
         return fechaPago;
     }
-    public void setFechaPago(String fechaPago) {
-        this.fechaPago = fechaPago;
+
+    public int getIDCliente() {
+        return IDCliente;
     }
 
-
+    public int getID() {
+        return ID;
+    }
 }

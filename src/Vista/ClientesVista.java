@@ -22,11 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -57,10 +53,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
-import Modelo.ClienteObj;
-import Modelo.PlanesModelo;
-import Modelo.ChecadorModelo;
-import Modelo.ClienteModelo;
+import Modelo.*;
 import controlador.ClientesControlador;
 import controlador.InicioControlador;
 import controlador.MenuControlador;
@@ -725,6 +718,7 @@ public class ClientesVista {
         }
         ClienteModelo.obtenerInstancia().editarCliente(cliente); 
 	}
+
 	private boolean validarCamposCrear() {
 		int ID = 0;
 		String nombre = textNombre.getText().trim();
@@ -808,7 +802,9 @@ public class ClientesVista {
 		ClientesControlador.registrarCliente(ID, nombre, apellido, correo, telefono, fechaInicial, fechaFinal,
 				tipoMembresia, planMembresia, fechaNacimiento, imagen, metodoPago, estado);
 
+		int monto = getPrice(planMembresia, tipoMembresia);
 		controlador.crearClientes();
+		RegistroPagoModelo.registrarPago(new RegistroPagoObj(0, ClienteModelo.getClient().getLast().getID(), fechaInicial, fechaFinal, tipoMembresia, monto, metodoPago));
 		// InicioControlador.registrar(nombre, password,email);
 		return true;
 	}
@@ -1144,6 +1140,8 @@ public class ClientesVista {
 		JPanel panel = getMenu();
 		panel.add(menuVerticalClientes());
 
+		RegistroPagoModelo.cargarPagosPorCliente();
+
 		JLabel lblTitutlo = new JLabel("Detalles del cliente");
 		lblTitutlo.setForeground(new Color(0, 0, 0));
 		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -1461,8 +1459,10 @@ public class ClientesVista {
 		lblMembresia.setBounds(87, 55, 200, 20);
 		panelInfo.add(lblMembresia);
 
-		String titles[] = { "Membresía", "Fecha inicial", "Vencimiento", "Total" };
+		/*String titles[] = { "Membresía", "Fecha inicial", "Metodo de pago", "Vencimiento", "Total" };
 		DefaultTableModel modelo = new DefaultTableModel(null, titles) {
+			private Vector<RegistroPagoObj> registroPagoObjs = new Vector<>();
+
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false; // La tabla no se edita
@@ -1470,33 +1470,13 @@ public class ClientesVista {
 
 			@Override
 			public Class<?> getColumnClass(int col) {
-				return col == 3 ? Integer.class : String.class;
-			}
-
-			private int getPrice(String planMembresia, String tipoMembresia) {
-			    return switch (planMembresia) {
-			        case "General" -> (tipoMembresia.equals("1 mes") ? 399
-			                : (tipoMembresia.equals("3 meses") ? 1137
-			                : (tipoMembresia.equals("6 meses") ? 2274
-			                : (tipoMembresia.equals("1 año") ? 4608 : 50))));
-			        case "Familiar" -> (tipoMembresia.equals("1 mes") ? 500
-			                : (tipoMembresia.equals("3 meses") ? 1425
-			                : (tipoMembresia.equals("6 meses") ? 2850
-			                : (tipoMembresia.equals("1 año") ? 5775 : 50))));
-			        case "Estudiante" -> (tipoMembresia.equals("1 mes") ? 358
-			                : (tipoMembresia.equals("3 meses") ? 1020
-			                : (tipoMembresia.equals("6 meses") ? 2040
-			                : (tipoMembresia.equals("1 año") ? 4090 : 50))));
-			        case "Duo" -> (tipoMembresia.equals("1 mes") ? 599
-			                : (tipoMembresia.equals("3 meses") ? 1737
-			                : (tipoMembresia.equals("6 meses") ? 3474
-			                : (tipoMembresia.equals("1 año") ? 7068 : 50))));
-			        default -> 50;
-			    };
+				return col == 4 ? Double.class : String.class;
 			}
 
 			@Override
 			public Object getValueAt(int fila, int col) {
+				RegistroPagoObj pagoObj = RegistroPagoModelo.getPagos().stream().filter(r -> r.getIDCliente() == cliente.getID()).
+
 				return switch (col) {
 				case 0 -> cliente.getTipoMembresia();
 				case 1 -> cliente.getFechaInicial();
@@ -1506,12 +1486,15 @@ public class ClientesVista {
 				};
 			}
 
-		};
+			public void addRow() {
+
+			}
+
+		};*/
+		RegistroPagoTablaModelo modelo = new RegistroPagoTablaModelo();
+		RegistroPagoModelo.getPagos().stream().filter(r -> r.getIDCliente() == cliente.getID()).forEach(modelo::addRow);
 		JTable datosTabla = new JTable(modelo);
 		datosTabla.setColumnSelectionAllowed(false);
-		Vector<ClienteObj> clientes = new Vector<>();
-		clientes.add(cliente);
-		modelo.addRow(clientes);
 		JScrollPane tablaScroll = new JScrollPane(datosTabla);
 		tablaScroll.setBounds(87, 95, 730, 200);
 		panelInfo.add(tablaScroll);
@@ -1666,9 +1649,41 @@ public class ClientesVista {
 				cliente.setTipoMembresia((String) comboMembresia.getSelectedItem());
 				cliente.setMetodoPago((String) comboMetodo.getSelectedItem());
 				cliente.setPlanMembresia((String) comboTipo.getSelectedItem());
-				
-			    
 			    String tipoMembresia = (String) comboTipo.getSelectedItem();
+
+				LocalDate fechaActual = LocalDate.now();
+				LocalDate fechaInicio;
+				LocalDate fechaFin;
+				switch (tipoMembresia) {
+					case "1 mes":
+						fechaInicio = fechaActual;
+						fechaFin = fechaActual.plusMonths(1);
+						break;
+					case "3 meses":
+						fechaInicio = fechaActual;
+						fechaFin = fechaActual.plusMonths(3);
+						break;
+					case "6 meses":
+						fechaInicio = fechaActual;
+						fechaFin = fechaActual.plusMonths(6);
+						break;
+					case "1 año":
+						fechaInicio = fechaActual;
+						fechaFin = fechaActual.plusYears(1);
+						break;
+					default:
+						fechaInicio = fechaActual;
+						fechaFin = fechaActual;
+						break;
+				}
+
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+				String fechaInicioFormateada = fechaInicio.format(formatter);
+				String fechaFinFormateada = fechaFin.format(formatter);
+
+				double monto = getPrice(cliente.getPlanMembresia(), cliente.getTipoMembresia());
+
+				RegistroPagoModelo.registrarPago(new RegistroPagoObj(0, cliente.getID(), fechaInicioFormateada, fechaFinFormateada, tipoMembresia, monto, cliente.getMetodoPago()));
                 actualizarFechasSegunMembresia(tipoMembresia);
                 
                 renovar.dispose();
@@ -1718,6 +1733,28 @@ public class ClientesVista {
 		lblName.setBounds(287, 125, 200, 20);
 		panelEditar.add(lblName);
 		renovar.setLocationRelativeTo(null);
+	}
+
+	public static int getPrice(String planMembresia, String tipoMembresia) {
+		int precio = 0;
+
+		Optional<TarifaObj> tarifa = TarifaModelo.getTarifa().stream().filter(tarifaObj -> tarifaObj.getPlan().getNombre().toLowerCase(Locale.ROOT).equalsIgnoreCase(tipoMembresia.toLowerCase(Locale.ROOT))).findFirst();
+
+		if (tarifa.isPresent()) {
+			if (planMembresia.equals("1 mes")) {
+				precio = (int) tarifa.get().getPlan().getPrecio();
+			} else if (planMembresia.equals("3 meses")) {
+				precio = (int) ((int) ((tarifa.get().getPlan().getPrecio() / 100) * tarifa.get().getDescuento().getPorcentaje3meses()) + tarifa.get().getPlan().getPrecio()) * 3;
+			} else if (planMembresia.equals("6 meses")) {
+				precio = (int) ((int) ((tarifa.get().getPlan().getPrecio() / 100) * tarifa.get().getDescuento().getPorcentaje6meses()) + tarifa.get().getPlan().getPrecio()) * 6;
+			} else if (planMembresia.equals("1 año")) {
+				precio = (int) ((int) ((tarifa.get().getPlan().getPrecio() / 100) * tarifa.get().getDescuento().getPorcentaje1anio()) + tarifa.get().getPlan().getPrecio()) * 12;
+			}
+		} else {
+			System.out.println("No encontro tarifa");
+		}
+
+		return precio;
 	}
 	
 	public void actualizarFechasSegunMembresia(String tipoMembresia) {
