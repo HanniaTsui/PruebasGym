@@ -9,9 +9,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
-
 import Modelo.*;
 import controlador.MenuControlador;
 import controlador.TarifasControlador;
@@ -35,7 +33,7 @@ public class TarifasVista {
 	JCheckBox box2;
 
 
-	 private TarifasControlador controlador;
+	private TarifasControlador controlador;
 	private JTextArea infor3Meses;
 	private JTextArea infor6Meses;
 	private JTextArea info1anio;
@@ -287,6 +285,7 @@ public class TarifasVista {
 			public void actionPerformed(ActionEvent e) {
 				int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar esta tarifa?", "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
 	             if (op == JOptionPane.OK_OPTION) {
+	            	 TarifaModelo.removerTarifa(tarifa);
 	                 JOptionPane.showMessageDialog(null, "Tarifa eliminada con éxito", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
 					 controlador.tarifas();
 	             }

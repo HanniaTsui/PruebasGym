@@ -26,6 +26,8 @@ import com.code.advancedsql.query.Insert;
 import com.code.advancedsql.query.Select;
 import com.code.advancedsql.query.Update;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
@@ -35,6 +37,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.TextAlignment;
@@ -152,6 +155,22 @@ public class ClienteModelo {
 						.setFont(font)
 						.setFontSize(12);
 				table.addCell(new Cell().add(fechaParagraph));
+				
+				if (cliente.getImagen() != null) {
+	                try {
+	                    BufferedImage bufferedImage = cliente.getImagen();
+	                    byte[] imageData = convertBufferedImageToByteArray(bufferedImage);
+	                    ImageData image = ImageDataFactory.create(imageData);
+	                    Image img = new Image(image);
+	                    img.scaleToFit(150, 150); 
+
+	                    table.addCell(new Cell().add(new Paragraph("Foto:"))
+	                            .setFont(font).setFontSize(12).setBold());
+	                    table.addCell(new Cell().add(img));
+	                } catch (IOException ex) {
+	                    ex.printStackTrace();
+	                }
+	            }
 
 				doc.add(new Paragraph("Larry's Gym - Credencial del Cliente\n\n")
 						.setFontSize(22)
@@ -381,6 +400,12 @@ public class ClienteModelo {
         }
 
         return new ByteArrayInputStream(imageData);
+    }
+    
+    private static byte[] convertBufferedImageToByteArray(BufferedImage bufferedImage) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "jpg", byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
     }
 
     private static byte[] compressImage(BufferedImage image, int maxSize) throws IOException {

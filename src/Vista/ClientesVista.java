@@ -1628,10 +1628,21 @@ public class ClientesVista {
 		comboTipo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	String tipoMembresia = (String) comboTipo.getSelectedItem();
-                actualizarFechasSegunMembresia(tipoMembresia);
-                
+                actualizarFechasSegunMembresia(tipoMembresia); 
             }
         });
+		
+		comboMembresia.addItemListener(new ItemListener() {
+		    public void itemStateChanged(ItemEvent e) {
+		        actualizarPago();
+		    }
+		});
+
+		comboTipo.addItemListener(new ItemListener() {
+		    public void itemStateChanged(ItemEvent e) {
+		        actualizarPago();
+		    }
+		});
 		
 		panelEditar.add(comboTipo);
 		String[] metodo = { "Efectivo", "Tarjeta de credito", "Cheque" };
@@ -1640,6 +1651,10 @@ public class ClientesVista {
 		comboMetodo.setSelectedItem(cliente.getMetodoPago());
 		panelEditar.add(comboMetodo);
 		
+		lblPago = new JLabel();
+		lblPago.setBounds(287, 295, 170, 30); 
+		configurarLabelsIzq(lblPago);
+		panelEditar.add(lblPago);
 		JButton btnG = new JButton("Renovar");
 		btnG.setFocusable(false);
 		panelEditar.add(btnG);
@@ -1650,7 +1665,9 @@ public class ClientesVista {
 				cliente.setTipoMembresia((String) comboMembresia.getSelectedItem());
 				cliente.setMetodoPago((String) comboMetodo.getSelectedItem());
 				cliente.setPlanMembresia((String) comboTipo.getSelectedItem());
-			    String tipoMembresia = (String) comboTipo.getSelectedItem();
+				String membresia = (String) comboMembresia.getSelectedItem();
+
+				String tipoMembresia = (String) comboTipo.getSelectedItem();
 
 				LocalDate fechaActual = LocalDate.now();
 				LocalDate fechaInicio;
@@ -1683,8 +1700,8 @@ public class ClientesVista {
 				String fechaFinFormateada = fechaFin.format(formatter);
 
 				double monto = getPrice(cliente.getPlanMembresia(), cliente.getTipoMembresia());
-
-				RegistroPagoModelo.registrarPago(new RegistroPagoObj(0, cliente.getID(), fechaInicioFormateada, fechaFinFormateada, tipoMembresia, monto, cliente.getMetodoPago()));
+				lblPago.setText(String.valueOf(monto));
+				RegistroPagoModelo.registrarPago(new RegistroPagoObj(0, cliente.getID(), fechaInicioFormateada, fechaFinFormateada, membresia, monto, cliente.getMetodoPago()));
                 actualizarFechasSegunMembresia(tipoMembresia);
                 
                 renovar.dispose();
@@ -1713,6 +1730,11 @@ public class ClientesVista {
 		configurarLabelsIzq(lblMtodoDePago);
 		lblMtodoDePago.setBounds(70, 255, 200, 20);
 		panelEditar.add(lblMtodoDePago);
+		
+		JLabel lblMontoPagar = new JLabel("Monto a pagar: ");
+		configurarLabelsIzq(lblMontoPagar);
+		lblMontoPagar.setBounds(287, 255, 200, 20);
+		panelEditar.add(lblMontoPagar);
 
 		JLabel lblPlanDeLa = new JLabel("Plan de la membresía:");
 		configurarLabelsIzq(lblPlanDeLa);
@@ -1734,6 +1756,8 @@ public class ClientesVista {
 		lblName.setBounds(287, 125, 200, 20);
 		panelEditar.add(lblName);
 		renovar.setLocationRelativeTo(null);
+		
+		
 	}
 
 	public static int getPrice(String planMembresia, String tipoMembresia) {
