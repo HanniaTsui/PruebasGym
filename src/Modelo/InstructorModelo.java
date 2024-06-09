@@ -170,7 +170,7 @@ public class InstructorModelo {
 		insertar.field("telefono",instructor.getTelefono());
 		insertar.field("fechaContratacion",instructor.getFechaContratacion());
 		insertar.field("especialidad",instructor.getEspecialidad());
-	//	insertar.field("IDclase",instructor.getIDClase());
+		insertar.field("IDclase",instructor.getIDClase());
 
 		
 		try {
@@ -469,7 +469,7 @@ public class InstructorModelo {
 	}
 
 
-	private void actualizarIDInstructorEnClase(int idClase, int idInstructor) {
+	public void actualizarIDInstructorEnClase(int idClase, int idInstructor) {
 	    Update updateClase = BaseDatos.optenerIstancia().getMySQL().table("clase").update();
 	    updateClase.field("IDInstructor", idInstructor);
 	    updateClase.where("ID = ?", idClase);

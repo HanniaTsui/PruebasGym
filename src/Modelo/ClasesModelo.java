@@ -26,7 +26,14 @@ public class ClasesModelo {
 	public static ClasesModelo obtenerInstancia() {
 		return instance;
 	}
-
+	public static String obtenerNombreClase(int idClase) {
+		for (ClasesObj clasesObj : clases) {
+			if(clasesObj.getID()==idClase) {
+				return clasesObj.getNombre();
+			}
+		}
+		return null;
+	}
 	public static List<ClasesObj> cargarClases() {
 		clases.clear();
 		Select nombreTabla=BaseDatos.optenerIstancia().getMySQL().table("clase").select();
@@ -308,7 +315,18 @@ public class ClasesModelo {
 	    }
 	    return false; 
 	}
-
+  public void eliminarInstructorDeClase(int idInstructor, int idClase) {
+	    try {
+	        // Actualizar la tabla clase para establecer IDInstructor a NULL
+	        Update query = BaseDatos.optenerIstancia().getMySQL().table("clase")
+	                .update()
+	                .field("IDInstructor", null)
+	                .where("ID = ? AND IDInstructor = ?", idClase, idInstructor);
+	        query.execute();
+	      } catch (SQLException e) {
+	        e.printStackTrace();
+	        }
+	}
 
   public String obtenerNombreInstructor(int idInstructor) {
 	    String nombreInstructor = "";
@@ -364,7 +382,7 @@ public class ClasesModelo {
       return false;
   }
 
-  public boolean claseAsignada(int idClase) {
+  public static boolean claseAsignada(int idClase) {
 	    // Realizar una consulta para verificar si la clase está asignada a un instructor
 	    Select select = BaseDatos.optenerIstancia().getMySQL().table("clase").select().where("ID = ?", idClase);
 	    try {

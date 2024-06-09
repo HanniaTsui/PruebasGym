@@ -323,10 +323,13 @@ public class InstructorVista{
 	    panel.add(panelCredencial);
 	    panelCredencial.setLayout(null);
 	    
-	    lblFoto = new JLabel();
-	    lblFoto.setIcon(new ImageIcon(instructor.getImagen()));
-	    lblFoto.setBounds(36, 23, 217, 218);
-	    panelCredencial.add(lblFoto);
+	    BufferedImage imagenOriginal = instructor.getImagen();
+        Image escala = imagenOriginal.getScaledInstance(217, 218, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(escala);
+        lblFoto = new JLabel("",0);
+        lblFoto.setIcon(scaledIcon);
+        lblFoto.setBounds(36, 23, 217, 218);
+        panelCredencial.add(lblFoto);
 	    
 	    lblCodigo = new JLabel();
 	    lblCodigo.setIcon(new ImageIcon(InstructorVista.class.getResource("/img/codigoDeBarras.png")));
@@ -371,7 +374,7 @@ public class InstructorVista{
         btnReporte.setBounds(690, 204, 215, 50);
         panelCredencial.add(btnReporte);
 	    
-	    JLabel lblEspecialidad = new JLabel(instructor.getEspecialidad());
+	    JLabel lblEspecialidad = new JLabel("Clase: "+instructor.getEspecialidad());
 	    configurarLabels(lblEspecialidad);
 	    lblEspecialidad.setBounds(299, 74, 327, 20);
 	    panelCredencial.add(lblEspecialidad);
@@ -832,13 +835,29 @@ public class InstructorVista{
 	    // Cargar las clases desde la base de datos y añadirlas al JComboBox
 	    List<String> nombresClases = ClasesModelo.obtenerNombresClases();
 	    DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
-
+	    String claseInstructor = null;
+	    int idClase=0;
+	    for (InstructorObj instructorSelec : instructores) {
+			if(id==instructorSelec.getID()) {
+				idClase=instructorSelec.getIDClase();
+				break;
+			}
+		}
 	    for (String nombreClase : nombresClases) {
 	        comboBoxModel.addElement(nombreClase);
+	        
 	    }
 
+	    claseInstructor=ClasesModelo.obtenerNombreClase(idClase);
 	    comboEspecialidad.setModel(comboBoxModel);
-	    
+	    System.out.println(claseInstructor);
+	    // Seleccionar el valor por defecto
+	    if (claseInstructor != null && nombresClases.contains(claseInstructor)) {
+	        comboEspecialidad.setSelectedItem(claseInstructor);
+	    } else if (nombresClases.size() > 0) {
+	        comboEspecialidad.setSelectedItem(nombresClases.get(0));
+	    }
+
 	    lblEspec = new JLabel("Clase:");
 	    configurarLabelsIzq(lblEspec);
 	    lblEspec.setBounds(70, 119, 200, 20);
@@ -848,7 +867,7 @@ public class InstructorVista{
 	    btnGuardar.setForeground(new Color(255, 255, 255));
 	    btnGuardar.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent e) {
-	        	
+	        	ClasesModelo.obtenerInstancia().cargarClases();
 	        	String claseSeleccionada = (String) comboEspecialidad.getSelectedItem();
 	            int idClaseSeleccionada = ClasesModelo.obtenerIdClasePorNombre(claseSeleccionada);
 	            
@@ -859,7 +878,6 @@ public class InstructorVista{
 	            
 	            validarCamposEditar();
 	            if (camposVacios) {
-	                JOptionPane.showMessageDialog(null, "Por favor, complete todos los campos obligatorios.", "Campos vacíos", JOptionPane.WARNING_MESSAGE);
 	                return; // Detener el proceso si algún campo está vacío
 	            }
 	            
@@ -872,9 +890,10 @@ public class InstructorVista{
 	            // Obtener y asignar las nuevas fechas seleccionadas
 	            Date fechaNac = (Date) spinnerFechaC.getValue();
 	            instructor.setFechaContratacion(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
-
+	            //instructor.setIDClase(idClaseSeleccionada);
+	            BufferedImage imagen = null;
 	            if (!path.equals("Predeterminado")) {
-	                BufferedImage imagen;
+	                
 	                try {
 	                    imagen = ImageIO.read(new File(path));
 	                    instructor.setImagen(imagen);
@@ -884,16 +903,20 @@ public class InstructorVista{
 	            }
 	            for (InstructorObj instructor : instructores) {
 	                if(instructor.getID()==id) {
+	                	instructor.setImagen(imagen);
 	                    instructor.setNombre(textNombre.getText());
 	                    instructor.setApellido(textApellidos.getText());
 	                    instructor.setCorreo(textEmail.getText());
 	                    instructor.setTelefono(textTel.getText());
 	                    instructor.setEspecialidad((String) comboEspecialidad.getSelectedItem());
 	                    instructor.setFechaContratacion(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
+	    	            ClasesModelo.obtenerInstancia().eliminarInstructorDeClase(id, instructor.getIDClase());
+	                    instructor.setIDClase(idClaseSeleccionada);
+	    	            InstructorModelo.obtenerInstancia().editarInstructor(instructor);
+	    	            InstructorModelo.obtenerInstancia().actualizarIDInstructorEnClase( idClaseSeleccionada,  instructor.getID());
 	                    break;
 	                }
 	            }
-	            InstructorModelo.obtenerInstancia().editarInstructor(instructor);
 	            actualizarTabla();
 	            controlador.instructor();
 	        }
@@ -959,15 +982,19 @@ public class InstructorVista{
         if(textTel.getText().length() !=10 ) {
         	JOptionPane.showMessageDialog(null, "El teléfono debe tener exactamente 10 caracteres.", "Error", JOptionPane.ERROR_MESSAGE);
 		    textTel.setBorder(BorderFactory.createLineBorder(Color.RED)); // Marcar el campo en rojo
+		    camposVacios=true;
 		    return;
         }
         if(!textEmail.getText().contains("@")) {
         	textEmail.setBorder(new LineBorder(Color.RED));
         	JOptionPane.showMessageDialog(null, "La dirección de correo electrónico debe contener el carácter '@'.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+        	camposVacios=true;
+        	return;
         }
         // Mostrar mensaje de alerta
         if (camposVacios) {
+        	JOptionPane.showMessageDialog(null, "Por favor, complete todos los campos obligatorios.", "Campos vacíos", JOptionPane.WARNING_MESSAGE);
+        
             return; // Detener el proceso si algún campo está vacío
         }
 	    

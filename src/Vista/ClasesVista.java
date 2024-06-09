@@ -242,6 +242,7 @@ public class ClasesVista {
 	        cargarDatos=true;
         }else {
         	actualizarPanelConClases(clases, panel_1);
+        	cargarDatos=false;
         }
         JButton btnChecador = new JButton("Nueva clase");
         btnChecador.setForeground(Color.WHITE);
