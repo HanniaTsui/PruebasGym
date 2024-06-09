@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -154,7 +155,7 @@ public class ChecadorVista extends JFrame  {
 	        public void actionPerformed(ActionEvent e) {
 	        	
 	        	for (ChecadorObj checada : registros) {
-					if(checada.getHoraSalida()!=null) {
+	        		if(checada.getHoraSalida()!=null && checada.getIdCliente()==Integer.parseInt(textID.getText())) {
 						JOptionPane.showMessageDialog(null, "Lo sentimos, solo se permite una checada por cliente. Por favor, espere antes de intentar nuevamente.");
 		            	return;
 					}
@@ -174,7 +175,8 @@ public class ChecadorVista extends JFrame  {
 	               //cargar imagen 
 	               BufferedImage imagenCliente = cliente.getImagen();
                    if (imagenCliente != null) {
-                       ImageIcon icon = new ImageIcon(imagenCliente);
+                	   Image imagenRedimensionada = imagenCliente.getScaledInstance(116, 116, Image.SCALE_SMOOTH);
+                       ImageIcon icon = new ImageIcon(imagenRedimensionada);
                        lblLogoCheck.setIcon(icon);
                    } else {
                        JOptionPane.showMessageDialog(null, "El cliente no tiene una imagen asociada.");

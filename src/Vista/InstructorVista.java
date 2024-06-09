@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -493,7 +494,10 @@ public class InstructorVista{
 	    panelCrear.add(btnVolver);
 
 	    JLabel lblNewLabel = new JLabel();
-	    lblNewLabel.setIcon(new ImageIcon(InstructorVista.class.getResource("/img/usuarioGym 2.png")));
+	    BufferedImage imagenOriginal = instructor.getImagen();
+		Image escala = imagenOriginal.getScaledInstance(83, 85, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(escala);
+	    lblNewLabel.setIcon(scaledIcon);
 	    lblNewLabel.setBounds(727, 23, 83, 85);
 	    panelCrear.add(lblNewLabel);
 
@@ -590,6 +594,7 @@ public class InstructorVista{
         
 	    panelCrear.add(spinnerFechaIn);
 	    
+	    
 	    JLabel lblFoto = new JLabel("",0);
 	    lblFoto.setIcon(new ImageIcon(InstructorVista.class.getResource("/img/usuarioGym 1.png")));
 	    lblFoto.setBounds(642, 33, 217, 221);
@@ -603,10 +608,23 @@ public class InstructorVista{
 			public void actionPerformed(ActionEvent e) {
 				subirFoto();
 				if (selectedFile != null) {
-					lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
-					panel.revalidate();
-					panel.repaint();
-					path = selectedFile.getAbsolutePath();
+		            try {
+		                BufferedImage originalImage = ImageIO.read(selectedFile);
+		                if (originalImage != null) {
+		                    Image scaledImage = originalImage.getScaledInstance(217, 221, Image.SCALE_SMOOTH);
+		                    ImageIcon scaledIcon = new ImageIcon(scaledImage);
+		                    lblFoto.setIcon(scaledIcon);
+		                    panel.revalidate();
+		                    panel.repaint();
+		                    path = selectedFile.getAbsolutePath();
+		                } else {
+		                    lblFoto.setIcon(new ImageIcon(InstructorVista.class.getResource("/img/usuarioGym 1.png")));
+		                    panel.revalidate();
+		                    panel.repaint();
+		                }
+		            } catch (IOException ex) {
+		                ex.printStackTrace();
+		            }
 				}
 			}
 	    });
@@ -799,7 +817,10 @@ public class InstructorVista{
 	    panelCrear.add(btnFoto);
 	    
 	    lblFoto = new JLabel("",0);
-	    lblFoto.setIcon(new ImageIcon(instructor.getImagen()));
+	    BufferedImage imagenOriginal = instructor.getImagen();
+		Image escala = imagenOriginal.getScaledInstance(217, 221, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(escala);
+	    lblFoto.setIcon(scaledIcon);
 	    lblFoto.setBounds(642, 33, 217, 221);
 	    panelCrear.add(lblFoto);
 	    

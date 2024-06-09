@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -546,6 +547,7 @@ public class ClientesVista {
 		        actualizarPago();
 		    }
 		});
+		
 		JLabel lblFoto = new JLabel("",0);
 		lblFoto.setIcon(new ImageIcon(ClientesVista.class.getResource("/img/usuarioGym 1.png")));
 		lblFoto.setBounds(642, 33, 217, 221);
@@ -555,16 +557,29 @@ public class ClientesVista {
 		btnFoto.setForeground(new Color(255, 255, 255));
 		btnFoto.setFocusable(false);
 		btnFoto.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				subirFoto();
-				if (selectedFile != null) {
-					lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
-					panel.revalidate();
-					panel.repaint();
-					path = selectedFile.getAbsolutePath();
-				}
-			}
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        subirFoto();
+		        if (selectedFile != null) {
+		            try {
+		                BufferedImage imagenOriginal = ImageIO.read(selectedFile);
+		                if (imagenOriginal != null) {
+		                    Image escala = imagenOriginal.getScaledInstance(217, 221, Image.SCALE_SMOOTH);
+		                    ImageIcon scaledIcon = new ImageIcon(escala);
+		                    lblFoto.setIcon(scaledIcon);
+		                    panel.revalidate();
+		                    panel.repaint();
+		                    path = selectedFile.getAbsolutePath();
+		                } else {
+		                    lblFoto.setIcon(new ImageIcon(ClientesVista.class.getResource("/img/usuarioGym 1.png")));
+		                    panel.revalidate();
+		                    panel.repaint();
+		                }
+		            } catch (IOException ex) {
+		                ex.printStackTrace();
+		            }
+		        }     	
+		    }
 		});
 		btnFoto.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
@@ -1098,8 +1113,11 @@ public class ClientesVista {
 		btnFoto.setBounds(652, 270, 207, 40);
 		panelCrear.add(btnFoto);
 
+		BufferedImage imagenOriginal = cliente.getImagen();
+		Image escala = imagenOriginal.getScaledInstance(207, 221, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(escala);
 		lblFoto = new JLabel("",0);
-		lblFoto.setIcon(new ImageIcon(cliente.getImagen()));
+		lblFoto.setIcon(scaledIcon);
 		lblFoto.setBounds(652, 33, 207, 221);
 		panelCrear.add(lblFoto);
 
@@ -1328,8 +1346,11 @@ public class ClientesVista {
 		btnElim.setBounds(690, 135, 190, 50);
 		panelInfo.add(btnElim);
 
+		BufferedImage originalImage = cliente.getImagen();
+		Image scaledImage = originalImage.getScaledInstance(217, 218, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(scaledImage);
 		lblPersona = new JLabel("",0);
-		lblPersona.setIcon(new ImageIcon(cliente.getImagen()));
+		lblPersona.setIcon(scaledIcon);
 		lblPersona.setBounds(36, 33, 217, 218);
 		panelInfo.add(lblPersona);
 
@@ -1411,10 +1432,13 @@ public class ClientesVista {
 		lblFechaFinal.setBounds(400, 260, 200, 20);
 		panelInfo.add(lblFechaFinal);
 
+		BufferedImage imagenOriginal = cliente.getImagen();
+		Image escala = imagenOriginal.getScaledInstance(217, 218, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(escala);
 		lblNewLabel = new JLabel();
 		// lblNewLabel.setIcon(new ImageIcon(Clientes.class.getResource("/img/usuarioGym
 		// 1.png")));
-		lblNewLabel.setIcon(new ImageIcon(cliente.getImagen()));
+		lblNewLabel.setIcon(scaledIcon);
 		lblNewLabel.setBounds(650, 20, 217, 218);
 		panelInfo.add(lblNewLabel);
 
@@ -1937,9 +1961,12 @@ public class ClientesVista {
 		btnElim.setFocusable(false);
 		btnElim.setBounds(690, 130, 180, 50);
 		panelCredencial.add(btnElim);
-
+		
+		BufferedImage imagenOriginal = cliente.getImagen();
+		Image escala = imagenOriginal.getScaledInstance(217, 218, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(escala);
 		lblPersona = new JLabel();
-		lblPersona.setIcon(new ImageIcon(cliente.getImagen()));
+		lblPersona.setIcon(scaledIcon);
 		lblPersona.setBounds(36, 23, 217, 218);
 		panelCredencial.add(lblPersona);
 
