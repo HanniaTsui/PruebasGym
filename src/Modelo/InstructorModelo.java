@@ -73,7 +73,7 @@ public class InstructorModelo {
 	        	String telefono=(String)map.get("telefono");
 	        	String especialidad= (String)map.get("especialidad");
 	        	String fechaContratacion=(String)map.get("fechaContratacion");
-	   //     	ClasesObj IDClase = (ClasesObj)map.get("IDClase");
+	        	int IDClase = (int)map.get("IDClase");
 	        			
 	        	
 	        	BufferedImage imagen;
@@ -88,7 +88,7 @@ public class InstructorModelo {
 	        	
 
 	            instructor.add(new InstructorObj(ID,  nombre,  apellido,  correo,  telefono,
-	        			 fechaContratacion,  especialidad, imagen,  2));
+	        			 fechaContratacion,  especialidad, imagen,  IDClase));
 	            
 		}
 		} catch (SQLException e) {
@@ -199,6 +199,7 @@ public class InstructorModelo {
 		insertar.field("telefono",instructor.getTelefono());
 		insertar.field("fechaContratacion",instructor.getFechaContratacion());
 		insertar.field("especialidad",instructor.getEspecialidad());
+		insertar.field("IDClase", instructor.getIDClase());
 
 		try {
 			insertar.field("imagen",convertImageToBinary(instructor.getImagen()));
@@ -217,8 +218,17 @@ public class InstructorModelo {
 			 JOptionPane.showMessageDialog(null, "No se pudo añadir el instructor", "ERROR", JOptionPane.WARNING_MESSAGE);
 			 return false;
 		}
-		 JOptionPane.showMessageDialog(null, "Se añadió instructor correctamente");
-		 return true;
+		int idInstructor = obtenerUltimoIDInstructor();
+
+	    // Asignar el ID del instructor a la clase correspondiente
+	    if (idInstructor != -1) {
+	        actualizarIDInstructorEnClase(instructor.getIDClase(), idInstructor);
+	    } else {
+	        JOptionPane.showMessageDialog(null, "Error al obtener el ID del instructor", "ERROR", JOptionPane.WARNING_MESSAGE);
+	        return false;
+	    }
+		JOptionPane.showMessageDialog(null, "Se añadió instructor correctamente");
+		return true;
 	}
     
     public void generarPDFCredencial(InstructorObj instructor) {
@@ -375,6 +385,66 @@ public class InstructorModelo {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static InstructorObj obtenerInstructorPorIdClase(int idClase) {
+	    Select select = BaseDatos.optenerIstancia().getMySQL().table("instructor").select().where("IDClase = ?", idClase);
+	    List<Map<String, Object>> result;
+	    try {
+	        result = select.fetchAllAsList();
+	        if (!result.isEmpty()) {
+	            Map<String, Object> map = result.get(0);
+
+	            int ID = (int) map.get("ID");
+	            String nombre = (String) map.get("nombre");
+	            String apellido = (String) map.get("apellido");
+	            String correo = (String) map.get("correo");
+	            String telefono = (String) map.get("telefono");
+	            String especialidad = (String) map.get("especialidad");
+	            String fechaContratacion = (String) map.get("fechaContratacion");
+
+	            BufferedImage imagen;
+	            try {
+	                byte[] imagenBytes = (byte[]) map.get("imagen");
+	                imagen = convertByteArrayToImage(imagenBytes);
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	                throw new RuntimeException(e);
+	            }
+
+	            return new InstructorObj(ID, nombre, apellido, correo, telefono, fechaContratacion, especialidad, imagen, idClase);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return null;
+	}
+
+	private int obtenerUltimoIDInstructor() {
+	    try {
+	        Select select = BaseDatos.optenerIstancia().getMySQL().table("instructor").select(new String[]{"MAX(ID) AS ultimoID"});
+	        List<Map<String, Object>> result = select.fetchAllAsList();
+	        if (!result.isEmpty()) {
+	            Map<String, Object> row = result.get(0);
+	            return (int) row.get("ultimoID");
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return -1;
+	}
+
+
+	private void actualizarIDInstructorEnClase(int idClase, int idInstructor) {
+	    Update updateClase = BaseDatos.optenerIstancia().getMySQL().table("clase").update();
+	    updateClase.field("IDInstructor", idInstructor);
+	    updateClase.where("ID = ?", idClase);
+	    try {
+	        updateClase.execute();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        JOptionPane.showMessageDialog(null, "Error al actualizar el ID del instructor en la clase", "ERROR", JOptionPane.WARNING_MESSAGE);
+	    }
 	}
 	
 

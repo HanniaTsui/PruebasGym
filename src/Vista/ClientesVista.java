@@ -210,6 +210,7 @@ public class ClientesVista {
 			@Override
 			protected List<ClienteObj> doInBackground() {
 				ClienteModelo.cargarCliente();
+				TarifaModelo.cargarTarifas();
 				return ClienteModelo.getClient();
 			}
 
@@ -601,6 +602,7 @@ public class ClientesVista {
 		btnPagar.setBounds(472, 490, 150, 40);
 		panelCrear.add(btnPagar);
 
+		
 		lblTotalPago = new JLabel("Total a pagar: $");
 		configurarLabelsIzq(lblTotalPago);
 		lblTotalPago.setBounds(652, 338, 130, 20);
@@ -798,11 +800,12 @@ public class ClientesVista {
 		String metodoPago = (String) comboPago.getSelectedItem();
 		String estado = ClienteModelo.obtenerInstancia().estado(fechaFinal) ? "Activo" : "No activo";
 		
-
+		int monto = getPrice(planMembresia, tipoMembresia);
+		
 		ClientesControlador.registrarCliente(ID, nombre, apellido, correo, telefono, fechaInicial, fechaFinal,
 				tipoMembresia, planMembresia, fechaNacimiento, imagen, metodoPago, estado);
 
-		int monto = getPrice(planMembresia, tipoMembresia);
+		
 		controlador.crearClientes();
 		RegistroPagoModelo.registrarPago(new RegistroPagoObj(0, ClienteModelo.getClient().getLast().getID(), fechaInicial, fechaFinal, tipoMembresia, monto, metodoPago));
 		// InicioControlador.registrar(nombre, password,email);
@@ -1543,38 +1546,9 @@ public class ClientesVista {
 	    String tipoSeleccionado = (String) comboTipo.getSelectedItem();
 	    
 	    if (membresiaSeleccionada != null && tipoSeleccionado != null) {
-	        if (membresiaSeleccionada.equals("Plan general") && tipoSeleccionado.equals("1 mes")) {
-	            lblPago.setText("399");
-	        } else if (membresiaSeleccionada.equals("Plan Estudiante") && tipoSeleccionado.equals("1 mes")) {
-	            lblPago.setText("358");
-	        } else if (membresiaSeleccionada.equals("Plan Familiar") && tipoSeleccionado.equals("1 mes")) {
-	            lblPago.setText("500");
-	        } else if (membresiaSeleccionada.equals("Plan dúo") && tipoSeleccionado.equals("1 mes")) {
-	            lblPago.setText("599");
-	        } else if (membresiaSeleccionada.equals("Plan general") && tipoSeleccionado.equals("3 meses")) {
-	            lblPago.setText("1137.15");
-	        } else if (membresiaSeleccionada.equals("Plan Estudiante") && tipoSeleccionado.equals("3 meses")) {
-	            lblPago.setText("1020.3");
-	        } else if (membresiaSeleccionada.equals("Plan Familiar") && tipoSeleccionado.equals("3 meses")) {
-	            lblPago.setText("1425.0");
-	        } else if (membresiaSeleccionada.equals("Plan dúo") && tipoSeleccionado.equals("3 meses")) {
-	            lblPago.setText("1737.1");
-	        } else if (membresiaSeleccionada.equals("Plan general") && tipoSeleccionado.equals("6 meses")) {
-	            lblPago.setText("2274.3");
-	        } else if (membresiaSeleccionada.equals("Plan Estudiante") && tipoSeleccionado.equals("6 meses")) {
-	            lblPago.setText("2040.6");
-	        } else if (membresiaSeleccionada.equals("Plan Familiar") && tipoSeleccionado.equals("6 meses")) {
-	            lblPago.setText("2850.0");
-	        } else if (membresiaSeleccionada.equals("Plan dúo") && tipoSeleccionado.equals("6 meses")) {
-	            lblPago.setText("3474.2");
-	        } else if (membresiaSeleccionada.equals("Plan general") && tipoSeleccionado.equals("1 año")) {
-	            lblPago.setText("4608.45");
-	        } else if (membresiaSeleccionada.equals("Plan Estudiante") && tipoSeleccionado.equals("1 año")) {
-	            lblPago.setText("2040.6");
-	        } else if (membresiaSeleccionada.equals("Plan Familiar") && tipoSeleccionado.equals("1 año")) {
-	            lblPago.setText("5775.0");
-	        } else if (membresiaSeleccionada.equals("Plan dúo") && tipoSeleccionado.equals("1 año")) {
-	            lblPago.setText("7068.2");
+	        int precioReal = getPrice(tipoSeleccionado, membresiaSeleccionada);
+	        if (precioReal > 0) {
+	            lblPago.setText(String.valueOf(precioReal));
 	        } else {
 	            lblPago.setText("");
 	        }
@@ -1582,6 +1556,7 @@ public class ClientesVista {
 	        lblPago.setText("");
 	    }
 	}
+
 
 	public void renovar(ClienteObj cliente) {
 		// Crear una nueva ventana para editar la clase
@@ -1630,8 +1605,10 @@ public class ClientesVista {
             public void actionPerformed(ActionEvent e) {
             	String tipoMembresia = (String) comboTipo.getSelectedItem();
                 actualizarFechasSegunMembresia(tipoMembresia);
+                
             }
         });
+		
 		panelEditar.add(comboTipo);
 		String[] metodo = { "Efectivo", "Tarjeta de credito", "Cheque" };
 		JComboBox<String> comboMetodo = new JComboBox<>(metodo);
@@ -1736,26 +1713,29 @@ public class ClientesVista {
 	}
 
 	public static int getPrice(String planMembresia, String tipoMembresia) {
-		int precio = 0;
+	    int precio = 0;
+	    
+	    Optional<TarifaObj> tarifa = TarifaModelo.getTarifa().stream().filter(tarifaObj -> tarifaObj.getPlan().getNombre().toLowerCase(Locale.ROOT).equalsIgnoreCase(tipoMembresia.toLowerCase(Locale.ROOT))).findFirst();
 
-		Optional<TarifaObj> tarifa = TarifaModelo.getTarifa().stream().filter(tarifaObj -> tarifaObj.getPlan().getNombre().toLowerCase(Locale.ROOT).equalsIgnoreCase(tipoMembresia.toLowerCase(Locale.ROOT))).findFirst();
+	    if (tarifa.isPresent()) {
+	        double precioMensual = tarifa.get().getPlan().getPrecio();
+	        if (planMembresia.equals("1 mes")) {
+	            precio = (int) precioMensual;
+	        } else if (planMembresia.equals("3 meses")) {
+	            precio = (int) ((precioMensual * (1 - tarifa.get().getDescuento().getPorcentaje3meses() / 100.0)) * 3);
+	        } else if (planMembresia.equals("6 meses")) {
+	            precio = (int) ((precioMensual * (1 - tarifa.get().getDescuento().getPorcentaje6meses() / 100.0)) * 6);
+	        } else if (planMembresia.equals("1 año")) {
+	            precio = (int) ((precioMensual * (1 - tarifa.get().getDescuento().getPorcentaje1anio() / 100.0)) * 12);
+	        }
+	    } else {
+	        System.out.println("No se encontró tarifa");
+	    }
 
-		if (tarifa.isPresent()) {
-			if (planMembresia.equals("1 mes")) {
-				precio = (int) tarifa.get().getPlan().getPrecio();
-			} else if (planMembresia.equals("3 meses")) {
-				precio = (int) ((int) ((tarifa.get().getPlan().getPrecio() / 100) * tarifa.get().getDescuento().getPorcentaje3meses()) + tarifa.get().getPlan().getPrecio()) * 3;
-			} else if (planMembresia.equals("6 meses")) {
-				precio = (int) ((int) ((tarifa.get().getPlan().getPrecio() / 100) * tarifa.get().getDescuento().getPorcentaje6meses()) + tarifa.get().getPlan().getPrecio()) * 6;
-			} else if (planMembresia.equals("1 año")) {
-				precio = (int) ((int) ((tarifa.get().getPlan().getPrecio() / 100) * tarifa.get().getDescuento().getPorcentaje1anio()) + tarifa.get().getPlan().getPrecio()) * 12;
-			}
-		} else {
-			System.out.println("No encontro tarifa");
-		}
-
-		return precio;
+	    return precio;
 	}
+
+
 	
 	public void actualizarFechasSegunMembresia(String tipoMembresia) {
 	    LocalDate fechaActual = LocalDate.now();
@@ -2092,6 +2072,4 @@ public class ClientesVista {
 			}
 		});
 	}
-
-	
 }

@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.*;
+import java.text.DecimalFormat;
 import java.util.*;
 
 import javax.swing.*;
@@ -74,9 +75,11 @@ public class TarifasVista {
 		ArrayList<String> infoPlan = new ArrayList<>();
 
 		for (TarifaObj tarifaObj : tarifaObjList) {
-			double tarifa3 = (tarifaObj.getPlan().getPrecio() * 3) - ((tarifaObj.getPlan().getPrecio() / 100) * tarifaObj.getDescuento().getPorcentaje3meses());
-			double tarifa6 = (tarifaObj.getPlan().getPrecio() * 6) - ((tarifaObj.getPlan().getPrecio() / 100) * tarifaObj.getDescuento().getPorcentaje6meses());
-			double tarifa1anio = (tarifaObj.getPlan().getPrecio() * 12) - ((tarifaObj.getPlan().getPrecio() / 100) * tarifaObj.getDescuento().getPorcentaje1anio());
+			DecimalFormat df = new DecimalFormat("#.##");
+			double precioMensual = tarifaObj.getPlan().getPrecio();
+			double tarifa3 = Double.parseDouble(df.format((precioMensual * (1 - tarifaObj.getDescuento().getPorcentaje3meses() / 100.0)) * 3));
+			double tarifa6 = Double.parseDouble(df.format((precioMensual * (1 - tarifaObj.getDescuento().getPorcentaje6meses() / 100.0)) * 6));
+			double tarifa1anio = Double.parseDouble(df.format((precioMensual * (1 - tarifaObj.getDescuento().getPorcentaje1anio() / 100.0)) * 12));
 
 			detallesDePlan.add("<br>" + tarifaObj.getPlan().getNombre() +" - $" + tarifaObj.getPlan().getPrecio() +"/mes<br>" + tarifa3 +"/3Meses<br>$" + tarifa6 +"/6Meses<br>$"+ tarifa1anio+"/1Año");
 
@@ -498,10 +501,12 @@ public class TarifasVista {
 			textDesc1.setText(String.valueOf(tarifa.getDescuento().getPorcentaje1anio()));
 			textDesc3.setText(String.valueOf(tarifa.getDescuento().getPorcentaje3meses()));
 			textDesc6.setText(String.valueOf(tarifa.getDescuento().getPorcentaje6meses()));
-
-			double tarifa3 = (tarifa.getPlan().getPrecio() * 3) - ((tarifa.getPlan().getPrecio() / 100) * tarifa.getDescuento().getPorcentaje3meses());
-			double tarifa6 = (tarifa.getPlan().getPrecio() * 6) - ((tarifa.getPlan().getPrecio() / 100) * tarifa.getDescuento().getPorcentaje6meses());
-			double tarifa1anio = (tarifa.getPlan().getPrecio() * 12) - ((tarifa.getPlan().getPrecio() / 100) * tarifa.getDescuento().getPorcentaje1anio());
+			
+			DecimalFormat df = new DecimalFormat("#.##");
+			double precioMensual = tarifa.getPlan().getPrecio();
+			double tarifa3 = Double.parseDouble(df.format((precioMensual * (1 - tarifa.getDescuento().getPorcentaje3meses() / 100.0)) * 3));
+			double tarifa6 = Double.parseDouble(df.format((precioMensual * (1 - tarifa.getDescuento().getPorcentaje6meses() / 100.0)) * 6));
+			double tarifa1anio = Double.parseDouble(df.format((precioMensual * (1 - tarifa.getDescuento().getPorcentaje1anio() / 100.0)) * 12));
 
 			textPrecio1.setText(String.valueOf(tarifa1anio));
 			textPrecio3.setText(String.valueOf(tarifa3));

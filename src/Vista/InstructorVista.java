@@ -17,6 +17,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -136,8 +137,6 @@ public class InstructorVista{
 	             }
 	 	     };
 	    }
-	    
-		 
 	     datosTabla = new JTable(modelo);
 	     JScrollPane tablaScroll = new JScrollPane(datosTabla);
 	     tablaScroll.setBounds(200,250,800,350);
@@ -186,13 +185,19 @@ public class InstructorVista{
 	     btnGuardar_1.setFocusable(false);
 	     btnGuardar_1.addActionListener(new ActionListener() {
 		    	public void actionPerformed(ActionEvent e) {
-		    		controlador.nuevoInstructor();
+		    		boolean todasClasesAsignadas = todasClasesAsignadas();
+		    	    if (todasClasesAsignadas) {
+		    	        JOptionPane.showMessageDialog(null, "No hay más clases disponibles por asignar", "Información", JOptionPane.INFORMATION_MESSAGE);
+		    	    } else {
+		    	    	controlador.nuevoInstructor();
+		    	    }
 		    	}
 		    });
 	     btnGuardar_1.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 	     btnGuardar_1.setBackground(new Color(0, 45, 78));
 	     btnGuardar_1.setBounds(593, 190, 120, 40);
 	     panel.add(btnGuardar_1);
+	     
 	    return panel;
 	}
 	
@@ -222,6 +227,7 @@ public class InstructorVista{
 			@Override
 			protected List<InstructorObj> doInBackground() {
 				InstructorModelo.cargarInstructor();
+				ClasesModelo.cargarClases();
 				return InstructorModelo.getInstructor();
 			}
 
@@ -229,6 +235,7 @@ public class InstructorVista{
 			protected void done() {
 				try {
 					instructores = get();
+				    instructores=InstructorModelo.getInstructor();
 					actualizarTabla();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -240,8 +247,6 @@ public class InstructorVista{
 	private void actualizarTabla() {
 	    // Limpiar el modelo de la tabla
 	    modelo.setRowCount(0);
-	    List<InstructorObj> instructores=InstructorModelo.obtenerInstancia().getInstructor();
-	   
 	    // Agregar todos los instructores al modelo de la tabla
 	    for (InstructorObj instructor : instructores) {
 	        agregarInstructorATabla(instructor);
@@ -278,8 +283,17 @@ public class InstructorVista{
 	             if (op == JOptionPane.OK_OPTION) {
 	                 JOptionPane.showMessageDialog(null, "Instructor eliminado con éxito", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
 	                 InstructorModelo.obtenerInstancia().eliminarInstructor(instructor);
+
+	                 Iterator<InstructorObj> iterator = instructores.iterator();
+	                 while (iterator.hasNext()) {
+	                     InstructorObj instructorObj = iterator.next();
+	                     if (instructorObj.getID() == instructor.getID()) {
+	                         iterator.remove();
+	                     }
+	                 }
+
+	                 controlador.instructor();
 	                 actualizarTabla();
-	 	    		 controlador.instructor();
 	             }
 	    	}
 	    });
@@ -329,7 +343,7 @@ public class InstructorVista{
 	    btnHistorial = new JButton("Historial de clases");
 	    btnHistorial.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		controlador.historialClases();
+	    		controlador.historialClases(instructor);
 	    	}
 	    	
 	    });
@@ -367,65 +381,109 @@ public class InstructorVista{
 	    panelCredencial.add(lblFechaDeContratacin);
 	    return panel;
 	}
+	public JPanel historialClases(InstructorObj instructor) {
+	    JPanel panel = getMenu();
+	    JLabel lblTitulo = new JLabel("Historial de clases");
+	    lblTitulo.setForeground(new Color(0, 0, 0));
+	    lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblTitulo.setFont(new Font("Arial Black", Font.PLAIN, 25));
+	    lblTitulo.setBounds(427, 114, 346, 33);
+	    panel.add(lblTitulo);
 
-	public JPanel historialClases() {
-		JPanel panel = getMenu();
-		JLabel lblTitutlo = new JLabel("Historial de clases");
-		lblTitutlo.setForeground(new Color(0, 0, 0));
-		lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
-		lblTitutlo.setBounds(427, 114, 346, 33);
-		panel.add(lblTitutlo);
-		
-		panelCrear = new JPanel();
+	    panelCrear = new JPanel();
 	    panel.add(panelCrear);
 	    panelCrear.setBackground(new Color(217, 217, 217));
 	    panelCrear.setLayout(null);
 	    panelCrear.setBounds(142, 100, 915, 550);
-		String[] columnas = {"Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"};
-        String[][] datos = {
-            {"6:00 - 7:00", "", "", "", "", ""},
-            {"7:00 - 8:00", "", "", "", "", ""},
-            {"8:00 - 9:00", "", "", "", "", ""},
-            {"9:00 - 10:00", "", "", "", "", ""},
-            {"11:00 - 12:00", "", "", "", "", ""},
-            {"12:00 - 13:00", "", "", "", "", ""},
-            {"13:00 - 14:00", "", "", "", "", ""},
-            {"14:00 - 15:00", "", "", "", "", ""},
-            {"15:00 - 16:00", "", "", "", "", ""},
-            {"16:00 - 17:00", "", "", "", "", ""},
-            {"17:00 - 18:00", "", "", "", "", ""},
-            {"18:00 - 19:00", "", "", "", "", ""},
-            {"19:00 - 20:00", "", "", "", "", ""}
-        };
-        JTable tablaHorario = new JTable(datos, columnas);
-        tablaHorario.setRowHeight(40);
+	    
+	    // Columnas de la tabla
+	    String[] columnas = {"Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"};
+	    String[][] datos = {
+	        {"06:00 - 07:00", "", "", "", "", ""},
+	        {"07:00 - 08:00", "", "", "", "", ""},
+	        {"08:00 - 09:00", "", "", "", "", ""},
+	        {"09:00 - 10:00", "", "", "", "", ""},
+	        {"11:00 - 12:00", "", "", "", "", ""},
+	        {"12:00 - 13:00", "", "", "", "", ""},
+	        {"13:00 - 14:00", "", "", "", "", ""},
+	        {"14:00 - 15:00", "", "", "", "", ""},
+	        {"15:00 - 16:00", "", "", "", "", ""},
+	        {"16:00 - 17:00", "", "", "", "", ""},
+	        {"17:00 - 18:00", "", "", "", "", ""},
+	        {"18:00 - 19:00", "", "", "", "", ""},
+	        {"19:00 - 20:00", "", "", "", "", ""}
+	    };
 
-        // Ajustar anchos de columnas
-        for (int i = 0; i < columnas.length; i++) {
-            if (i == 0) {
-                tablaHorario.getColumnModel().getColumn(i).setPreferredWidth(100);
-            } else {
-                tablaHorario.getColumnModel().getColumn(i).setPreferredWidth(150);
-            }
-        }
+	    JTable tablaHorario = new JTable(datos, columnas);
+	    tablaHorario.setRowHeight(40);
 
-        // Agregar tabla a un JScrollPane
-        JScrollPane scrollPane = new JScrollPane(tablaHorario);
-        scrollPane.setBounds(80,130,755,372);
-        panelCrear.add(scrollPane, BorderLayout.CENTER);
-        
-        btnVolver = new JButton("Volver");
-	    btnVolver.addActionListener(new ActionListener() {
-	    	public void actionPerformed(ActionEvent e) {
-	    		int filaSeleccionada = datosTabla.getSelectedRow();
-	            if (filaSeleccionada != -1) {
-	                // Obtener los datos del instructor de la fila seleccionada
-	                InstructorObj instructorSeleccionado = obtenerInstructorDeFila(filaSeleccionada);
-	                // Llamar al método editarInstructor() con el instructor seleccionado como argumento
-	                controlador.detallesInstructor(instructorSeleccionado);
+	    // Ajustar anchos de columnas
+	    for (int i = 0; i < columnas.length; i++) {
+	        if (i == 0) {
+	            tablaHorario.getColumnModel().getColumn(i).setPreferredWidth(100);
+	        } else {
+	            tablaHorario.getColumnModel().getColumn(i).setPreferredWidth(150);
+	        }
+	    }
+
+	    ClasesModelo.obtenerInstancia().cargarClases();
+	    
+	    for (InstructorObj instructor1 : instructores) {
+	        if (instructor1.getID() == instructor.getID()) {
+	            int idClase = instructor1.getIDClase();  // Obtener ID de la clase del instructor
+	            String horarioYDia = ClasesModelo.obtenerHorarioYDiaPorIdClase(idClase);  // Obtener horario y día por ID de clase
+	            System.out.println(instructor1.getIDClase());
+	            if (horarioYDia != null) {
+	                String[] partes = horarioYDia.split(" - ");
+	                if (partes.length == 3) {
+	                    String horario = partes[0] + " - " + partes[1];
+	                    String dia = partes[2];
+
+	                    // Actualizar la tabla con el horario y día de la clase del instructor
+	                    for (int i = 0; i < datos.length; i++) {
+	                        if (datos[i][0].equals(horario)) {
+	                            switch (dia) {
+	                                case "Lunes":
+	                                    datos[i][1] = "Clase del instructor";
+	                                    break;
+	                                case "Martes":
+	                                    datos[i][2] = "Clase del instructor";
+	                                    break;
+	                                case "Miércoles":
+	                                    datos[i][3] = "Clase del instructor";
+	                                    break;
+	                                case "Jueves":
+	                                    datos[i][4] = "Clase del instructor";
+	                                    break;
+	                                case "Viernes":
+	                                    datos[i][5] = "Clase del instructor";
+	                                    break;
+	                                default:
+	                                    System.out.println("Día no válido: " + dia);
+	                                    break;
+	                            }
+	                            break;
+	                        }
+	                    }
+	                } else {
+	                    System.out.println("Formato de horario y día incorrecto: " + horarioYDia);
+	                }
+	            } else {
+	                System.out.println("El horario y día es nulo");
 	            }
-	    	}
+	        }
+	    }
+
+	    // Agregar tabla a un JScrollPane
+	    JScrollPane scrollPane = new JScrollPane(tablaHorario);
+	    scrollPane.setBounds(80, 130, 755, 372);
+	    panelCrear.add(scrollPane, BorderLayout.CENTER);
+
+	    JButton btnVolver = new JButton("Volver");
+	    btnVolver.addActionListener(new ActionListener() {
+	        public void actionPerformed(ActionEvent e) {
+	            controlador.detallesInstructor(instructor);
+	        }
 	    });
 	    btnVolver.setFocusable(false);
 	    btnVolver.setForeground(Color.white);
@@ -433,15 +491,17 @@ public class InstructorVista{
 	    btnVolver.setFont(new Font("Arial Black", Font.PLAIN, 13));
 	    btnVolver.setBounds(80, 45, 132, 40);
 	    panelCrear.add(btnVolver);
-	    
-	    lblNewLabel = new JLabel();
-		lblNewLabel.setIcon(new ImageIcon(InstructorVista.class.getResource("/img/usuarioGym 2.png")));
-		lblNewLabel.setBounds(727, 23, 83, 85);
-		panelCrear.add(lblNewLabel);
-		
-		lblPeterParker = new JLabel("Usuario");
-	    configurarLabels(lblPeterParker);lblPeterParker.setBounds(693, 105, 142, 20);
+
+	    JLabel lblNewLabel = new JLabel();
+	    lblNewLabel.setIcon(new ImageIcon(InstructorVista.class.getResource("/img/usuarioGym 2.png")));
+	    lblNewLabel.setBounds(727, 23, 83, 85);
+	    panelCrear.add(lblNewLabel);
+
+	    JLabel lblPeterParker = new JLabel(instructor.getNombre());
+	    configurarLabels(lblPeterParker);
+	    lblPeterParker.setBounds(693, 105, 142, 20);
 	    panelCrear.add(lblPeterParker);
+
 	    return panel;
 	}
 	
@@ -767,6 +827,15 @@ public class InstructorVista{
 	    btnGuardar.setForeground(new Color(255, 255, 255));
 	    btnGuardar.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent e) {
+	        	
+	        	String claseSeleccionada = (String) comboEspecialidad.getSelectedItem();
+	            int idClaseSeleccionada = ClasesModelo.obtenerIdClasePorNombre(claseSeleccionada);
+	            
+	            if (ClasesModelo.claseAsignadaAOtroInstructor(idClaseSeleccionada, instructor.getID())) {
+	                JOptionPane.showMessageDialog(null, "Otro instructor ya tiene asignada esa clase", "Error", JOptionPane.ERROR_MESSAGE);
+	                return; // Detener el proceso si la clase está asignada a otro instructor
+	            }
+	            
 	            validarCamposEditar();
 	            if (camposVacios) {
 	                JOptionPane.showMessageDialog(null, "Por favor, complete todos los campos obligatorios.", "Campos vacíos", JOptionPane.WARNING_MESSAGE);
@@ -829,6 +898,18 @@ public class InstructorVista{
 	    btnCancelar.setBounds(466, 380, 120, 40);
 	    panelCrear.add(btnCancelar);
 		return panel;
+	}
+	
+	public boolean todasClasesAsignadas() {
+	    List<String> nombresClases = ClasesModelo.obtenerNombresClases();
+
+	    for (String nombreClase : nombresClases) {
+	        int idClase = ClasesModelo.obtenerIdClasePorNombre(nombreClase);
+	        if (!ClasesModelo.obtenerInstancia().claseAsignada(idClase)) {
+	            return false;
+	        }
+	    }
+	    return true;
 	}
 	
 	public void validarCamposEditar() {
@@ -976,12 +1057,15 @@ public class InstructorVista{
 		String fecha = fechaInicial1;
 		String especialidad = (String) comboEspecialidad.getSelectedItem();
 
+		String nombreClaseSeleccionada = (String) comboEspecialidad.getSelectedItem(); 
+	    int idClase = ClasesModelo.obtenerIdClasePorNombre(nombreClaseSeleccionada);
+
 		BufferedImage imagen = null; // Inicializamos la imagen como nula
 		if (path == null || path.equals("usuarioGym 1")) {
 			JOptionPane.showMessageDialog(null, "Debe seleccionar una imagen.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false; 
 		}
-		if (!esEmailValido(correo)) {
+		if (!esEmailValido(correo)) { 
 	    	JOptionPane.showMessageDialog(null, "Correo electrónico no válido", "Error", JOptionPane.WARNING_MESSAGE);
 	    	return false;
 	    }
@@ -999,8 +1083,11 @@ public class InstructorVista{
 			JOptionPane.showMessageDialog(null, "Error al obtener imagen", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
-
-		InstructorControlador.registrarInstructor(ID, nombre, apellido, correo, telefono, fecha, especialidad, imagen, 2);
+		if (ClasesModelo.claseAsignadaAOtroInstructor(idClase, -1)) {
+            JOptionPane.showMessageDialog(null, "Otro instructor ya tiene asignada esa clase", "Error", JOptionPane.ERROR_MESSAGE);
+            return false; 
+        }
+		InstructorControlador.registrarInstructor(ID, nombre, apellido, correo, telefono, fecha, especialidad, imagen, idClase);
 		
 		controlador.instructor();
 		return true;

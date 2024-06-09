@@ -57,7 +57,7 @@ public class ChecadorVista extends JFrame  {
 	static boolean datosCargados=false;
 	ClienteObj cliente;
 	private String fechaFormateada; 
-	DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+	DateFormat formatoFecha = new SimpleDateFormat("yyyy/MM/dd");
     String fechaActual = formatoFecha.format(new Date()); 
 	public ChecadorVista(ChecadorControlador controlador) {
         this.controlador = controlador;
@@ -153,6 +153,12 @@ public class ChecadorVista extends JFrame  {
 	    btnBuscar.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent e) {
 	        	
+	        	for (ChecadorObj checada : registros) {
+					if(checada.getHoraSalida()!=null) {
+						JOptionPane.showMessageDialog(null, "Lo sentimos, solo se permite una checada por cliente. Por favor, espere antes de intentar nuevamente.");
+		            	return;
+					}
+				}
 	            int idCliente = Integer.parseInt(textID.getText());
 	            ClienteObj cliente = controladorV.buscarClientePorID(idCliente);
 
@@ -304,25 +310,25 @@ public class ChecadorVista extends JFrame  {
 		};
 		worker.execute();
 	}
-	  private void cargarDatosEnTabla() {
-	        modelo = (DefaultTableModel) datosTabla.getModel();
-	        registros = ChecadorModelo.obtenerInstancia().getRegistros();
-	        for (ChecadorObj registro : registros) {
-	        	if(registro.getFecha().equals(fechaActual)) {
-	            Object[] rowData = {
-	                registro.getIdCliente(),
-	                registro.getNombreCliente(),
-	                registro.getEstadoCliente(),
-	                registro.getHoraEntrada(),
-	                registro.getHoraSalida()
-	            };
-	            modelo.addRow(rowData);
-	        	}
-                actualizarTabla(registro);
-	        }
-	    }
+	private void cargarDatosEnTabla() {
+        modelo = (DefaultTableModel) datosTabla.getModel();
+        registros = ChecadorModelo.obtenerInstancia().getRegistros();
+        for (ChecadorObj registro : registros) {
+        	if(registro.getFecha().equals(fechaActual)) {
+            Object[] rowData = {
+                registro.getIdCliente(),
+                registro.getNombreCliente(),
+                registro.getEstadoCliente(),
+                registro.getHoraEntrada(),
+                registro.getHoraSalida()
+            };
+            modelo.addRow(rowData);
+        	}
+            actualizarTabla(registro);
+        }
+    }
 
-	    public void actualizarTabla(ChecadorObj checadorObj) {
+	  public void actualizarTabla(ChecadorObj checadorObj) {
 	        modelo = (DefaultTableModel) datosTabla.getModel();
 	        boolean encontrado = false;
 	        for (int i = 0; i < modelo.getRowCount(); i++) {

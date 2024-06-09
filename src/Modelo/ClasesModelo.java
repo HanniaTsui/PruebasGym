@@ -136,6 +136,85 @@ public class ClasesModelo {
 	            return false;
 	        }
 	    }
+	 public static String obtenerHorarioYDiaPorIdClase(int idClase) {
+	        for (ClasesObj clase : clases) {
+	            if (clase.getID() == idClase) {
+	                String horarioText;
+	                String diaText;
+	                
+	                // Obtener el horario según el ID de la clase
+	                switch (clase.getIdHorario()) {
+	                case 1:
+	                    horarioText = "06:00 - 07:00";
+	                    break;
+	                case 2:
+	                    horarioText = "07:00 - 08:00";
+	                    break;
+	                case 3:
+	                    horarioText = "08:00 - 09:00";
+	                    break;
+	                case 4:
+	                    horarioText = "09:00 - 10:00";
+	                    break;  
+	                case 5:
+	                    horarioText = "10:00 - 11:00";
+	                    break; 
+	                case 6:
+	                    horarioText = "11:00 - 12:00";
+	                    break;  
+	                case 7:
+	                    horarioText = "12:00 - 13:00";
+	                    break; 
+	                case 8:
+	                    horarioText = "13:00 - 14:00";
+	                    break;
+	                case 9:
+	                    horarioText = "14:00 - 15:00";
+	                    break;
+	                case 10:
+	                    horarioText = "15:00 - 16:00";
+	                    break;
+	                case 11:
+	                    horarioText = "16:00 - 17:00";
+	                    break;
+	                case 12:
+	                    horarioText = "17:00 - 18:00";
+	                    break;
+	                case 13:
+	                    horarioText = "18:00 - 19:00";
+	                    break;
+	                case 14:
+	                    horarioText = "19:00 - 20:00";
+	                    break;
+	                default:
+	                    horarioText = "";
+	                    break;
+	                }
+	                switch (clase.getIdDia()) {
+	                case 1:
+	                    diaText = "Lunes";
+	                    break;
+	                case 2:
+	                    diaText = "Martes";
+	                    break;
+	                case 3:
+	                    diaText = "Miércoles";
+	                    break;
+	                case 4:
+	                    diaText = "Jueves";
+	                    break;
+	                case 5:
+	                    diaText = "Viernes";
+	                    break;
+	                default:
+	                    diaText = "";
+	                    break;
+	            }
+	                return horarioText + " - " + diaText;
+	            }
+	        }
+	        return null;
+	    }
 	 public static List<String> obtenerNombresClases() {
 		    List<String> nombresClases = new ArrayList<>();
 		    Select nombreTabla = BaseDatos.optenerIstancia().getMySQL().table("clase").select(new String[]{"nombreClase"});
@@ -169,4 +248,142 @@ public class ClasesModelo {
              e.printStackTrace();
          }
      }
+  
+  public List<ClienteObj> obtenerClientesInscritos(int idClase) {
+	    List<ClienteObj> clientesInscritos = new ArrayList<>();
+
+	    // Realiza una consulta para obtener los clientes inscritos en la clase específica
+	    Select select = BaseDatos.optenerIstancia().getMySQL().table("inscripciones").select().where("idClase = ?", idClase);
+
+	    try {
+	        List<Map<String, Object>> result = select.fetchAllAsList();
+	        for (Map<String, Object> map : result) {
+	            Object idClienteObject = map.get("idCliente");
+	            if (idClienteObject != null) {
+	                int idCliente = (int) idClienteObject;
+	                // Busca el cliente en la lista de clientes y agrégalo a la lista de clientes inscritos
+	                for (ClienteObj cliente : clientes) {
+	                    if (cliente.getID() == idCliente) {
+	                        clientesInscritos.add(cliente);
+	                        break; // Una vez que se encuentra el cliente, salir del bucle
+	                    }
+	                }
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return clientesInscritos;
+	}
+  
+  public static boolean clienteEstaInscrito(int idCliente, int idClase) {
+	    boolean estaInscrito = false;
+	Select select = BaseDatos.optenerIstancia().getMySQL().table("inscripciones").select().where("IDCliente = ? AND IDClase = ?", idCliente, idClase);
+
+	    try {
+	        List<Map<String, Object>> result = select.fetchAllAsList();
+	        if (!result.isEmpty()) {
+	            estaInscrito = true;
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return estaInscrito;
+	}
+  
+  public boolean eliminarInscripcion(int idCliente, int idClase) {
+	    try {
+	        Delete query = BaseDatos.optenerIstancia().getMySQL().table("inscripciones")
+	                .delete()
+	                .where("IDCliente = ? AND IDClase = ?", idCliente, idClase);
+	        int execute = query.execute();
+
+	        if (execute > 0) {
+	            return true;
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return false; 
+	}
+
+
+  public String obtenerNombreInstructor(int idInstructor) {
+	    String nombreInstructor = "";
+	    Select select = BaseDatos.optenerIstancia().getMySQL().table("instructor").select(new String[]{"nombre", "apellido"}).where("ID = ?", idInstructor);
+	    try {
+	        List<Map<String, Object>> result = select.fetchAllAsList();
+	        if (!result.isEmpty()) {
+	            Map<String, Object> instructor = result.get(0);
+	            String nombre = (String) instructor.get("nombre");
+	            String apellido = (String) instructor.get("apellido");
+	            nombreInstructor = nombre + " " + apellido;
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return nombreInstructor;
+	}
+
+  public static int obtenerIdClasePorNombre(String nombreClase) {
+	    int idClase = 0;
+
+	    Select select = BaseDatos.optenerIstancia().getMySQL().table("clase").select().where("nombreClase = ?", nombreClase);
+
+	    try {
+	        List<Map<String, Object>> result = select.fetchAllAsList();
+	        if (!result.isEmpty()) {
+	            Map<String, Object> map = result.get(0);
+	            idClase = (int) map.get("ID");
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return idClase;
+	}
+
+  public static boolean claseAsignadaAOtroInstructor(int idClase, int idInstructorActual) {
+      // Realizar una consulta para verificar si la clase está asignada a otro instructor
+      Select select = BaseDatos.optenerIstancia().getMySQL().table("clase").select().where("ID = ?", idClase);
+      try {
+          List<Map<String, Object>> result = select.fetchAllAsList();
+          if (!result.isEmpty()) {
+              // Obtener el ID del instructor asignado a la clase
+              Integer idInstructorAsignado = (Integer) result.get(0).get("IDInstructor");
+              // Verificar si el ID del instructor asignado es diferente del ID del instructor actual
+              if (idInstructorAsignado != null) {
+                  return idInstructorAsignado.intValue() != idInstructorActual;
+              }
+          }
+      } catch (SQLException e) {
+          e.printStackTrace();
+      }
+      return false;
+  }
+
+  public boolean claseAsignada(int idClase) {
+	    // Realizar una consulta para verificar si la clase está asignada a un instructor
+	    Select select = BaseDatos.optenerIstancia().getMySQL().table("clase").select().where("ID = ?", idClase);
+	    try {
+	        List<Map<String, Object>> result = select.fetchAllAsList();
+	        if (!result.isEmpty()) {
+	            // Verificar si la clase está asignada a un instructor
+	            Object idInstructorAsignadoObj = result.get(0).get("IDInstructor");
+	            // Verificar si el ID del instructor asignado es null
+	            if (idInstructorAsignadoObj == null) {
+	                return false;
+	            }
+	            // Si no es null, obtener y verificar su valor
+	            int idInstructorAsignado = ((Number) idInstructorAsignadoObj).intValue();
+	            return idInstructorAsignado > 0;
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return false;
+	}
+
 }

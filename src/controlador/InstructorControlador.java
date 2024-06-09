@@ -28,8 +28,8 @@ public class InstructorControlador {
     	FramePrincipal.obtenerInstancia().agregarPanel(instructor.detallesInstructor(instructorObj));
     }
 
-    public void historialClases() {
-    	FramePrincipal.obtenerInstancia().agregarPanel(instructor.historialClases());
+    public void historialClases(InstructorObj instructorObj) {
+    	FramePrincipal.obtenerInstancia().agregarPanel(instructor.historialClases(instructorObj));
     }
     public void nuevoInstructor() {
     	FramePrincipal.obtenerInstancia().agregarPanel(instructor.nuevoInstructor());

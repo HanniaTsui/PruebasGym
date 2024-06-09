@@ -22,6 +22,7 @@ import com.code.advancedsql.query.Select;
 public class ChecadorModelo {
     public static ChecadorModelo instance = new ChecadorModelo();
     public static List<ChecadorObj> registros = new ArrayList<>();
+    public static List<ChecadorObj> registroEntrada = new ArrayList<>();
     static List<ClienteObj> clientes = ClienteModelo.obtenerInstancia().getClient();
     
     public static ChecadorModelo obtenerInstancia() {
@@ -58,28 +59,29 @@ public class ChecadorModelo {
     public static void cargarChecador() {
         registros.clear(); // Limpiar la lista antes de cargar los registros
         Select nombreTabla = BaseDatos.optenerIstancia().getMySQL().table("checador").select();
+        // Obtener la fecha actual en formato "yyyy-MM-dd"
+        DateFormat formatoFechaSQL = new SimpleDateFormat("yyyy-MM-dd");
+        String fechaActual = formatoFechaSQL.format(new java.util.Date());
+
+        nombreTabla.where("fecha = ?", fechaActual); // Obtener solo los registros de la fecha actual
         try {
             List<Map<String, Object>> resultTableUser = nombreTabla.fetchAllAsList();
-            
-            // Creamos un SimpleDateFormat con la zona horaria correcta
             SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
             dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-            
             for (Map<String, Object> map : resultTableUser) {
                 int IDCliente = (int) map.get("IDCliente");
                 String nombreCliente = (String) map.get("nombreCliente");
                 Time horaEntradaTime = (Time) map.get("horaEntrada");
                 Time horaSalidaTime = (Time) map.get("horaSalida");
-                Date fechaFormato = (Date) map.get("fecha");
+                Date fechaFormato=(Date) map.get("fecha");
                 String estadoCliente = (String) map.get("estadoCliente");
 
-                // Convertimos explícitamente la hora a la zona horaria local
+
                 String horaEntrada = horaEntradaTime != null ? dateFormat.format(horaEntradaTime) : null;
                 String horaSalida = horaSalidaTime != null ? dateFormat.format(horaSalidaTime) : null;
-                DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+                DateFormat formatoFecha = new SimpleDateFormat("yyyy/MM/dd");
                 String fecha = formatoFecha.format(fechaFormato);
-                
-                registros.add(new ChecadorObj(IDCliente, nombreCliente, estadoCliente, horaEntrada, horaSalida, fecha));
+                registros.add(new ChecadorObj(IDCliente, nombreCliente, estadoCliente, horaEntrada, horaSalida,fecha));
                 System.out.println(IDCliente);
             }
             System.out.println("Registros cargados: " + registros.size()); // Mensaje de depuración
@@ -87,11 +89,13 @@ public class ChecadorModelo {
             e.printStackTrace();
         }
     }
+    
     public ChecadorObj registrarChecada(int idCliente, String nombreCliente, String horaActual,String fechaActual) {
-        for (ChecadorObj registro : registros) {
+    	for (ChecadorObj registro : registroEntrada) {
             if (registro.getIdCliente() == idCliente && registro.getHoraSalida() == null ) {
                 registro.setHoraSalida(horaActual);
                 subirDatosChecador(registro);
+                registros.add(registro);
                 return registro;
             }
         }
@@ -106,10 +110,10 @@ public class ChecadorModelo {
 
         String estadoActual = ClienteModelo.obtenerInstancia().estado(fechaFinal) ? "Activo" : "No activo";
         ChecadorObj nuevoRegistro = new ChecadorObj(idCliente, nombreCliente, estadoActual, horaActual, null,fechaActual);
-        registros.add(nuevoRegistro);
-        return nuevoRegistro;
-        
+        registroEntrada.add(nuevoRegistro);
+        return nuevoRegistro; 
     }
+
     public boolean subirDatosChecador(ChecadorObj checador) {
         Insert insertar = BaseDatos.optenerIstancia().getMySQL().table("checador").insert();
         insertar.field("IDCliente", checador.getIdCliente());
@@ -117,6 +121,8 @@ public class ChecadorModelo {
         insertar.field("estadoCliente", checador.getEstadoCliente());
         insertar.field("horaEntrada", checador.getHoraEntrada());
         insertar.field("horaSalida", checador.getHoraSalida());
+        insertar.field("fecha", checador.getFecha());
+        
         try {
             insertar.execute();
             registros.add(checador);

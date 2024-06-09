@@ -26,12 +26,16 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import Modelo.ClasesModelo;
 import Modelo.ClasesObj;
 import Modelo.ClienteModelo;
 import Modelo.ClienteObj;
+import Modelo.InstructorModelo;
+import Modelo.InstructorObj;
 import controlador.ClasesControlador;
 import controlador.ClientesControlador;
 import controlador.MenuControlador;
@@ -58,6 +62,7 @@ public class ClasesVista {
 	private JTextField textID;
 	private JTextField textNombre;
 	private JLabel lblNombreInstructor;
+	private JLabel lblNombre;
 	private static JPanel panel_1;
 	static boolean cargarDatos=false;
     static List<ClasesObj> clases;
@@ -414,7 +419,9 @@ public class ClasesVista {
 	    lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
 	    lblTitutlo.setBounds(0, 114, 1200, 33);
 	    panel.add(lblTitutlo);
-	    lblUsuariosInscritos = new JLabel("Total de usuarios inscritos: ");
+	    List<ClienteObj> clientesInscritos = ClasesModelo.obtenerInstancia().obtenerClientesInscritos(clases.getID());
+	    int totalInscritos = clientesInscritos.size();
+	    lblUsuariosInscritos = new JLabel("Total de usuarios inscritos: "+totalInscritos);
 	    lblUsuariosInscritos.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblUsuariosInscritos.setBounds(0, 187, 1200, 20);
 	    panel.add(lblUsuariosInscritos);
@@ -433,11 +440,27 @@ public class ClasesVista {
 	    configurarLabelsDer(lblNewLabel_4);
 	    lblNewLabel_4.setBounds(172, 367, 365, 30);
 	    panel.add(lblNewLabel_4);
-	    
+
+	    int idClase = clases.getID();
+
+		InstructorObj instructor = InstructorModelo.obtenerInstancia().obtenerInstructorPorIdClase(idClase);
+	
+		String nombreCompletoInstructor = "";
+		if (instructor != null) {
+		    nombreCompletoInstructor = instructor.getNombre() + " " + instructor.getApellido();
+		} else {
+		    nombreCompletoInstructor = " ";
+		}
+	 
 	    lblNombreInstructor = new JLabel("Instructor: ");
 	    configurarLabelsDer(lblNombreInstructor);
 	    lblNombreInstructor.setBounds(172, 421, 365, 30);
 	    panel.add(lblNombreInstructor);
+	    
+	    lblNombre = new JLabel(nombreCompletoInstructor);
+	    configurarLabelsIzq(lblNombre);
+	    lblNombre.setBounds(561, 421, 365, 30);
+	    panel.add(lblNombre);
 	    
 	    textID = new JTextField();
 	    textID.setColumns(10);
@@ -538,7 +561,7 @@ public class ClasesVista {
 	    
 	    JLabel diaSelec = new JLabel();
 	    configurarLabelsIzq(diaSelec);
-	    diaSelec.setBounds(567, 367, 93, 30);
+	    diaSelec.setBounds(565, 367, 93, 30);
 	    panel.add(diaSelec);
 	    
 	    int idDiaClase = clases.getIdDia();
@@ -568,25 +591,30 @@ public class ClasesVista {
 	    
 
 	    btnPagar = new JButton("Inscribir");
-        btnPagar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (cliente != null) {
-                    // Obtener el ID de la clase
-                    int idClase = clases.getID();
+	    btnPagar.addActionListener(new ActionListener() {
+	        public void actionPerformed(ActionEvent e) {
+	            if (cliente != null) {
+	                // Obtener el ID de la clase
+	                int idClase = clases.getID();
 
-                    // Guardar la inscripción en la base de datos
-                    boolean exito = ClasesModelo.inscribirClienteEnClase(cliente.getID(), idClase);
+	                // Verificar si el cliente ya está inscrito en la clase
+	                if (ClasesModelo.clienteEstaInscrito(cliente.getID(), idClase)) {
+	                    JOptionPane.showMessageDialog(null, "El cliente ya está inscrito en esta clase", "Cliente ya inscrito", JOptionPane.INFORMATION_MESSAGE);
+	                } else {
+	                    // Guardar la inscripción en la base de datos
+	                    boolean exito = ClasesModelo.inscribirClienteEnClase(cliente.getID(), idClase);
 
-                    if (exito) {
-                        JOptionPane.showMessageDialog(null, "¡Cliente inscrito correctamente!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Error al inscribir cliente en la clase", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Por favor, busca un cliente antes de inscribirlo", "Cliente no encontrado", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
+	                    if (exito) {
+	                        JOptionPane.showMessageDialog(null, "¡Cliente inscrito correctamente!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+	                    } else {
+	                        JOptionPane.showMessageDialog(null, "Error al inscribir cliente en la clase", "Error", JOptionPane.ERROR_MESSAGE);
+	                    }
+	                }
+	            } else {
+	                JOptionPane.showMessageDialog(null, "Por favor, busca un cliente antes de inscribirlo", "Cliente no encontrado", JOptionPane.ERROR_MESSAGE);
+	            }
+	        }
+	    });
         btnPagar.setForeground(Color.white);
         btnPagar.setFocusable(false);
         btnPagar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
@@ -626,7 +654,7 @@ public class ClasesVista {
 	    btnVolver.setBackground(new Color(0,0,0)); 
 	    btnVolver.setBounds(109, 114, 120, 40);
 	    panel.add(btnVolver);
-	    JLabel lblTitutlo = new JLabel("Clase de " + ""+ "Registros");
+	    JLabel lblTitutlo = new JLabel("Clase de " +clases.getNombre()+ " "+ "- Registros");
 	    lblTitutlo.setForeground(new Color(0, 0, 0));
 	    lblTitutlo.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblTitutlo.setFont(new Font("Arial Black", Font.PLAIN, 25));
@@ -637,10 +665,14 @@ public class ClasesVista {
 	    panelCrear.setBackground(new Color(217, 217, 217));
 	    panelCrear.setLayout(null);
 	    panelCrear.setBounds(109, 218, 948, 432);
-	    lblUsuariosInscritos = new JLabel("Total de usuarios inscritos: ");configurarLabelsIzq(lblUsuariosInscritos);
+	    
+	    
+	    List<ClienteObj> clientesInscritos = ClasesModelo.obtenerInstancia().obtenerClientesInscritos(clases.getID());
+	    int totalInscritos = clientesInscritos.size();
+	    lblUsuariosInscritos = new JLabel("Total de usuarios inscritos: "+totalInscritos);
+	    configurarLabelsIzq(lblUsuariosInscritos);
 	    lblUsuariosInscritos.setBounds(74, 30, 300, 20);
 	    panelCrear.add(lblUsuariosInscritos);
-	    
 	    String titles[]= {"ID", "Nombre", "Horario"};
 		DefaultTableModel modelo = new DefaultTableModel(null, titles) {
             @Override
@@ -653,26 +685,82 @@ public class ClasesVista {
 		tablaScroll.setBounds(74,90,800,300);
 		panelCrear.add(tablaScroll);
 		
+		if (!clientesInscritos.isEmpty()) {
+	        for (ClienteObj cliente : clientesInscritos) {
+	        	String nombreHorario = obtenerNombreHorario(clases.getIdHorario());
+	            modelo.addRow(new Object[]{cliente.getID(), cliente.getNombre(), nombreHorario});
+	        }
+	    } else {
+	        // Si no hay clientes inscritos, mostrar un mensaje en la tabla
+	        modelo.addRow(new Object[]{"No hay clientes inscritos", "", ""});
+	    }
+		
+		
+		
 		btnEliminar_2 = new JButton("Eliminar");
+		btnEliminar_2.setEnabled(false);
 		btnEliminar_2.setBorder(new LineBorder(new Color(0, 0, 0)));
 		btnEliminar_2.addActionListener(new ActionListener() {
-	    	public void actionPerformed(ActionEvent e) {
-	    		 int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar la suscripción de este cliente? \nID: " +"" + "\tNombre: "+"", "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
-	             if (op == JOptionPane.OK_OPTION) {
-	                 JOptionPane.showMessageDialog(null, "Cliente eliminado con éxito", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
-	                 //quitarComponentes(); registrosClase();
-					 controlador.registrosClase(clases);
-	             } 
-	             
-	    	}
-	    });
+		    public void actionPerformed(ActionEvent e) {
+		        int selectedRow = datosTabla.getSelectedRow();
+		        if (selectedRow != -1) { // Verifica si hay una fila seleccionada
+		            // Obtiene el ID del cliente y el nombre para mostrar en el mensaje
+		            int idCliente = (int) datosTabla.getValueAt(selectedRow, 0);
+		            String nombreCliente = (String) datosTabla.getValueAt(selectedRow, 1);
+
+		            int op = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar la suscripción de clase de este cliente? \nID: " + idCliente + "\nNombre: " + nombreCliente , "Confirmar eliminación", JOptionPane.OK_CANCEL_OPTION);
+		            if (op == JOptionPane.OK_OPTION) {
+		                // Elimina la fila seleccionada del modelo de la tabla visual
+		                ((DefaultTableModel) datosTabla.getModel()).removeRow(selectedRow);
+		                
+		                // Elimina la entrada correspondiente en la tabla de inscripciones en la base de datos
+		                boolean eliminado = ClasesModelo.obtenerInstancia().eliminarInscripcion(idCliente, clases.getID());
+		                if (eliminado) {
+		                    JOptionPane.showMessageDialog(null, "Cliente eliminado con éxito", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
+		                } else {
+		                    JOptionPane.showMessageDialog(null, "Error al eliminar cliente de la clase", "Error", JOptionPane.ERROR_MESSAGE);
+		                }
+		            }
+		        } else {
+		            JOptionPane.showMessageDialog(null, "Por favor, seleccione una fila para eliminar", "Eliminar cliente", JOptionPane.INFORMATION_MESSAGE);
+		        }
+		    }
+		});
+
 		btnEliminar_2.setFocusable(false); btnEliminar_2.setForeground(Color.white);
 		btnEliminar_2.setBackground(colorBtnEliminar);
 		btnEliminar_2.setBounds(763, 20, 111, 30);
 		panelCrear.add(btnEliminar_2);
+		
+		datosTabla.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+		    public void valueChanged(ListSelectionEvent event) {
+		        // Verifica si hay alguna fila seleccionada en la tabla
+		        if (!event.getValueIsAdjusting() && datosTabla.getSelectedRow() != -1) {
+		            btnEliminar_2.setEnabled(true);
+		        } else {
+		            btnEliminar_2.setEnabled(false);
+		        }
+		    }
+		});
 
 		return panel;
 	}
+	
+	private String obtenerNombreHorario(int idHorario) {
+	    String[] horarios = {
+	        "06:00 - 07:00",  "07:00 - 08:00", "08:00 - 09:00",   "09:00 - 10:00",    
+	        "10:00 - 11:00", "11:00 - 12:00", "12:00 - 13:00",   "13:00 - 14:00", 
+	        "14:00 - 15:00", "15:00 - 16:00", "16:00 - 17:00",   "17:00 - 18:00",  
+	        "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00",   "21:00 - 22:00" 
+	    };
+
+	    if (idHorario >= 1 && idHorario <= horarios.length) {
+	        return horarios[idHorario - 1];
+	    } else {
+	         return "Horario no válido";
+	    }
+	}
+
 	
 	public void panelInscribirseDetallesClase(JPanel panel) {
 	    btnVolver=new JButton("Volver");
