@@ -1,9 +1,9 @@
 package controlador;
 
-import Modelo.BaseDatos;
-import Modelo.Usuario;
-import Vista.FramePrincipal;
-import Vista.InicioVista;
+import modelo.BaseDatos;
+import objetos.Usuario;
+import vista.FramePrincipal;
+import vista.InicioVista;
 
 import javax.swing.*;
 

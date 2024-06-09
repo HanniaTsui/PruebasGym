@@ -6,10 +6,10 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
-import Vista.InicioVista;
-import Vista.MenuPrincipalVista;
-import Modelo.BaseDatos;
-import Modelo.Usuario;
+import modelo.BaseDatos;
+import objetos.Usuario;
+import vista.InicioVista;
+import vista.MenuPrincipalVista;
 
 public class Controlador implements ActionListener {
 	private  InicioVista inicio1;

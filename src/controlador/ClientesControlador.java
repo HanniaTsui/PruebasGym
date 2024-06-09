@@ -1,7 +1,9 @@
 package controlador;
 
-import Vista.ClientesVista;
-import Vista.FramePrincipal;
+import modelo.ClienteModelo;
+import objetos.ClienteObj;
+import vista.ClientesVista;
+import vista.FramePrincipal;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -11,9 +13,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-
-import Modelo.ClienteObj;
-import Modelo.ClienteModelo;
 
 public class ClientesControlador {
 

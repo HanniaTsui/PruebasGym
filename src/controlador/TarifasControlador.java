@@ -1,8 +1,8 @@
 package controlador;
 
-import Modelo.TarifaObj;
-import Vista.FramePrincipal;
-import Vista.TarifasVista;
+import objetos.TarifaObj;
+import vista.FramePrincipal;
+import vista.TarifasVista;
 
 import javax.swing.*;
 

@@ -1,8 +1,9 @@
 import java.awt.EventQueue;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import Modelo.BaseDatos;
+
 import controlador.InicioControlador;
+import modelo.BaseDatos;
 
 public class Main {
 

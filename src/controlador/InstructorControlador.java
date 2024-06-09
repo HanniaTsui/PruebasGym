@@ -1,17 +1,16 @@
 package controlador;
 
-import Vista.FramePrincipal;
-import Vista.InstructorVista;
-import Vista.TarifasVista;
+import modelo.ClienteModelo;
+import modelo.InstructorModelo;
+import objetos.ClienteObj;
+import objetos.InstructorObj;
+import vista.FramePrincipal;
+import vista.InstructorVista;
+import vista.TarifasVista;
 
 import java.awt.image.BufferedImage;
 
 import javax.swing.*;
-
-import Modelo.ClienteModelo;
-import Modelo.ClienteObj;
-import Modelo.InstructorModelo;
-import Modelo.InstructorObj;
 
 public class InstructorControlador {
     private InstructorVista instructor;

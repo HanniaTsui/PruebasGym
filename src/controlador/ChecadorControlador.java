@@ -1,10 +1,10 @@
 package controlador;
 
-import Vista.ChecadorVista;
-import Vista.FramePrincipal;
-import Modelo.ChecadorModelo;
-import Modelo.ChecadorObj;
-import Modelo.ClienteObj;
+import modelo.ChecadorModelo;
+import objetos.ChecadorObj;
+import objetos.ClienteObj;
+import vista.ChecadorVista;
+import vista.FramePrincipal;
 
 import java.util.Date;
 import java.text.SimpleDateFormat;

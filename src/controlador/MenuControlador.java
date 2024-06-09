@@ -1,11 +1,11 @@
 package controlador;
 
-import Vista.ChecadorVista;
-import Vista.ClientesVista;
-import Vista.FramePrincipal;
-import Vista.MenuPrincipalVista;
-
 import javax.swing.*;
+
+import vista.ChecadorVista;
+import vista.ClientesVista;
+import vista.FramePrincipal;
+import vista.MenuPrincipalVista;
 
 public class MenuControlador {
 	
