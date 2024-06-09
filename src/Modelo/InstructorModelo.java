@@ -301,7 +301,8 @@ public class InstructorModelo {
 		}
 	}
 
-	public void generarPDFReporte(InstructorObj instructor) {
+	public void generarPDFReporte(InstructorObj instruc) {
+		
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.setAcceptAllFileFilterUsed(false);
@@ -331,22 +332,31 @@ public class InstructorModelo {
 
 				table.addCell(new Cell().add(new Paragraph("Instructor:"))
 						.setFont(font).setFontSize(12).setBold());
-				table.addCell(new Cell().add(new Paragraph(instructor.getNombre() + " " + instructor.getApellido()))
+				table.addCell(new Cell().add(new Paragraph(instruc.getNombre() + " " + instruc.getApellido()))
 						.setFont(font).setFontSize(12));
 				
 				table.addCell(new Cell().add(new Paragraph("Correo Electrónico:"))
 						.setFont(font).setFontSize(12).setBold());
-				table.addCell(new Cell().add(new Paragraph(instructor.getCorreo()))
+				table.addCell(new Cell().add(new Paragraph(instruc.getCorreo()))
 						.setFont(font).setFontSize(12));
 
 				table.addCell(new Cell().add(new Paragraph("Especialidad:"))
 						.setFont(font).setFontSize(12).setBold());
-				table.addCell(new Cell().add(new Paragraph(instructor.getEspecialidad()))
+				table.addCell(new Cell().add(new Paragraph(instruc.getEspecialidad()))
 						.setFont(font).setFontSize(12));
-
-				table.addCell(new Cell().add(new Paragraph("Historial de clases:"))
+				
+				String horarioYDia = null;
+				ClasesModelo.obtenerInstancia().cargarClases();
+			    for (InstructorObj instructor1 : instructor) {
+			        if (instructor1.getID() == instruc.getID()) {
+			        	int idClase = instructor1.getIDClase(); 
+			        	horarioYDia = ClasesModelo.obtenerHorarioYDiaPorIdClase(idClase); 
+			        }
+			    }
+	            
+				table.addCell(new Cell().add(new Paragraph("Historial de clase:"))
 						.setFont(font).setFontSize(12).setBold());
-				table.addCell(new Cell().add(new Paragraph("HOLA")))
+				table.addCell(new Cell().add(new Paragraph(horarioYDia)))
 						.setFont(font).setFontSize(12);
 
 				doc.add(new Paragraph("Larry's Gym - Reporte del instructor\n\n")
