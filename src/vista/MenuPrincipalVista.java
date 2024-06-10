@@ -156,7 +156,7 @@ public class MenuPrincipalVista {
 		
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         try {
-            InputStream is = getClass().getResourceAsStream("/Fuente/Forte.ttf");
+            InputStream is = getClass().getResourceAsStream("/fuente/Forte.ttf");
             if (is == null) {
                 throw new IOException("Font file not found");
             }

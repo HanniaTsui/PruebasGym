@@ -1104,11 +1104,22 @@ public class ClientesVista {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				subirFoto();
-				if (selectedFile != null && lblFoto != null) {
-					lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
-					path = selectedFile.getAbsolutePath();
-				}
-			}
+				if (selectedFile != null) {
+		            try {
+		                BufferedImage imagenOriginal = ImageIO.read(selectedFile);
+		                if (imagenOriginal != null) {
+		                    Image escala = imagenOriginal.getScaledInstance(217, 221, Image.SCALE_SMOOTH);
+		                    ImageIcon scaledIcon = new ImageIcon(escala);
+		                    lblFoto.setIcon(scaledIcon);
+		                    path = selectedFile.getAbsolutePath();
+		                } else {
+		                    lblFoto.setIcon(new ImageIcon(ClientesVista.class.getResource("/img/usuarioGym 1.png")));
+		                }
+		            } catch (IOException ex) {
+		                ex.printStackTrace();
+		            }
+		        }     	
+		    }
 		});
 		btnFoto.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
@@ -1269,6 +1280,10 @@ public class ClientesVista {
 		            panelInfo.revalidate();
 		            panelInfo.setVisible(true);
 		            detallesInformacion(cliente);  // Mostrar detalles de información del cliente
+		            botones[1].setBackground(new Color(174, 174, 174));
+		            botones[2].setBackground(new Color(174, 174, 174));
+		            botones[3].setBackground(new Color(174, 174, 174));
+		            botones[4].setBackground(new Color(174, 174, 174));
 		            botones[0].setBackground(new Color(217, 217, 217));  // Cambiar el color del primer botón para indicar que está activo
 		        } else {
 		            panelInfo.setVisible(false);

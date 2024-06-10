@@ -808,10 +808,19 @@ public class InstructorVista{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				subirFoto();
-		        if (selectedFile != null && lblFoto != null) {
-		            lblFoto.setIcon(new ImageIcon(selectedFile.getAbsolutePath()));
-		            path = selectedFile.getAbsolutePath();
-		        }
+				if (selectedFile != null) {
+		            try {
+		                BufferedImage originalImage = ImageIO.read(selectedFile);
+		                if (originalImage != null) {
+		                    Image scaledImage = originalImage.getScaledInstance(217, 221, Image.SCALE_SMOOTH);
+		                    ImageIcon scaledIcon = new ImageIcon(scaledImage);
+		                    lblFoto.setIcon(scaledIcon);
+		                    path = selectedFile.getAbsolutePath();
+		                }
+		            } catch (IOException ex) {
+		                ex.printStackTrace();
+		            }
+				}
 			}
 	    });
 	    btnFoto.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
