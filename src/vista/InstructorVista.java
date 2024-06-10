@@ -1020,6 +1020,7 @@ public class InstructorVista{
         if (returnValue == JFileChooser.APPROVE_OPTION) {
              selectedFile = fileChooser.getSelectedFile();
         } else {
+			selectedFile=null;
             JOptionPane.showMessageDialog(null, "Agrega una imagen valida");
         }
 

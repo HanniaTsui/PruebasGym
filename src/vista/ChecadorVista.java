@@ -16,6 +16,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -59,7 +60,8 @@ public class ChecadorVista extends JFrame  {
 	ClienteObj cliente;
 	private String fechaFormateada; 
 	DateFormat formatoFecha = new SimpleDateFormat("yyyy/MM/dd");
-    String fechaActual = formatoFecha.format(new Date()); 
+    String fechaActual = formatoFecha.format(new Date());
+	private JLabel lblCodigoBarra; 
 	public ChecadorVista(ChecadorControlador controlador) {
         this.controlador = controlador;
         this.controladorV = new ClientesControlador(); 
@@ -248,12 +250,12 @@ public class ChecadorVista extends JFrame  {
 	    lblInicioSus.setBounds(140, 65, 315, 20);
 	    panel_1.add(lblInicioSus);
 	    
-	    JLabel lblCodigoBarra = new JLabel("");
+	    lblCodigoBarra = new JLabel("");
 	    lblCodigoBarra.setIcon(new ImageIcon(ChecadorVista.class.getResource("/img/image 10.png")));
 	    lblCodigoBarra.setBounds(140, 95, 315, 23);
 	    panel_1.add(lblCodigoBarra);
 	    
-	     lblUserCheck = new JLabel("Usuario");
+	     lblUserCheck = new JLabel("    ");
 	    lblUserCheck.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblUserCheck.setBounds(0, 125, 125, 13);
 	    panel_1.add(lblUserCheck);
@@ -305,6 +307,7 @@ public class ChecadorVista extends JFrame  {
 				try {
 					registros = get();
 					cargarDatosEnTabla();
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

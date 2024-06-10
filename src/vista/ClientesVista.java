@@ -602,22 +602,21 @@ public class ClientesVista {
 		btnCancelar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 		btnCancelar.setBackground(new Color(0, 0, 0));
-		btnCancelar.setBounds(292, 490, 150, 40);
+		btnCancelar.setBounds(472, 490, 150, 40);
 		panelCrear.add(btnCancelar);
 
-		btnPagar = new JButton("Pagar");
+		btnPagar = new JButton("Añadir");
 		btnPagar.setForeground(new Color(255, 255, 255));
 		btnPagar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				validarCamposCrear();
-				// ticket();
 			}
 		});
 		btnPagar.setFocusable(false);
 		btnPagar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 		btnPagar.setBackground(new Color(0, 45, 78));
-		btnPagar.setBounds(472, 490, 150, 40);
+		btnPagar.setBounds(292, 490, 150, 40);
 		panelCrear.add(btnPagar);
 
 		
@@ -1103,6 +1102,7 @@ public class ClientesVista {
 		btnFoto.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				path=null;
 				subirFoto();
 				if (selectedFile != null) {
 		            try {
@@ -1112,9 +1112,9 @@ public class ClientesVista {
 		                    ImageIcon scaledIcon = new ImageIcon(escala);
 		                    lblFoto.setIcon(scaledIcon);
 		                    path = selectedFile.getAbsolutePath();
-		                } else {
-		                    lblFoto.setIcon(new ImageIcon(ClientesVista.class.getResource("/img/usuarioGym 1.png")));
-		                }
+		                }else {
+		                	lblFoto.setIcon(new ImageIcon(cliente.getImagen()));
+		                } 
 		            } catch (IOException ex) {
 		                ex.printStackTrace();
 		            }
@@ -1146,7 +1146,7 @@ public class ClientesVista {
 		btnCancelar.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 		btnCancelar.setBackground(new Color(0, 0, 0));
-		btnCancelar.setBounds(302, 490, 120, 40);
+		btnCancelar.setBounds(462, 490, 120, 40);
 		panelCrear.add(btnCancelar);
 
 		btnGuardar = new JButton("Guardar");
@@ -1165,7 +1165,7 @@ public class ClientesVista {
 				}*/
             }
         });
-		btnGuardar.setBounds(462, 490, 120, 40);
+		btnGuardar.setBounds(302, 490, 120, 40);
 		panelCrear.add(btnGuardar);
 
 		return panelCrear;
@@ -1890,6 +1890,7 @@ public class ClientesVista {
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			selectedFile = fileChooser.getSelectedFile();
 		} else {
+			selectedFile=null;
 			JOptionPane.showMessageDialog(null, "Agrega una imagen valida");
 		}
 

@@ -58,7 +58,6 @@ public class ChecadorModelo {
             e.printStackTrace();
         }
     }*/
-    
     public static void cargarChecador() {
         registros.clear(); // Limpiar la lista antes de cargar los registros
         Select nombreTabla = BaseDatos.optenerIstancia().getMySQL().table("checador").select();
@@ -128,7 +127,6 @@ public class ChecadorModelo {
         
         try {
             insertar.execute();
-            registros.add(checador);
         } catch (SQLException e) {
             e.printStackTrace(); 
             return false;
