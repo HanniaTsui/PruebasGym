@@ -45,6 +45,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalAlignment;
 
 import objetos.InstructorObj;
 
@@ -243,89 +244,88 @@ public class InstructorModelo {
     }
     
     public void generarPDFCredencial(InstructorObj instructor) {
-		JFileChooser chooser = new JFileChooser();
-		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		chooser.setAcceptAllFileFilterUsed(false);
-		FileNameExtensionFilter pdfs = new FileNameExtensionFilter("Documentos PDF", "pdf");
-		chooser.addChoosableFileFilter(pdfs);
-		chooser.setFileFilter(pdfs);
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+        FileNameExtensionFilter pdfs = new FileNameExtensionFilter("Documentos PDF", "pdf");
+        chooser.addChoosableFileFilter(pdfs);
+        chooser.setFileFilter(pdfs);
 
-		int result = chooser.showSaveDialog(null);
-		if (result == JFileChooser.APPROVE_OPTION) {
-			File file = chooser.getSelectedFile();
-			if (!file.getName().endsWith(".pdf")) {
-				file = new File(file + ".pdf");
-			}
+        int result = chooser.showSaveDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            if (!file.getName().endsWith(".pdf")) {
+                file = new File(file + ".pdf");
+            }
 
-			try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(file));
-				 Document doc = new Document(pdfDoc, PageSize.A4)) {
+            try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(file));
+                 Document doc = new Document(pdfDoc, PageSize.A4)) {
 
-				PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
-				Table table = new Table(UnitValue.createPercentArray(new float[]{1, 3})).useAllAvailableWidth();
+                PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+                Table table = new Table(UnitValue.createPercentArray(new float[]{1, 3})).useAllAvailableWidth();
 
-				table.addHeaderCell(new Cell(1, 2).add(new Paragraph("Credencial del instructor")
-						.setFont(font)
-						.setFontSize(18)
-						.setFontColor(DeviceGray.BLACK)
-						.setBackgroundColor(new DeviceRgb(180, 180, 255))
-						.setTextAlignment(TextAlignment.CENTER)));
+                table.addHeaderCell(new Cell(1, 2).add(new Paragraph("Credencial del instructor")
+                        .setFont(font)
+                        .setFontSize(18)
+                        .setFontColor(DeviceGray.BLACK)
+                        .setBackgroundColor(new DeviceRgb(180, 180, 255))
+                        .setTextAlignment(TextAlignment.CENTER)));
 
-				table.addCell(new Cell().add(new Paragraph("Nombre:"))
-						.setFont(font).setFontSize(12).setBold());
-				table.addCell(new Cell().add(new Paragraph(instructor.getNombre() + " " + instructor.getApellido()))
-						.setFont(font).setFontSize(12));
+                if (instructor.getImagen() != null) {
+                    try {
+                        BufferedImage bufferedImage = instructor.getImagen();
+                        byte[] imageData = convertBufferedImageToByteArray(bufferedImage);
+                        ImageData image = ImageDataFactory.create(imageData);
+                        Image img = new Image(image);
+                        img.scaleToFit(150, 150);
 
-				table.addCell(new Cell().add(new Paragraph("Especialidad:"))
-						.setFont(font).setFontSize(12).setBold());
-				table.addCell(new Cell().add(new Paragraph(instructor.getEspecialidad()))
-						.setFont(font).setFontSize(12));
+                        table.addCell(new Cell().add(img).setVerticalAlignment(VerticalAlignment.MIDDLE));
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    table.addCell(new Cell());
+                }
 
-				table.addCell(new Cell().add(new Paragraph("Correo Electrónico:"))
-						.setFont(font).setFontSize(12).setBold());
-				table.addCell(new Cell().add(new Paragraph(instructor.getCorreo()))
-						.setFont(font).setFontSize(12));
-				
-				table.addCell(new Cell().add(new Paragraph("Fecha de contratación:"))
-						.setFont(font).setFontSize(12).setBold());
-				table.addCell(new Cell().add(new Paragraph(instructor.getFechaContratacion()))
-						.setFont(font).setFontSize(12));
-				
-				if (instructor.getImagen() != null) {
-	                try {
-	                    BufferedImage bufferedImage = instructor.getImagen();
-	                    byte[] imageData = convertBufferedImageToByteArray(bufferedImage);
-	                    ImageData image = ImageDataFactory.create(imageData);
-	                    Image img = new Image(image);
-	                    img.scaleToFit(150, 150); 
+                table.addCell(new Cell().add(new Paragraph("Nombre: " + instructor.getNombre() + " " + instructor.getApellido()))
+                        .setFont(font)
+                        .setFontSize(22)
+                        .setVerticalAlignment(VerticalAlignment.MIDDLE));
 
-	                    table.addCell(new Cell().add(new Paragraph("Foto:"))
-	                            .setFont(font).setFontSize(12).setBold());
-	                    table.addCell(new Cell().add(img));
-	                } catch (IOException ex) {
-	                    ex.printStackTrace();
-	                }
-	            }
+                table.addCell(new Cell().add(new Paragraph("Especialidad:"))
+                        .setFont(font).setFontSize(12).setBold());
+                table.addCell(new Cell().add(new Paragraph(instructor.getEspecialidad()))
+                        .setFont(font).setFontSize(12));
 
-				doc.add(new Paragraph("Larry's Gym - Credencial del instructor\n\n")
-						.setFontSize(22)
-						.setTextAlignment(TextAlignment.CENTER));
-				doc.add(table);
-				JOptionPane.showMessageDialog(null, "¡Descarga exitosa!", "", JOptionPane.INFORMATION_MESSAGE);
+                table.addCell(new Cell().add(new Paragraph("Correo Electrónico:"))
+                        .setFont(font).setFontSize(12).setBold());
+                table.addCell(new Cell().add(new Paragraph(instructor.getCorreo()))
+                        .setFont(font).setFontSize(12));
 
-				if (Desktop.isDesktopSupported()) {
-					try {
-						Desktop.getDesktop().open(file);
-					} catch (IOException ex) {
-						JOptionPane.showMessageDialog(null, "No se pudo abrir el documento", "", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
-			catch (IOException ex) {
-				ex.printStackTrace();
-				JOptionPane.showMessageDialog(null, "Hubo un error al generar el PDF.", "", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
+                table.addCell(new Cell().add(new Paragraph("Fecha de contratación:"))
+                        .setFont(font).setFontSize(12).setBold());
+                table.addCell(new Cell().add(new Paragraph(instructor.getFechaContratacion()))
+                        .setFont(font).setFontSize(12));
+
+                doc.add(new Paragraph("Larry's Gym - Credencial del instructor\n\n")
+                        .setFontSize(22)
+                        .setTextAlignment(TextAlignment.CENTER));
+                doc.add(table);
+                JOptionPane.showMessageDialog(null, "¡Descarga exitosa!", "", JOptionPane.INFORMATION_MESSAGE);
+
+                if (Desktop.isDesktopSupported()) {
+                    try {
+                        Desktop.getDesktop().open(file);
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(null, "No se pudo abrir el documento", "", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Hubo un error al generar el PDF.", "", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
 
 	public void generarPDFReporte(InstructorObj instruc) {
 		

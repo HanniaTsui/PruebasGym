@@ -16,7 +16,7 @@ Instalación:
 
 Uso:
 * Iniciar la aplicación.
-* Iniciar sesión o registrarse.
+* Registrarse o iniciar sesión con el siguiente usuario y contraseña: Usuario: admin    Contraseña: 12345.
 * Explorar las diferentes funcionalidades disponibles, como la gestión de usuarios, membresías, clases, pagos, etc.
 * Utilizar los menús y formularios para realizar las operaciones deseadas.
 

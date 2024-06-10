@@ -42,6 +42,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalAlignment;
 
 import objetos.ClienteObj;
 
@@ -97,102 +98,100 @@ public class ClienteModelo {
 	}
 
 	public void generarPDFCredencial(ClienteObj cliente) {
-		JFileChooser chooser = new JFileChooser();
-		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		chooser.setAcceptAllFileFilterUsed(false);
-		FileNameExtensionFilter pdfs = new FileNameExtensionFilter("Documentos PDF", "pdf");
-		chooser.addChoosableFileFilter(pdfs);
-		chooser.setFileFilter(pdfs);
+	    JFileChooser chooser = new JFileChooser();
+	    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+	    chooser.setAcceptAllFileFilterUsed(false);
+	    FileNameExtensionFilter pdfs = new FileNameExtensionFilter("Documentos PDF", "pdf");
+	    chooser.addChoosableFileFilter(pdfs);
+	    chooser.setFileFilter(pdfs);
 
-		int result = chooser.showSaveDialog(null);
-		if (result == JFileChooser.APPROVE_OPTION) {
-			File file = chooser.getSelectedFile();
-			if (!file.getName().endsWith(".pdf")) {
-				file = new File(file + ".pdf");
-			}
+	    int result = chooser.showSaveDialog(null);
+	    if (result == JFileChooser.APPROVE_OPTION) {
+	        File file = chooser.getSelectedFile();
+	        if (!file.getName().endsWith(".pdf")) {
+	            file = new File(file + ".pdf");
+	        }
 
-			try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(file));
-				 Document doc = new Document(pdfDoc, PageSize.A4)) {
+	        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(file));
+	             Document doc = new Document(pdfDoc, PageSize.A4)) {
 
-				PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
-				Table table = new Table(UnitValue.createPercentArray(new float[]{1, 3})).useAllAvailableWidth();
+	            PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+	            Table table = new Table(UnitValue.createPercentArray(new float[]{1, 3})).useAllAvailableWidth();
 
-				table.addHeaderCell(new Cell(1, 2).add(new Paragraph("Credencial del Cliente")
-						.setFont(font)
-						.setFontSize(18)
-						.setFontColor(DeviceGray.WHITE)
-						.setBackgroundColor(new DeviceRgb(0, 102, 204))
-						.setTextAlignment(TextAlignment.CENTER)));
+	            table.addHeaderCell(new Cell(1, 2).add(new Paragraph("Credencial del Cliente")
+	                    .setFont(font)
+	                    .setFontSize(18)
+	                    .setFontColor(DeviceGray.WHITE)
+	                    .setBackgroundColor(new DeviceRgb(0, 102, 204))
+	                    .setTextAlignment(TextAlignment.CENTER)));
 
-				table.addCell(new Cell().add(new Paragraph("Nombre:"))
-						.setFont(font).setFontSize(12).setBold());
-				table.addCell(new Cell().add(new Paragraph(cliente.getNombre()))
-						.setFont(font).setFontSize(12));
-
-				table.addCell(new Cell().add(new Paragraph("Fecha de Nacimiento:"))
-						.setFont(font).setFontSize(12).setBold());
-				table.addCell(new Cell().add(new Paragraph(cliente.getFechaNacimiento()))
-						.setFont(font).setFontSize(12));
-
-				table.addCell(new Cell().add(new Paragraph("Teléfono:"))
-						.setFont(font).setFontSize(12).setBold());
-				table.addCell(new Cell().add(new Paragraph(cliente.getTelefono()))
-						.setFont(font).setFontSize(12));
-
-				table.addCell(new Cell().add(new Paragraph("Correo Electrónico:"))
-						.setFont(font).setFontSize(12).setBold());
-				table.addCell(new Cell().add(new Paragraph(cliente.getCorreo()))
-						.setFont(font).setFontSize(12));
-
-				table.addCell(new Cell().add(new Paragraph("Fecha de Registro:"))
-						.setFont(font).setFontSize(12).setBold());
-				table.addCell(new Cell().add(new Paragraph(cliente.getFechaInicial()))
-						.setFont(font).setFontSize(12));
-
-				table.addCell(new Cell().add(new Paragraph("Suscripción: "))
-						.setFont(font).setFontSize(12).setBold());
-
-				Paragraph fechaParagraph = new Paragraph(cliente.getFechaInicial() + " - " + cliente.getFechaFinal())
-						.setFont(font)
-						.setFontSize(12);
-				table.addCell(new Cell().add(fechaParagraph));
-				
-				if (cliente.getImagen() != null) {
+	            if (cliente.getImagen() != null) {
 	                try {
 	                    BufferedImage bufferedImage = cliente.getImagen();
 	                    byte[] imageData = convertBufferedImageToByteArray(bufferedImage);
 	                    ImageData image = ImageDataFactory.create(imageData);
 	                    Image img = new Image(image);
-	                    img.scaleToFit(150, 150); 
+	                    img.scaleToFit(150, 150);
 
-	                    table.addCell(new Cell().add(new Paragraph("Foto:"))
-	                            .setFont(font).setFontSize(12).setBold());
-	                    table.addCell(new Cell().add(img));
+	                    table.addCell(new Cell().add(img).setVerticalAlignment(VerticalAlignment.MIDDLE));
 	                } catch (IOException ex) {
 	                    ex.printStackTrace();
 	                }
+	            } else {
+	                table.addCell(new Cell());
 	            }
 
-				doc.add(new Paragraph("Larry's Gym - Credencial del Cliente\n\n")
-						.setFontSize(22)
-						.setTextAlignment(TextAlignment.CENTER));
-				doc.add(table);
-				JOptionPane.showMessageDialog(null, "¡Descarga exitosa!", "", JOptionPane.INFORMATION_MESSAGE);
+	            table.addCell(new Cell().add(new Paragraph("Nombre: " + cliente.getNombre() + " " + cliente.getApellido()))
+	                    .setFont(font)
+	                    .setFontSize(22)
+	                    .setVerticalAlignment(VerticalAlignment.MIDDLE));
 
-				if (Desktop.isDesktopSupported()) {
-					try {
-						Desktop.getDesktop().open(file);
-					} catch (IOException ex) {
-						JOptionPane.showMessageDialog(null, "No se pudo abrir el documento", "", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
-			catch (IOException ex) {
-				ex.printStackTrace();
-				JOptionPane.showMessageDialog(null, "Hubo un error al generar el PDF.", "", JOptionPane.ERROR_MESSAGE);
-			}
-		}
+	            table.addCell(new Cell().add(new Paragraph("Fecha de Nacimiento:"))
+	                    .setFont(font).setFontSize(12).setBold());
+	            table.addCell(new Cell().add(new Paragraph(cliente.getFechaNacimiento()))
+	                    .setFont(font).setFontSize(12));
+
+	            table.addCell(new Cell().add(new Paragraph("Teléfono:"))
+	                    .setFont(font).setFontSize(12).setBold());
+	            table.addCell(new Cell().add(new Paragraph(cliente.getTelefono()))
+	                    .setFont(font).setFontSize(12));
+
+	            table.addCell(new Cell().add(new Paragraph("Correo Electrónico:"))
+	                    .setFont(font).setFontSize(12).setBold());
+	            table.addCell(new Cell().add(new Paragraph(cliente.getCorreo()))
+	                    .setFont(font).setFontSize(12));
+
+	            table.addCell(new Cell().add(new Paragraph("Fecha de Registro:"))
+	                    .setFont(font).setFontSize(12).setBold());
+	            table.addCell(new Cell().add(new Paragraph(cliente.getFechaInicial()))
+	                    .setFont(font).setFontSize(12));
+
+	            table.addCell(new Cell().add(new Paragraph("Suscripción: "))
+	                    .setFont(font).setFontSize(12).setBold());
+	            table.addCell(new Cell().add(new Paragraph(cliente.getFechaInicial() + " - " + cliente.getFechaFinal()))
+	                    .setFont(font)
+	                    .setFontSize(12));
+
+	            doc.add(new Paragraph("Larry's Gym - Credencial del Cliente\n\n")
+	                    .setFontSize(22)
+	                    .setTextAlignment(TextAlignment.CENTER));
+	            doc.add(table);
+	            JOptionPane.showMessageDialog(null, "¡Descarga exitosa!", "", JOptionPane.INFORMATION_MESSAGE);
+
+	            if (Desktop.isDesktopSupported()) {
+	                try {
+	                    Desktop.getDesktop().open(file);
+	                } catch (IOException ex) {
+	                    JOptionPane.showMessageDialog(null, "No se pudo abrir el documento", "", JOptionPane.ERROR_MESSAGE);
+	                }
+	            }
+	        } catch (IOException ex) {
+	            ex.printStackTrace();
+	            JOptionPane.showMessageDialog(null, "Hubo un error al generar el PDF.", "", JOptionPane.ERROR_MESSAGE);
+	        }
+	    }
 	}
+
 
 	public void generarPDFReporte(ClienteObj cliente) {
 		JFileChooser chooser = new JFileChooser();

@@ -900,7 +900,8 @@ public class InstructorVista{
 	            Date fechaNac = (Date) spinnerFechaC.getValue();
 	            instructor.setFechaContratacion(new SimpleDateFormat("dd/MM/yyyy").format(fechaNac));
 	            //instructor.setIDClase(idClaseSeleccionada);
-	            BufferedImage imagen = null;
+
+	            BufferedImage imagen = instructor.getImagen();
 	            if (!path.equals("Predeterminado")) {
 	                
 	                try {

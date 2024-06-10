@@ -1304,6 +1304,7 @@ public class ClientesVista {
 		panel.add(btnBuscar);
 
 		btnReporte = new JButton("Renovar suscripción");
+		desactivarBoton(btnReporte);
 		btnReporte.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (cliente != null) {
