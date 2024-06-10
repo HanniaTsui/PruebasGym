@@ -16,7 +16,7 @@ import com.code.advancedsql.query.Update;
 
 import objetos.ClasesObj;
 import objetos.ClienteObj;
-
+import objetos.InstructorObj;
 public class ClasesModelo {
 	public static ClasesModelo instance = new ClasesModelo();
 	
@@ -50,7 +50,6 @@ public class ClasesModelo {
 	        	String nombre=((String)map.get("nombreClase")); 
 	        	int dia=((int)map.get("IDDia")); 
 	        	int horario=((int)map.get("IDHorario")); 
-	      //  	int IDClase = (int)map.get("IDClase");
 	            clases.add(new ClasesObj(ID,  nombre,  dia,  horario));
 	            
 		}
@@ -196,6 +195,12 @@ public class ClasesModelo {
 	                case 14:
 	                    horarioText = "19:00 - 20:00";
 	                    break;
+	                case 15:
+	                    horarioText = "20:00 - 21:00";
+	                    break;
+	                case 16:
+	                    horarioText = "21:00 - 22:00";
+	                    break;
 	                default:
 	                    horarioText = "";
 	                    break;
@@ -245,10 +250,23 @@ public class ClasesModelo {
              Delete query = BaseDatos.optenerIstancia().getMySQL().table("clase").delete().where("ID = ?", Integer.toString(cla.getID()));
              int execute = query.execute();
 
-             // Imprimir la consulta y el resultado
-             System.out.println(query);
-             System.out.println(execute);
+             List<InstructorObj> Instructores = InstructorModelo.obtenerInstancia().getInstructor();
+             for (InstructorObj instructorObj : Instructores) {
+				if(instructorObj.getIDClase()==cla.getID()) {
+					instructorObj.setEspecialidad("Sin especialidad");
+					Update insertar =BaseDatos.optenerIstancia().getMySQL().table("instructor").update();
+					insertar.field("especialidad","Sin especialidad");
 
+					insertar.where("ID =?", instructorObj.getID());
+					try {
+						insertar.execute();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						return ;
+					}
+				}
+			}
              // Si la eliminación en la base de datos fue exitosa, eliminar el cliente de la lista en memoria
              if (execute > 0) {
                  System.out.println("se elimino");

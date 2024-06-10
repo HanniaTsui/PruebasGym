@@ -148,6 +148,12 @@ public class ClasesVista {
             case 14:
                 horarioText = "19:00 - 20:00";
                 break;
+            case 15:
+                horarioText = "20:00 - 21:00";
+                break;
+            case 16:
+                horarioText = "21:00 - 22:00";
+                break;
             default:
                 horarioText = "";
                 break;
@@ -516,26 +522,65 @@ public class ClasesVista {
 	    JLabel horario = new JLabel();
 	    configurarLabelsIzq(horario);
 	    horario.setBounds(561,313,285,30);
-	    String[] horarios = {
-	    	    "06:00 - 07:00",  "07:00 - 08:00", "08:00 - 09:00",   "09:00 - 10:00",    
-	    	    "10:00 - 11:00", "11:00 - 12:00", "12:00 - 13:00",   "13:00 - 14:00", 
-	    	    "14:00 - 15:00", "15:00 - 16:00", "16:00 - 17:00",   "17:00 - 18:00",  
-	    	    "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00",   "21:00 - 22:00" 
-	    	};
+	    String horarioText=null;
+	    switch (clases.getIdHorario()) {
+        case 1:
+        	horarioText = "06:00 - 07:00";
+            break;
+        case 2:
+            horarioText = "07:00 - 08:00";
+            break;
+        case 3:
+            horarioText = "08:00 - 09:00";
+            break;
+        case 4:
+            horarioText = "09:00 - 10:00";
+            break;  
+        case 5:
+            horarioText = "10:00 - 11:00";
+            break; 
+        case 6:
+            horarioText = "11:00 - 12:00";
+            break;  
+        case 7:
+            horarioText = "12:00 - 13:00";
+            break; 
+        case 8:
+            horarioText = "13:00 - 14:00";
+            break;
+        case 9:
+            horarioText = "14:00 - 15:00";
+            break;
+        case 10:
+            horarioText = "15:00 - 16:00";
+            break;
+        case 11:
+            horarioText = "16:00 - 17:00";
+            break;
+        case 12:
+            horarioText = "17:00 - 18:00";
+            break;
+        case 13:
+            horarioText = "18:00 - 19:00";
+            break;
+        case 14:
+            horarioText = "19:00 - 20:00";
+            break;
+        case 15:
+            horarioText = "20:00 - 21:00";
+            break;
+        case 16:
+            horarioText = "21:00 - 22:00";
+            break;
+        default:
+            horarioText = "";
+            break;
+        }
 
-	    	int idHorario = clases.getIdHorario();
-	    	if (idHorario >= 1 && idHorario < horarios.length) {
-	    	    String horarioTexto = horarios[idHorario-1];
-	    	    horario.setText(horarioTexto);
-	    	} else {
-	    	    // Manejar el caso en que el ID del horario está fuera del rango
-	    	    horario.setText("Horario no válido");
-	    	}
+	    	    horario.setText(horarioText);
+	    
 
 	    panel.add(horario);
-	    JComboBox<String> comboBox = new JComboBox<>(horarios);
-	//    comboBox.setSelectedItem(clases.getIdHorario());
-        comboBox.setBounds(561, 318, 285, 30);
 	//    panel.add(comboBox);
 	    
         ButtonGroup grupoDiasSemana = new ButtonGroup();
