@@ -228,7 +228,7 @@ public class InstructorVista{
 			@Override
 			protected List<InstructorObj> doInBackground() {
 				InstructorModelo.cargarInstructor();
-				ClasesModelo.cargarClases();
+				//ClasesModelo.cargarClases();
 				return InstructorModelo.getInstructor();
 			}
 
@@ -711,6 +711,7 @@ public class InstructorVista{
 
 	
 	public JPanel editarInstructor(InstructorObj instructor) {
+    	ClasesModelo.obtenerInstancia().cargarClases();
 		id=instructor.getID();
 		JPanel panel = getMenu();
 		JLabel lblTitutlo = new JLabel("Editar instructor");
@@ -861,7 +862,6 @@ public class InstructorVista{
 
 	    claseInstructor=ClasesModelo.obtenerNombreClase(idClase);
 	    comboEspecialidad.setModel(comboBoxModel);
-	    System.out.println(claseInstructor);
 	    // Seleccionar el valor por defecto
 	    if (claseInstructor != null && nombresClases.contains(claseInstructor)) {
 	        comboEspecialidad.setSelectedItem(claseInstructor);
@@ -878,7 +878,6 @@ public class InstructorVista{
 	    btnGuardar.setForeground(new Color(255, 255, 255));
 	    btnGuardar.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent e) {
-	        	ClasesModelo.obtenerInstancia().cargarClases();
 	        	String claseSeleccionada = (String) comboEspecialidad.getSelectedItem();
 	            int idClaseSeleccionada = ClasesModelo.obtenerIdClasePorNombre(claseSeleccionada);
 	            

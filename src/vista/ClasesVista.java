@@ -76,6 +76,7 @@ public class ClasesVista {
 	}
 
 	private void cargarClasesEnSegundoPlano(JPanel panel_1) {
+        cargarDatos=true;
         SwingWorker<List<ClasesObj>, Void> worker = new SwingWorker<List<ClasesObj>, Void>() {
             @Override
             protected List<ClasesObj> doInBackground() throws Exception {
@@ -99,6 +100,9 @@ public class ClasesVista {
     }
 	
 	private void actualizarPanelConClases(List<ClasesObj> clases, JPanel panel_1) {
+		 if (clases == null) {
+		        return;
+		    }
         panel_1.removeAll(); // Limpia el panel antes de agregar nuevas clases
         for (ClasesObj clase : clases) {
         	String horarioText;
@@ -245,10 +249,9 @@ public class ClasesVista {
 
         if(!cargarDatos) {
 	        cargarClasesEnSegundoPlano(panel_1);
-	        cargarDatos=true;
         }else {
         	actualizarPanelConClases(clases, panel_1);
-        	cargarDatos=false;
+        	//cargarDatos=false;
         }
         JButton btnChecador = new JButton("Nueva clase");
         btnChecador.setForeground(Color.WHITE);

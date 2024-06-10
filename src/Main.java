@@ -4,6 +4,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import controlador.InicioControlador;
 import modelo.BaseDatos;
+import modelo.ClasesModelo;
 
 public class Main {
 
@@ -11,7 +12,6 @@ public class Main {
         setLookAndFeel();
 
         BaseDatos.optenerIstancia().cargarBase();
-
         EventQueue.invokeLater(() -> {
             try {
                 InicioControlador inicio = new InicioControlador();
